@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+:root {
+  /* ================================
+     Brand
+     ================================ */
+  --brand-primary: #16a34a;
+  --brand-primary-hover: #15803d;
+  --brand-primary-light: #dcfce7;
+  --brand-primary-muted: #b7e3c8;
+
+  /* ================================
+     Background
+     ================================ */
+  --background: #f8fafc;
+  --background-white: #ffffff;
+  --background-muted: #f1f5f9;
+
+  /* ================================
+     Text
+     ================================ */
+  --foreground: #111111;
+  --text-primary: #111111;
+  --text-secondary: #3a4350;
+  --text-muted: #94a3b8;
+  --text-white: #ffffff;
+
+  /* ================================
+     Border
+     ================================ */
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  /* ================================
+     Semantic
+     ================================ */
+  --success: #16a34a;
+  --success-light: #dcfce7;
+
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+}
+
+@theme inline {
+  /* Brand */
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-hover: var(--brand-primary-hover);
+  --color-brand-primary-light: var(--brand-primary-light);
+  --color-brand-primary-muted: var(--brand-primary-muted);
+
+  /* Background */
+  --color-background: var(--background);
+  --color-background-white: var(--background-white);
+  --color-background-muted: var(--background-muted);
+
+  /* Text */
+  --color-foreground: var(--foreground);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-white: var(--text-white);
+
+  /* Border */
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  /* Semantic */
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+
+  --color-warning: var(--warning);
+  --color-warning-light: var(--warning-light);
+
+  --color-danger: var(--danger);
+  --color-danger-light: var(--danger-light);
+
+  --color-info: var(--info);
+  --color-info-light: var(--info-light);
+}

@@ -185,7 +185,7 @@ export default function RegisterForm() {
 
         <button
           type="submit"
-          className="w-full rounded-xl bg-brand-primary/90 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
+          className="w-full rounded-xl bg-brand-primary/90 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-primary focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
         >
           Daftar
         </button>

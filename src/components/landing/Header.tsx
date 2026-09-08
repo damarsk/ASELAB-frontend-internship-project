@@ -1,4 +1,5 @@
 import Button from "../ui/Button";
+import Link from "next/link";
 
 export default function Header() {
   return (
@@ -34,8 +35,12 @@ export default function Header() {
         </div>
 
         <div className="flex gap-4">
-          <Button variant="outline">Login</Button>
-          <Button variant="solid">Register</Button>
+          <Link href="/login">
+            <Button variant="outline">Login</Button>
+          </Link>
+          <Link href="/register">
+            <Button variant="solid">Register</Button>
+          </Link>
         </div>
       </div>
     </nav>

@@ -1,66 +1,23 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-
-const registerSchema = z
-  .object({
-    fullName: z
-      .string()
-      .min(1, "Nama lengkap wajib diisi")
-      .min(3, "Nama minimal 3 karakter"),
-    nim: z
-      .string()
-      .min(1, "NIM wajib diisi")
-      .regex(/^\d+$/, "NIM hanya boleh berisi angka"),
-    email: z
-      .string()
-      .min(1, "Email wajib diisi")
-      .email("Format email tidak valid"),
-    password: z
-      .string()
-      .min(1, "Password wajib diisi")
-      .min(8, "Password minimal 8 karakter"),
-    confirmPassword: z.string().min(1, "Konfirmasi password wajib diisi"),
-    agreeTerms: z.boolean().refine((val) => val === true, {
-      message: "Anda harus menyetujui Syarat & Ketentuan",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Password dan Konfirmasi Password tidak cocok",
-    path: ["confirmPassword"],
-  });
-
-type RegisterFormValues = z.infer<typeof registerSchema>;
+import { useRegisterForm } from "@/src/features/auth/hooks/useRegisterForm";
 
 export default function RegisterForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const {
+    showPassword,
+    setShowPassword,
+    showConfirmPassword,
+    setShowConfirmPassword,
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      fullName: "",
-      nim: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      agreeTerms: false,
-    },
-  });
-
-  const onSubmit = (data: RegisterFormValues) => {
-    console.log("Form Submitted:", data);
-  };
+    errors,
+    isSubmitting,
+    apiError,
+    onSubmit,
+  } = useRegisterForm();
 
   return (
     <div className="grid h-screen w-screen grid-cols-1 overflow-hidden bg-white lg:grid-cols-2">
@@ -107,7 +64,11 @@ export default function RegisterForm() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            method="POST"
+            className="space-y-4"
+          >
             <div>
               <label
                 htmlFor="fullName"
@@ -278,6 +239,12 @@ export default function RegisterForm() {
             >
               {isSubmitting ? "Memproses..." : "Daftar"}
             </button>
+
+            {apiError && (
+              <div className="rounded-lg bg-red-50 px-4 py-3 text-center text-sm text-red-600">
+                {apiError}
+              </div>
+            )}
           </form>
 
           <p className="mt-5 text-center text-xs font-medium text-gray-700">

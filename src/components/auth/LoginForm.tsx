@@ -1,41 +1,20 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useLoginForm } from "@/src/features/auth/hooks/useLoginForm";
 
-const registerSchema = z.object({
-  email: z.email("Format email tidak valid"),
-  password: z
-    .string()
-    .min(1, "Password wajib diisi")
-    .min(8, "Password minimal 8 karakter"),
-});
-
-type RegisterFormValues = z.infer<typeof registerSchema>;
-
-export default function RegisterForm() {
-  const [showPassword, setShowPassword] = useState(false);
-
+export default function LoginForm() {
   const {
+    showPassword,
+    setShowPassword,
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const onSubmit = (data: RegisterFormValues) => {
-    console.log("Form Submitted:", data);
-  };
+    errors,
+    isSubmitting,
+    onSubmit,
+  } = useLoginForm();
 
   return (
     <div className="grid h-screen w-screen grid-cols-1 overflow-hidden bg-white lg:grid-cols-2">

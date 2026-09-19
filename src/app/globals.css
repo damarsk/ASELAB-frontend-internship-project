@@ -83,3 +83,21 @@
   --color-info: var(--info);
   --color-info-light: var(--info-light);
 }
+
+@layer base {
+  button,
+  [type="button"],
+  [type="submit"],
+  [type="reset"],
+  [role="button"] {
+    @apply cursor-pointer;
+  }
+
+  button:disabled,
+  [type="button"]:disabled,
+  [type="submit"]:disabled,
+  [type="reset"]:disabled,
+  [aria-disabled="true"] {
+    @apply cursor-not-allowed;
+  }
+}

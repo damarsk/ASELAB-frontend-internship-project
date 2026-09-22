@@ -36,21 +36,18 @@ export function useRegisterForm() {
     setApiError(null);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/request-register-otp`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            nama: data.fullName.trim(),
-            nim: data.nim.trim(),
-            emailInstitusi: data.email.trim().toLowerCase(),
-            password: data.password,
-          }),
+      const response = await fetch("/api/auth/request-register-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          nama: data.fullName.trim(),
+          nim: data.nim.trim(),
+          emailInstitusi: data.email.trim().toLowerCase(),
+          password: data.password,
+        }),
+      });
 
       const result = await response.json().catch(() => null);
 

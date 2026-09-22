@@ -25,19 +25,16 @@ export function useLoginForm() {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            emailInstitusi: data.emailInstitusi,
-            password: data.password,
-          }),
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          emailInstitusi: data.emailInstitusi,
+          password: data.password,
+        }),
+      });
 
       const result = await response.json().catch(() => null);
 

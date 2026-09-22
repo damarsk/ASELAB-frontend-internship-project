@@ -48,6 +48,11 @@ export function useEmailVerification() {
     if (!token) {
       setError("Token registrasi tidak ditemukan.");
       setIsLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) {
       return;
     }
 

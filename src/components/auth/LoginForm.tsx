@@ -74,13 +74,13 @@ export default function LoginForm() {
               <input
                 type="email"
                 id="email"
-                {...register("email")}
+                {...register("emailInstitusi")}
                 placeholder="nama@student.telkomuniversity.ac.id"
                 className="mt-1 w-full rounded-xl border border-gray-300 bg-gray-50/50 px-4 py-2 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-primary"
               />
-              {errors.email && (
+              {errors.emailInstitusi && (
                 <p className="mt-1 text-xs text-red-500">
-                  {errors.email.message}
+                  {errors.emailInstitusi.message}
                 </p>
               )}
             </div>

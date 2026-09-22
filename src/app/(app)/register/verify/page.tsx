@@ -1,11 +1,11 @@
 "use client";
 
-import EmailVerification from "@/src/components/auth/EmailVerfication";
+import VerifyOTP from "@/src/components/auth/VerifyOTP";
 
 export default function VerificationPage() {
   return (
     <main>
-      <EmailVerification />
+      <VerifyOTP />
     </main>
   );
 }

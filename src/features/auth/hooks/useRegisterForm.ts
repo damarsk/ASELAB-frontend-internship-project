@@ -7,14 +7,14 @@ import {
   registerSchema,
   type RegisterFormValues,
 } from "../schemas/register.schema";
-import { requestOtpAction } from "../actions/requestOtp.action";
 import { useRouter } from "next/navigation";
 
 export function useRegisterForm() {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
-  const router = useRouter();
 
   const {
     register,
@@ -35,25 +35,45 @@ export function useRegisterForm() {
   const onSubmit = async (data: RegisterFormValues) => {
     setApiError(null);
 
-    const registerData = {
-      nama: data.fullName,
-      nim: data.nim,
-      emailInstitusi: data.email,
-      password: data.password,
-    };
     try {
-      sessionStorage.setItem("registerData", JSON.stringify(registerData));
-    } catch (e) {
-      console.warn("Failed to store registration data", e);
-    }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/request-register-otp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nama: data.fullName.trim(),
+            nim: data.nim.trim(),
+            emailInstitusi: data.email.trim().toLowerCase(),
+            password: data.password,
+          }),
+        },
+      );
 
-    const otpResult = await requestOtpAction(data.email);
-    if (!otpResult.success) {
-      setApiError(otpResult.error || "Gagal mengirim OTP");
-      return;
-    }
+      const result = await response.json().catch(() => null);
 
-    router.push("/register/verify");
+      if (!response.ok) {
+        throw new Error(result?.error || "Gagal mengirim OTP.");
+      }
+
+      if (!result?.token) {
+        throw new Error("Token registrasi tidak diterima dari server.");
+      }
+
+      const params = new URLSearchParams({
+        token: result.token,
+      });
+
+      router.push(`/register/verify?${params.toString()}`);
+    } catch (error) {
+      setApiError(
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan saat registrasi.",
+      );
+    }
   };
 
   return {

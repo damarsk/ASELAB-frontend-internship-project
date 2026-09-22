@@ -26,7 +26,7 @@ export default function LoginForm() {
           priority
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/60" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-black/60" />
 
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm font-semibold tracking-wide text-brand-primary">

@@ -29,13 +29,15 @@ export default function RegisterForm() {
           priority
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/60" />
+
+        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-black/60" />
 
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm font-semibold tracking-wide text-brand-primary">
             <span className="inline-block h-2.5 w-2.5 rounded-full bg-brand-primary" />
             Partner In
           </div>
+
           <span className="text-xs tracking-wider text-gray-300">SDGs 17</span>
         </div>
 
@@ -43,10 +45,12 @@ export default function RegisterForm() {
           <span className="inline-block rounded-full bg-brand-primary/20 px-3 py-1 text-xs font-semibold text-brand-primary-light backdrop-blur-md">
             🚀 #1 PLATFORM CARI TIM LOMBA
           </span>
+
           <h2 className="text-4xl font-extrabold leading-tight text-white">
             Bangun Tim Impian, <br />
             Menangkan Kompetisi Bergengsi.
           </h2>
+
           <p className="text-sm leading-relaxed text-gray-300">
             Temukan tim berdasarkan skill, minat, dan kompetisi yang ingin kamu
             ikuti. Bangun kolaborasi dan raih prestasi bersama.
@@ -58,17 +62,14 @@ export default function RegisterForm() {
         <div className="mx-auto w-full max-w-md">
           <div className="mb-6 text-left">
             <h1 className="text-2xl font-bold text-gray-900">Buat Akun</h1>
+
             <p className="mt-1 text-sm text-gray-500">
               Daftar dan mulai temukan tim lomba yang sesuai dengan skill dan
               minatmu.
             </p>
           </div>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            method="POST"
-            className="space-y-4"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label
                 htmlFor="fullName"
@@ -76,6 +77,7 @@ export default function RegisterForm() {
               >
                 Nama Lengkap
               </label>
+
               <input
                 type="text"
                 id="fullName"
@@ -83,6 +85,7 @@ export default function RegisterForm() {
                 placeholder="Masukkan nama lengkap"
                 className="mt-1 w-full rounded-xl border border-gray-300 bg-gray-50/50 px-4 py-2 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-primary"
               />
+
               {errors.fullName && (
                 <p className="mt-1 text-xs text-red-500">
                   {errors.fullName.message}
@@ -97,6 +100,7 @@ export default function RegisterForm() {
               >
                 NIM
               </label>
+
               <input
                 type="text"
                 id="nim"
@@ -104,6 +108,7 @@ export default function RegisterForm() {
                 placeholder="Masukkan NIM"
                 className="mt-1 w-full rounded-xl border border-gray-300 bg-gray-50/50 px-4 py-2 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-primary"
               />
+
               {errors.nim && (
                 <p className="mt-1 text-xs text-red-500">
                   {errors.nim.message}
@@ -118,6 +123,7 @@ export default function RegisterForm() {
               >
                 E-Mail
               </label>
+
               <input
                 type="email"
                 id="email"
@@ -125,6 +131,7 @@ export default function RegisterForm() {
                 placeholder="nama@student.telkomuniversity.ac.id"
                 className="mt-1 w-full rounded-xl border border-gray-300 bg-gray-50/50 px-4 py-2 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-primary"
               />
+
               {errors.email && (
                 <p className="mt-1 text-xs text-red-500">
                   {errors.email.message}
@@ -139,6 +146,7 @@ export default function RegisterForm() {
               >
                 Password
               </label>
+
               <div className="relative mt-1">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -147,14 +155,16 @@ export default function RegisterForm() {
                   placeholder="Masukkan password"
                   className="w-full rounded-xl border border-gray-300 bg-gray-50/50 py-2 pl-4 pr-10 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-primary"
                 />
+
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword((current) => !current)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+
               {errors.password && (
                 <p className="mt-1 text-xs text-red-500">
                   {errors.password.message}
@@ -169,6 +179,7 @@ export default function RegisterForm() {
               >
                 Konfirmasi Password
               </label>
+
               <div className="relative mt-1">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
@@ -177,9 +188,10 @@ export default function RegisterForm() {
                   placeholder="Masukkan ulang password"
                   className="w-full rounded-xl border border-gray-300 bg-gray-50/50 py-2 pl-4 pr-10 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-primary"
                 />
+
                 <button
                   type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  onClick={() => setShowConfirmPassword((current) => !current)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showConfirmPassword ? (
@@ -189,6 +201,7 @@ export default function RegisterForm() {
                   )}
                 </button>
               </div>
+
               {errors.confirmPassword && (
                 <p className="mt-1 text-xs text-red-500">
                   {errors.confirmPassword.message}
@@ -204,6 +217,7 @@ export default function RegisterForm() {
                   {...register("agreeTerms")}
                   className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary"
                 />
+
                 <label
                   htmlFor="agreeTerms"
                   className="ml-2.5 pt-1 text-xs font-medium text-gray-600"
@@ -225,6 +239,7 @@ export default function RegisterForm() {
                   .
                 </label>
               </div>
+
               {errors.agreeTerms && (
                 <p className="mt-1 text-xs text-red-500">
                   {errors.agreeTerms.message}

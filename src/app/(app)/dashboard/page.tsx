@@ -1,8 +1,8 @@
 "use client";
 
+import Header from "@/src/components/landing/Header";
 import { useEffect, useState } from "react";
 
-// Helper sederhaana untuk membaca cookie di Client Side
 function getCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
   const value = `; ${document.cookie}`;
@@ -46,7 +46,7 @@ export default function DashboardPage() {
     };
 
     fetchProfile();
-  }, []); // Wajib tambahkan dependency array [] agar useEffect hanya jalan 1x
+  }, []);
 
   if (loading) {
     return (
@@ -65,12 +65,17 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-      <p className="mt-2 text-sm text-gray-500">
-        Halo <span className="font-semibold text-gray-900">{username}</span>,
-        selamat datang di dashboard Anda.
-      </p>
-    </div>
+    <>
+      <Header />
+      <div className="flex items-center bg-brand-primary-light px-32 py-4 h-64">
+        <div>
+          <h1 className="text-4xl font-medium mb-4">Halo, {username} 👋</h1>
+          <p className="text-4xl font-medium">Temukan Tim yang Cocok</p>
+          <p className="text-4xl text-brand-primary font-medium">
+            Berdasarkan skill dan minatmu
+          </p>
+        </div>
+      </div>
+    </>
   );
 }

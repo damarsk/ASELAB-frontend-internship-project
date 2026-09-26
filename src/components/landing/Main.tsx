@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Main() {
   return (
     <main className="min-h-[calc(100vh-5rem)] bg-background">
@@ -31,7 +33,7 @@ export default function Main() {
             </a>
 
             <a
-              href="#"
+              href="#cara-kerja"
               className="inline-flex h-14 items-center justify-center rounded-lg border border-border bg-white px-8 font-semibold text-text-primary transition-all duration-200 hover:border-brand-primary hover:text-brand-primary"
             >
               Pelajari Cara Kerja
@@ -158,7 +160,7 @@ export default function Main() {
         </div>
       </section>
 
-      <section className="bg-background py-20">
+      <section className="bg-background py-20" id="cara-kerja">
         <div className="mx-auto max-w-6xl px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-4xl font-extrabold leading-tight tracking-tight text-text-primary sm:text-5xl">
@@ -373,12 +375,12 @@ export default function Main() {
             dan mulai perjalanan kompetisimu.
           </p>
           <div className="mt-10">
-            <a
-              href="#"
+            <Link
+              href="/register"
               className="inline-flex h-14 items-center justify-center rounded-lg bg-brand-primary px-8 font-semibold text-white transition-all duration-200 hover:bg-brand-primary-hover hover:shadow-lg"
             >
               Daftar Sekarang →
-            </a>
+            </Link>
           </div>
         </div>
       </section>

@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 export async function proxy(request: NextRequest) {
-  const token = request.cookies.get("token")?.value;
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/dashboard")) {
@@ -15,7 +19,7 @@ export async function proxy(request: NextRequest) {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/profile`,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token.backendToken}`,
           },
         },
       );
@@ -25,7 +29,6 @@ export async function proxy(request: NextRequest) {
       }
     } catch (error) {
       const response = redirectToLogin(request, pathname);
-      response.cookies.delete("token");
       return response;
     }
   }

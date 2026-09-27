@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 export async function GET(request: NextRequest) {
   const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -10,10 +11,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  const nextAuthToken = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
   const authorization =
     request.headers.get("authorization") ??
-    (request.cookies.get("token")?.value
-      ? `Bearer ${request.cookies.get("token")?.value}`
+    (nextAuthToken?.backendToken
+      ? `Bearer ${nextAuthToken.backendToken}`
       : null);
   const backendUrl = `${backendBaseUrl}/auth/profile`;
 

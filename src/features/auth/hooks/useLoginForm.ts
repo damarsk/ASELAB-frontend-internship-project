@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { loginSchema, type LoginFormValues } from "../schemas/login.schema";
 
 export function useLoginForm() {
@@ -25,28 +26,19 @@ export function useLoginForm() {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          emailInstitusi: data.emailInstitusi,
-          password: data.password,
-        }),
+      const result = await signIn("credentials", {
+        emailInstitusi: data.emailInstitusi,
+        password: data.password,
+        redirect: false,
       });
 
-      const result = await response.json().catch(() => null);
-
-      if (!response.ok) {
+      if (!result || result.error) {
         setError("root", {
           type: "manual",
-          message: result?.message || result?.error || "Login gagal.",
+          message: "Email atau password salah.",
         });
         return;
       }
-
-      document.cookie = `token=${result.token}; path=/; max-age=86400; SameSite=Lax`;
 
       router.push("/dashboard");
       router.refresh();

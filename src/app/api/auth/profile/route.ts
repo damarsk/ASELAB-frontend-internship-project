@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   if (!backendBaseUrl) {
@@ -10,7 +10,11 @@ export async function GET(request: Request) {
     );
   }
 
-  const token = request.headers.get("authorization");
+  const authorization =
+    request.headers.get("authorization") ??
+    (request.cookies.get("token")?.value
+      ? `Bearer ${request.cookies.get("token")?.value}`
+      : null);
   const backendUrl = `${backendBaseUrl}/auth/profile`;
 
   try {
@@ -18,7 +22,7 @@ export async function GET(request: Request) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token ?? "",
+        ...(authorization ? { Authorization: authorization } : {}),
       },
     });
 

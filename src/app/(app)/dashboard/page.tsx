@@ -1,81 +1,58 @@
 "use client";
 
+import CompetitionSection, { type Competition } from "@/src/components/dashboard/CompetitionSection";
+import DashboardHero from "@/src/components/dashboard/DashboardHero";
+import ProfileActions from "@/src/components/dashboard/ProfileActions";
+import TeamSection, { type Team } from "@/src/components/dashboard/TeamSection";
+import Footer from "@/src/components/landing/Footer";
 import Header from "@/src/components/landing/Header";
 import { useEffect, useState } from "react";
 
-function getCookie(name: string): string | null {
-  if (typeof document === "undefined") return null;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
-  return null;
-}
+type ProfileResponse = { data: { nama: string } };
+
+const teams: Team[] = [
+  { name: "Nebula Team", event: "NusaHack 2026", skills: ["UI/UX", "Front-End"], match: 92 },
+  { name: "Pixel Squad", event: "DataHack 2026", skills: ["Back-End", "Front-End"], match: 87 },
+  { name: "InnovateX", event: "Java Business 2026", skills: ["Data", "Business"], match: 84 },
+];
+
+const competitions: Competition[] = [
+  { name: "GEMASTIK XVIII 2026", category: "UX Design & Software Development", detail: "Ajang prestisius IT mahasiswa se-Indonesia.", prize: "Rp 50.000.000", logo: "GEMASTIK", logoClassName: "border-[10px] border-cyan-800 text-red-600" },
+  { name: "Hackathon FinTech Indonesia", category: "Web3, Micro-lending, & AI Fraud Prevention", detail: "Untuk inklusi finansial UMKM.", prize: "Rp 100.000.000", logo: "HACKATHON", logoClassName: "border border-text-secondary text-text-secondary" },
+  { name: "National Cyber Security Championship", category: "Capture the Flag (CTF Jeopardy)", detail: "Reverse Engineering, dan Web Penetration Testing.", prize: "Rp 35.000.000", logo: "5TH\nEDITION", logoClassName: "border-4 border-black text-black" },
+];
 
 export default function DashboardPage() {
-  const [username, setUsername] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [username, setUsername] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = getCookie("token");
-
-        if (!token) {
-          throw new Error("Token tidak ditemukan");
-        }
-
-        const res = await fetch("/api/auth/profile", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!res.ok) {
-          throw new Error("Token invalid");
-        }
-
-        const data = await res.json();
+        const response = await fetch("/api/auth/profile", { method: "GET", credentials: "include", cache: "no-store" });
+        if (!response.ok) throw new Error("Gagal memuat profil");
+        const data: ProfileResponse = await response.json();
         setUsername(data.data.nama);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Gagal memuat profil");
+      } catch (fetchError) {
+        setError(fetchError instanceof Error ? fetchError.message : "Gagal memuat profil");
       } finally {
         setLoading(false);
       }
     };
-
     fetchProfile();
   }, []);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-sm text-gray-500">Memuat profil...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-sm text-red-500">Error: {error}</p>
-      </div>
-    );
-  }
 
   return (
     <>
       <Header />
-      <div className="flex items-center bg-brand-primary-light px-32 py-4 h-64">
-        <div>
-          <h1 className="text-4xl font-medium mb-4">Halo, {username} 👋</h1>
-          <p className="text-4xl font-medium">Temukan Tim yang Cocok</p>
-          <p className="text-4xl text-brand-primary font-medium">
-            Berdasarkan skill dan minatmu
-          </p>
-        </div>
-      </div>
+      <DashboardHero loading={loading} error={error} username={username} />
+      <main className="mx-auto max-w-6xl px-8 py-10 lg:py-16">
+        <TeamSection teams={teams} />
+        <CompetitionSection competitions={competitions} />
+        <ProfileActions />
+      </main>
+      <Footer />
     </>
   );
 }

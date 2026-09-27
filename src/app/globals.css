@@ -48,6 +48,8 @@
 }
 
 @theme inline {
+  --font-sans: var(--font-poppins);
+
   /* Brand */
   --color-brand-primary: var(--brand-primary);
   --color-brand-primary-hover: var(--brand-primary-hover);
@@ -85,6 +87,10 @@
 }
 
 @layer base {
+  body {
+    font-family: var(--font-poppins), sans-serif;
+  }
+
   button,
   [type="button"],
   [type="submit"],

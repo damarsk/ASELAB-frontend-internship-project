@@ -4,9 +4,37 @@ import Link from "next/link";
 import { Bell, CircleUserRound, LogOut, Settings } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+
+const navItems = [
+  {
+    href: "/dashboard",
+    label: "Home",
+    match: (pathname: string) => pathname === "/dashboard",
+  },
+  {
+    href: "/teams",
+    label: "Cari Tim",
+    match: (pathname: string) =>
+      pathname === "/teams" || pathname.startsWith("/teams/"),
+  },
+  {
+    href: "/competitions",
+    label: "Kompetisi",
+    match: (pathname: string) =>
+      pathname === "/competitions" || pathname.startsWith("/competitions/"),
+  },
+  {
+    href: "/my-teams",
+    label: "Tim Saya",
+    match: (pathname: string) =>
+      pathname === "/my-teams" || pathname.startsWith("/my-teams/"),
+  },
+];
 
 export default function DashHeader() {
   const { data: session, status } = useSession();
+  const pathname = usePathname();
 
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -74,33 +102,24 @@ export default function DashHeader() {
         </Link>
 
         <div className="flex items-center gap-10">
-          <Link
-            href="/"
-            className="font-medium text-brand-primary transition-colors duration-200"
-          >
-            Home
-          </Link>
+          {navItems.map((item) => {
+            const isActive = item.match(pathname);
 
-          <Link
-            href="/cari-tim"
-            className="font-medium text-text-secondary transition-colors duration-200 hover:text-brand-primary"
-          >
-            Cari Tim
-          </Link>
-
-          <Link
-            href="/kompetisi"
-            className="font-medium text-text-secondary transition-colors duration-200 hover:text-brand-primary"
-          >
-            Kompetisi
-          </Link>
-
-          <Link
-            href="/tim-saya"
-            className="font-medium text-text-secondary transition-colors duration-200 hover:text-brand-primary"
-          >
-            Tim Saya
-          </Link>
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
+                className={`font-medium transition-colors duration-200 ${
+                  isActive
+                    ? "text-brand-primary"
+                    : "text-text-secondary hover:text-brand-primary"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
 
         <div className="flex items-center gap-6">

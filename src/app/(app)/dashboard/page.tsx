@@ -6,32 +6,12 @@ import CompetitionSection, {
 import DashboardHero from "@/src/components/dashboard/DashboardHero";
 import DashHeader from "@/src/components/dashboard/DashHeader";
 import ProfileActions from "@/src/components/dashboard/ProfileActions";
-import TeamSection, { type Team } from "@/src/components/dashboard/TeamSection";
+import TeamSection from "@/src/components/dashboard/TeamSection";
+import { teams } from "@/src/data/teams";
 import Footer from "@/src/components/landing/Footer";
 import { useEffect, useState } from "react";
 
 type ProfileResponse = { data: { nama: string } };
-
-const teams: Team[] = [
-  {
-    name: "Nebula Team",
-    event: "NusaHack 2026",
-    skills: ["UI/UX", "Front-End"],
-    match: 92,
-  },
-  {
-    name: "Pixel Squad",
-    event: "DataHack 2026",
-    skills: ["Back-End", "Front-End"],
-    match: 87,
-  },
-  {
-    name: "InnovateX",
-    event: "Java Business 2026",
-    skills: ["Data", "Business"],
-    match: 84,
-  },
-];
 
 const competitions: Competition[] = [
   {
@@ -94,7 +74,7 @@ export default function DashboardPage() {
       <DashHeader />
       <DashboardHero loading={loading} error={error} username={username} />
       <main className="mx-auto max-w-6xl px-8 py-10 lg:py-16">
-        <TeamSection teams={teams} />
+        <TeamSection teams={teams.slice(0, 3)} />
         <CompetitionSection competitions={competitions} />
         <ProfileActions />
       </main>

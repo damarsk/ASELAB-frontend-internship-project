@@ -2,6 +2,7 @@
 
 import { ArrowRight, Search, Users } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
 export type Team = {
   name: string;
@@ -53,9 +54,11 @@ export default function TeamSection({ teams }: { teams: Team[] }) {
         >
           Siap menemukan tim lomba berikutnya?
         </h2>
-        <button className="hidden shrink-0 items-center gap-2 text-lg font-semibold text-brand-primary hover:text-brand-primary-hover sm:flex">
-          Lihat Semua <ArrowRight className="size-5" aria-hidden="true" />
-        </button>
+        <Link href="/teams">
+          <button className="hidden shrink-0 items-center gap-2 text-lg font-semibold text-brand-primary hover:text-brand-primary-hover sm:flex">
+            Lihat Semua <ArrowRight className="size-5" aria-hidden="true" />
+          </button>
+        </Link>
       </div>
 
       {filteredTeams.length > 0 ? (

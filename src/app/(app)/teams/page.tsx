@@ -3,10 +3,11 @@
 import { useMemo, useState } from "react";
 import DashHeader from "@/src/components/dashboard/DashHeader";
 import Footer from "@/src/components/landing/Footer";
-import TeamCard from "@/src/components/teams/TeamCard";
 import TeamFilters from "@/src/components/teams/TeamFilters";
+import TeamGridView from "@/src/components/teams/TeamGridView";
+import TeamModeToggle from "@/src/components/teams/TeamModeToggle";
+import TeamSwipeDeck from "@/src/components/teams/TeamSwipeDeck";
 import TeamsIntro from "@/src/components/teams/TeamsIntro";
-import TeamPagination from "@/src/components/teams/TeamPagination";
 import { teams } from "@/src/data/teams";
 
 const teamsPerPage = 6;
@@ -15,6 +16,7 @@ export default function TeamsPage() {
   const [search, setSearch] = useState("");
   const [skill, setSkill] = useState("all");
   const [page, setPage] = useState(1);
+  const [mode, setMode] = useState<"grid" | "swipe">("grid");
 
   const skills = useMemo(
     () => Array.from(new Set(teams.flatMap((team) => team.skills))).sort(),
@@ -69,23 +71,24 @@ export default function TeamsPage() {
           }}
         />
 
-        {visibleTeams.length > 0 ? (
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {visibleTeams.map((team) => (
-              <TeamCard key={team.name} team={team} />
-            ))}
-          </div>
-        ) : (
-          <p className="mt-16 text-center text-text-secondary">
-            Tim yang kamu cari belum tersedia.
-          </p>
-        )}
+        <TeamModeToggle mode={mode} onModeChange={setMode} />
 
-        <TeamPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
+        {mode === "swipe" ? (
+          filteredTeams.length > 0 ? (
+            <TeamSwipeDeck key={`${search}-${skill}`} teams={filteredTeams} />
+          ) : (
+            <p className="mt-16 text-center text-text-secondary">
+              Tim yang kamu cari belum tersedia.
+            </p>
+          )
+        ) : (
+          <TeamGridView
+            teams={visibleTeams}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
+        )}
       </main>
       <Footer />
     </>

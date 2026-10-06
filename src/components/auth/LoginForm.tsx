@@ -2,10 +2,16 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useLoginForm } from "@/src/features/auth/hooks/useLoginForm";
+import { Alert } from "@/src/components/ui/Alert";
 
-export default function LoginForm() {
+export default function LoginForm({
+  registrationSuccess,
+}: {
+  registrationSuccess: boolean;
+}) {
   const {
     showPassword,
     setShowPassword,
@@ -15,6 +21,14 @@ export default function LoginForm() {
     isSubmitting,
     onSubmit,
   } = useLoginForm();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("registered") === "1") {
+      window.history.replaceState({}, "", "/login");
+    }
+  }, []);
 
   return (
     <div className="grid h-screen w-screen grid-cols-1 overflow-hidden bg-white lg:grid-cols-2">
@@ -61,6 +75,18 @@ export default function LoginForm() {
               Masuk untuk lanjut menemukan tim lomba yang sesuai dengan skill
               dan minatmu.
             </p>
+          </div>
+
+          <div className="mb-4 space-y-3">
+            {registrationSuccess && (
+              <Alert variant="success">
+                Registrasi berhasil. Silakan masuk dengan akun kamu.
+              </Alert>
+            )}
+
+            {errors.root?.message && (
+              <Alert variant="danger">{errors.root.message}</Alert>
+            )}
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

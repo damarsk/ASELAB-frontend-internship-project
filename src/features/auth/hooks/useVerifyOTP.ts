@@ -30,11 +30,13 @@ export function useEmailVerification() {
 
   const [timeLeft, setTimeLeft] = useState(INITIAL_TIME);
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(Boolean(token));
 
   const [isResending, setIsResending] = useState(false);
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState(
+    token ? "" : "Token registrasi tidak ditemukan.",
+  );
 
   const setTimeFromExpiration = (expiresAt: string) => {
     const expiration = new Date(expiresAt).getTime();
@@ -43,13 +45,6 @@ export function useEmailVerification() {
 
     setTimeLeft(remaining);
   };
-
-  useEffect(() => {
-    if (!token) {
-      setError("Token registrasi tidak ditemukan.");
-      setIsLoading(false);
-    }
-  }, [token]);
 
   useEffect(() => {
     if (!token) {
@@ -230,7 +225,7 @@ export function useEmailVerification() {
         throw new Error(result?.error || "Verifikasi gagal.");
       }
 
-      router.replace("/login");
+      router.replace("/login?registered=1");
     } catch (error) {
       setError(
         error instanceof Error

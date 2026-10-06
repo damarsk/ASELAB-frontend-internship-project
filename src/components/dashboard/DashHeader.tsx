@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, CircleUserRound, LogOut, Settings } from "lucide-react";
+import { Bell, CircleUserRound, LogOut, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -248,12 +248,12 @@ export default function DashHeader() {
 
                 <div className="p-2">
                   <Link
-                    href="/settings"
+                    href="/profile"
                     onClick={() => setIsProfileOpen(false)}
                     className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-primary transition-colors hover:bg-gray-50"
                   >
-                    <Settings size={18} strokeWidth={2} />
-                    Settings
+                    <User size={18} strokeWidth={2} />
+                    Profile
                   </Link>
 
                   {isLoggedIn && (

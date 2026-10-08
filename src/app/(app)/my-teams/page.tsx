@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, Plus, UsersRound } from "lucide-react";
+import { ArrowRight, Clock3, Plus, UsersRound } from "lucide-react";
 import DashHeader from "@/src/components/dashboard/DashHeader";
 import Footer from "@/src/components/landing/Footer";
 import { teams } from "@/src/data/teams";
 
 export default function MyTeamPage() {
   const myTeams = teams.slice(0, 3);
+  const requestedTeams = teams.slice(3, 5);
 
   return (
     <>
@@ -113,6 +114,72 @@ export default function MyTeamPage() {
             </p>
           </section>
         )}
+        <section className="mt-10" aria-labelledby="team-requests-heading">
+          <div className="flex items-center justify-between gap-4">
+            <h2
+              id="team-requests-heading"
+              className="text-lg font-semibold text-text-primary"
+            >
+              Request
+            </h2>
+            <span className="text-sm text-text-muted">
+              {requestedTeams.length} request
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-text-secondary">
+            Pantau permintaan bergabung ke tim yang kamu pilih.
+          </p>
+          <div className="mt-4 space-y-3">
+            {requestedTeams.map((team) => (
+              <article
+                key={team.id}
+                className="flex flex-col gap-5 rounded-xl border border-border bg-white p-5 transition-shadow hover:shadow-md sm:flex-row sm:items-center"
+              >
+                <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-success-light text-2xl">
+                  👩🏻‍💼
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-lg font-bold text-text-primary">
+                      {team.name}
+                    </h3>
+                    <span className="flex items-center gap-1 rounded-full bg-warning-light px-2.5 py-1 text-[11px] font-semibold text-amber-700">
+                      <Clock3 className="size-3" aria-hidden="true" />
+                      Pending
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-text-muted">{team.event}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <span className="text-xs font-medium text-text-secondary">
+                      Skill Dibutuhkan
+                    </span>
+                    {team.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="rounded-full bg-success-light px-2.5 py-1 text-[11px] text-brand-primary"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex shrink-0 items-center justify-between gap-4 sm:flex-col sm:items-end">
+                  <span className="flex items-center gap-1 text-xs text-text-secondary">
+                    <UsersRound className="size-3.5" aria-hidden="true" /> 2/4
+                    Anggota
+                  </span>
+                  <Link
+                    href={`/teams/${team.id}`}
+                    className="flex items-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-primary-hover"
+                  >
+                    Lihat Tim{" "}
+                    <ArrowRight className="size-4" aria-hidden="true" />
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
       </main>
       <Footer />
     </>

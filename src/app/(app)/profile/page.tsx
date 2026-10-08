@@ -7,6 +7,7 @@ import {
   Check,
   FileText,
   ImagePlus,
+  LockKeyhole,
   Plus,
   Trash2,
   Upload,
@@ -90,6 +91,12 @@ export default function ProfilePage() {
   const [photo, setPhoto] = useState<string | null>(null);
   const [cv, setCv] = useState<File | null>(null);
   const [saved, setSaved] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const cvInputRef = useRef<HTMLInputElement>(null);
 
@@ -120,6 +127,53 @@ export default function ProfilePage() {
     event.preventDefault();
     setSaved(true);
     window.setTimeout(() => setSaved(false), 3000);
+  };
+
+  const handlePasswordSubmit = async () => {
+    setPasswordMessage("");
+    setPasswordError("");
+
+    if (!currentPassword) {
+      setPasswordError("Password saat ini wajib diisi.");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordError("Password baru minimal 8 karakter.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Konfirmasi password tidak cocok.");
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      const response = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      if (!response.ok) {
+        const result = (await response.json().catch(() => null)) as {
+          message?: string;
+        } | null;
+        throw new Error(result?.message ?? "Password gagal diubah.");
+      }
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setPasswordMessage("Password berhasil diubah.");
+    } catch (error) {
+      setPasswordError(
+        error instanceof Error ? error.message : "Password gagal diubah.",
+      );
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   return (
@@ -361,6 +415,85 @@ export default function ProfilePage() {
                 >
                   Simpan profil
                 </button>
+              </div>
+            </section>
+
+            <section className="rounded-2xl border border-slate-200 bg-white shadow-sm lg:col-span-8 lg:col-start-5">
+              <div className="border-b border-slate-100 px-6 py-5 sm:px-8">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h2 className="font-semibold text-slate-950">
+                      Ganti password
+                    </h2>
+                    <p className="mt-1 text-sm text-slate-500">
+                      Perbarui password akunmu secara berkala untuk menjaga
+                      keamanan akun.
+                    </p>
+                  </div>
+                  <LockKeyhole size={20} className="shrink-0 text-green-600" />
+                </div>
+              </div>
+              <div className="space-y-5 px-6 py-6 sm:px-8 sm:py-8">
+                <label className="block text-sm font-medium text-slate-700">
+                  Password saat ini
+                  <input
+                    required
+                    type="password"
+                    placeholder="Masukkan password saat ini"
+                    value={currentPassword}
+                    onChange={(event) => setCurrentPassword(event.target.value)}
+                    autoComplete="current-password"
+                    className="mt-2 w-full rounded-lg border border-slate-200 px-3.5 py-3 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
+                  />
+                </label>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <label className="block text-sm font-medium text-slate-700">
+                    Password baru
+                    <input
+                      required
+                      minLength={8}
+                      type="password"
+                      placeholder="Minimal 8 karakter"
+                      value={newPassword}
+                      onChange={(event) => setNewPassword(event.target.value)}
+                      autoComplete="new-password"
+                      className="mt-2 w-full rounded-lg border border-slate-200 px-3.5 py-3 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
+                    />
+                  </label>
+                  <label className="block text-sm font-medium text-slate-700">
+                    Konfirmasi password baru
+                    <input
+                      required
+                      minLength={8}
+                      type="password"
+                      placeholder="Ulangi password baru"
+                      value={confirmPassword}
+                      onChange={(event) =>
+                        setConfirmPassword(event.target.value)
+                      }
+                      autoComplete="new-password"
+                      className="mt-2 w-full rounded-lg border border-slate-200 px-3.5 py-3 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
+                    />
+                  </label>
+                </div>
+                {(passwordMessage || passwordError) && (
+                  <p
+                    className={`text-sm font-medium ${passwordError ? "text-red-600" : "text-green-600"}`}
+                    aria-live="polite"
+                  >
+                    {passwordError || passwordMessage}
+                  </p>
+                )}
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => void handlePasswordSubmit()}
+                    disabled={isChangingPassword}
+                    className="inline-flex items-center justify-center rounded-lg bg-green-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isChangingPassword ? "Menyimpan..." : "Ganti password"}
+                  </button>
+                </div>
               </div>
             </section>
           </form>

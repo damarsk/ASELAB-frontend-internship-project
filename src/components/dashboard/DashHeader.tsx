@@ -95,7 +95,7 @@ export default function DashHeader() {
   return (
     <nav className="h-20 bg-white shadow">
       <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-between px-8">
-        <Link href="/" className="shrink-0">
+        <Link href="/dashboard" className="shrink-0">
           <h1 className="text-2xl font-bold text-brand-primary">
             🤝 Partner<span className="text-black">In</span>
           </h1>

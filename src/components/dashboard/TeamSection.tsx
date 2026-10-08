@@ -5,6 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 export type Team = {
+  id: string;
   name: string;
   event: string;
   skills: string[];

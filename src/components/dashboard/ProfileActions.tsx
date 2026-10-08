@@ -1,6 +1,62 @@
 import { ArrowRight, Check, UserRound, UsersRound, X } from "lucide-react";
 
-export default function ProfileActions() {
+type Profile = Record<string, unknown>;
+
+type ProfileActionsProps = {
+  profile: Profile | null;
+  loading: boolean;
+};
+
+function hasValue(profile: Profile | null, keys: string[]) {
+  if (!profile) return false;
+
+  return keys.some((key) => {
+    const value = profile[key];
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "boolean") return value;
+    return typeof value === "string" ? value.trim().length > 0 : Boolean(value);
+  });
+}
+
+export default function ProfileActions({
+  profile,
+  loading,
+}: ProfileActionsProps) {
+  const checklist = [
+    {
+      label: "Portofolio GitHub & Proyek Unggulan terpasang",
+      complete: hasValue(profile, [
+        "github",
+        "githubUrl",
+        "portofolioGithub",
+        "portfolioGithub",
+        "proyekUnggulan",
+        "projects",
+      ]),
+    },
+    {
+      label: "Pengalaman lomba & spesialisasi tercatat",
+      complete: hasValue(profile, [
+        "pengalamanLomba",
+        "competitionExperience",
+        "spesialisasi",
+        "specialization",
+        "skills",
+      ]),
+    },
+    {
+      label: "Verifikasi Kartu Tanda Mahasiswa (KTM) / Kampus",
+      complete: hasValue(profile, [
+        "ktmVerified",
+        "isKtmVerified",
+        "kampusVerified",
+        "isCampusVerified",
+      ]),
+    },
+  ];
+  const completedCount = checklist.filter((item) => item.complete).length;
+  const completion = Math.round((completedCount / checklist.length) * 100);
+
   return (
     <section className="mx-auto grid max-w-6xl gap-8 pt-10 lg:grid-cols-2 lg:pt-14">
       <article className="border border-brand-primary-muted bg-brand-primary-light/50 px-8 py-7 text-center sm:px-10">
@@ -40,25 +96,26 @@ export default function ProfileActions() {
           lipat!
         </p>
         <div className="mt-6 flex items-center justify-between text-[10px] text-text-primary">
-          <span>Kelengkapan Data Portofolio</span>
-          <span>87%</span>
+          <span>Kelengkapan Data</span>
+          <span>{loading ? "..." : `${completion}%`}</span>
         </div>
         <div className="mt-1 h-1.5 w-full bg-white">
-          <div className="h-full w-[87%] bg-brand-primary" />
+          <div
+            className="h-full bg-brand-primary transition-[width]"
+            style={{ width: `${loading ? 0 : completion}%` }}
+          />
         </div>
         <ul className="mt-7 space-y-3 text-xs text-text-primary">
-          <li className="flex items-start gap-3">
-            <Check className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-            <span>Portofolio GitHub &amp; Proyek Unggulan terpasang</span>
-          </li>
-          <li className="flex items-start gap-3">
-            <Check className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-            <span>Pengalaman lomba &amp; spesialisasi frontend tercatat</span>
-          </li>
-          <li className="flex items-start gap-3">
-            <X className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-            <span>Belum verifikasi Kartu Tanda Mahasiswa (KTM) / Kampus</span>
-          </li>
+          {checklist.map((item) => (
+            <li key={item.label} className="flex items-start gap-3">
+              {item.complete ? (
+                <Check className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+              ) : (
+                <X className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+              )}
+              <span>{item.complete ? item.label : `Belum ${item.label.toLowerCase()}`}</span>
+            </li>
+          ))}
         </ul>
         <div className="mt-9 flex justify-center">
           <button className="inline-flex items-center gap-1 rounded-md bg-brand-primary px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-brand-primary-hover">

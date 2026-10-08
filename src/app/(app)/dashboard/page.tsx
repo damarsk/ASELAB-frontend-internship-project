@@ -11,7 +11,8 @@ import { teams } from "@/src/data/teams";
 import Footer from "@/src/components/landing/Footer";
 import { useEffect, useState } from "react";
 
-type ProfileResponse = { data: { nama: string } };
+type Profile = Record<string, unknown>;
+type ProfileResponse = { data?: Profile };
 
 const competitions: Competition[] = [
   {
@@ -41,6 +42,7 @@ const competitions: Competition[] = [
 ];
 
 export default function DashboardPage() {
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +57,11 @@ export default function DashboardPage() {
         });
         if (!response.ok) throw new Error("Gagal memuat profil");
         const data: ProfileResponse = await response.json();
-        setUsername(data.data.nama);
+        const profileData = data.data ?? null;
+        setProfile(profileData);
+        setUsername(
+          typeof profileData?.nama === "string" ? profileData.nama : null,
+        );
       } catch (fetchError) {
         setError(
           fetchError instanceof Error
@@ -76,7 +82,7 @@ export default function DashboardPage() {
       <main className="mx-auto max-w-6xl px-8 py-10 lg:py-16">
         <TeamSection teams={teams.slice(0, 3)} />
         <CompetitionSection competitions={competitions} />
-        <ProfileActions />
+        <ProfileActions profile={profile} loading={loading} />
       </main>
       <Footer />
     </>

@@ -78,7 +78,7 @@ export function Alert({
           type="button"
           onClick={dismiss}
           aria-label="Tutup notifikasi"
-          className="shrink-0 rounded p-0.5 opacity-70 transition-opacity hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="shrink-0 rounded p-0.5 opacity-70 transition-opacity hover:opacity-100 focus-visible:outline focus-visible:outline-offset-2"
         >
           <X size={16} aria-hidden="true" />
         </button>

@@ -1,9 +1,13 @@
 import { ShieldCheck } from "lucide-react";
 
 export default function TeamHero({
+  name,
+  event,
   memberCount,
   pendingCount,
 }: {
+  name: string;
+  event: string;
   memberCount: number;
   pendingCount: number;
 }) {
@@ -16,10 +20,10 @@ export default function TeamHero({
             <ShieldCheck className="size-4" aria-hidden="true" /> Tim kamu
           </p>
           <h1 className="max-w-xl text-3xl font-bold tracking-tight sm:text-4xl">
-            Nebula Team
+            {name}
           </h1>
           <p className="mt-3 max-w-lg text-sm leading-6 text-emerald-50/70 sm:text-base">
-            Bangun solusi terbaik untuk NusaHack 2026 bersama orang-orang dengan
+            Bangun solusi terbaik untuk {event} bersama orang-orang dengan
             semangat yang sama.
           </p>
         </div>

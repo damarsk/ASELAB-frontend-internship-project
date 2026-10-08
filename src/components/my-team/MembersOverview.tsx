@@ -20,13 +20,6 @@ export default function MembersOverview({
             Anggota tim
           </h2>
         </div>
-        <button
-          type="button"
-          onClick={onManageRequests}
-          className="flex items-center gap-2 self-start rounded-lg bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover sm:self-auto"
-        >
-          <UserPlus className="size-4" aria-hidden="true" /> Kelola request
-        </button>
       </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {members.map((member) => (

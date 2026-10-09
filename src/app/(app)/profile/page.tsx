@@ -13,10 +13,19 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 
-const initialSkills = ["UI/UX Design", "Figma", "Frontend"];
-const initialInterests = ["Hackathon", "Product Design"];
+type ProfileResponse = {
+  data?: {
+    nama?: string;
+    profile?: {
+      jurusan?: string;
+      skill?: string[];
+      minat?: string[];
+      pengalamanLomba?: string;
+    };
+  };
+};
 
 function TagList({
   items,
@@ -84,10 +93,16 @@ function TagInput({
 }
 
 export default function ProfilePage() {
-  const [skills, setSkills] = useState(initialSkills);
-  const [interests, setInterests] = useState(initialInterests);
+  const [name, setName] = useState("");
+  const [major, setMajor] = useState("");
+  const [about, setAbout] = useState("");
+  const [experience, setExperience] = useState("");
+  const [skills, setSkills] = useState<string[]>([]);
+  const [interests, setInterests] = useState<string[]>([]);
   const [newSkill, setNewSkill] = useState("");
   const [newInterest, setNewInterest] = useState("");
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [profileError, setProfileError] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const [cv, setCv] = useState<File | null>(null);
   const [saved, setSaved] = useState(false);
@@ -99,6 +114,46 @@ export default function ProfilePage() {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const cvInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const response = await fetch("/api/auth/profile", {
+          method: "GET",
+          credentials: "include",
+          cache: "no-store",
+        });
+
+        const result = (await response.json().catch(() => null)) as
+          | ProfileResponse
+          | { message?: string }
+          | null;
+
+        if (!response.ok) {
+          throw new Error(
+            result && "message" in result && result.message
+              ? result.message
+              : "Gagal memuat profil.",
+          );
+        }
+
+        const profile = (result as ProfileResponse).data?.profile;
+        setName((result as ProfileResponse).data?.nama ?? "");
+        setMajor(profile?.jurusan ?? "");
+        setSkills(profile?.skill ?? []);
+        setInterests(profile?.minat ?? []);
+        setExperience(profile?.pengalamanLomba ?? "");
+      } catch (error) {
+        setProfileError(
+          error instanceof Error ? error.message : "Gagal memuat profil.",
+        );
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    void loadProfile();
+  }, []);
 
   const addTag = (
     value: string,
@@ -192,6 +247,14 @@ export default function ProfilePage() {
               Lengkapi profil agar partner yang tepat lebih mudah menemukan dan
               mengenalmu.
             </p>
+            {isLoadingProfile && (
+              <p className="mt-3 text-sm text-slate-400">Memuat profil...</p>
+            )}
+            {profileError && (
+              <p className="mt-3 text-sm font-medium text-red-600" role="alert">
+                {profileError}
+              </p>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-12">
@@ -270,6 +333,8 @@ export default function ProfilePage() {
                     <input
                       required
                       name="name"
+                      value={name}
+                      onChange={(event) => setName(event.target.value)}
                       placeholder="Contoh: Aulia Rahma"
                       className="mt-2 w-full rounded-lg border border-slate-200 px-3.5 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:ring-2 focus:ring-green-100"
                     />
@@ -279,6 +344,8 @@ export default function ProfilePage() {
                     <input
                       required
                       name="major"
+                      value={major}
+                      onChange={(event) => setMajor(event.target.value)}
                       placeholder="Contoh: Sistem Informasi"
                       className="mt-2 w-full rounded-lg border border-slate-200 px-3.5 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:ring-2 focus:ring-green-100"
                     />
@@ -342,6 +409,8 @@ export default function ProfilePage() {
                   <textarea
                     name="about"
                     rows={5}
+                    value={about}
+                    onChange={(event) => setAbout(event.target.value)}
                     placeholder="Tulis ringkasan singkat tentang dirimu, keahlian, dan hal yang ingin kamu capai..."
                     className="mt-2 w-full resize-y rounded-lg border border-slate-200 px-3.5 py-3 text-sm leading-6 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:ring-2 focus:ring-green-100"
                   />
@@ -352,6 +421,8 @@ export default function ProfilePage() {
                   <textarea
                     name="experience"
                     rows={4}
+                    value={experience}
+                    onChange={(event) => setExperience(event.target.value)}
                     placeholder="Ceritakan pengalaman lomba atau proyek yang pernah kamu ikuti..."
                     className="mt-2 w-full resize-y rounded-lg border border-slate-200 px-3.5 py-3 text-sm leading-6 outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:ring-2 focus:ring-green-100"
                   />

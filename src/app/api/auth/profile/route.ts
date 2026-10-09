@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 export async function GET(request: NextRequest) {
-  const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const backendBaseUrl =
+    process.env.BACKEND_URL ?? process.env.NEXT_PUBLIC_BACKEND_URL;
 
   if (!backendBaseUrl) {
     return NextResponse.json(
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
         "Content-Type": res.headers.get("content-type") || "application/json",
       },
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { message: "Backend service is currently unavailable" },
       { status: 503 },

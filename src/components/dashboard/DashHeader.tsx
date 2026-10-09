@@ -203,7 +203,7 @@ export default function DashHeader() {
                 </div>
 
                 <Link
-                  href="/notifikasi"
+                  href="/notifications"
                   onClick={() => setIsNotificationOpen(false)}
                   className="block border-t border-gray-100 px-4 py-3 text-center text-sm font-medium text-brand-primary transition-colors hover:bg-gray-50"
                 >

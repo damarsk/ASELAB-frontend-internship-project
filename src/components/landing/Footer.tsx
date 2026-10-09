@@ -19,28 +19,28 @@ export default function Footer() {
 
         <nav className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
           <Link
-            href="/tentang-kami"
+            href="/"
             className="text-base font-medium text-text-secondary transition-colors hover:text-brand-primary"
           >
-            Tentang Kami
+            Home
           </Link>
           <Link
-            href="/cara-kerja"
+            href="/teams"
             className="text-base font-medium text-text-secondary transition-colors hover:text-brand-primary"
           >
-            Cara Kerja
+            Cari Tim
           </Link>
           <Link
-            href="/kontak"
+            href="/competitions"
             className="text-base font-medium text-text-secondary transition-colors hover:text-brand-primary"
           >
-            Kontak
+            Kompetisi
           </Link>
           <Link
-            href="/kebijakan-privasi"
+            href="/my-teams"
             className="text-base font-medium text-text-secondary transition-colors hover:text-brand-primary"
           >
-            Kebijakan Privasi
+            Tim Saya
           </Link>
         </nav>
       </div>

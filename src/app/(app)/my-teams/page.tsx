@@ -57,9 +57,6 @@ export default function MyTeamPage() {
                     </h3>
                     <p className="mt-1 text-sm text-text-muted">{team.event}</p>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <span className="text-xs font-medium text-text-secondary">
-                        Skill Dibutuhkan
-                      </span>
                       {team.skills.map((skill) => (
                         <span
                           key={skill}
@@ -150,9 +147,6 @@ export default function MyTeamPage() {
                   </div>
                   <p className="mt-1 text-sm text-text-muted">{team.event}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <span className="text-xs font-medium text-text-secondary">
-                      Skill Dibutuhkan
-                    </span>
                     {team.skills.map((skill) => (
                       <span
                         key={skill}

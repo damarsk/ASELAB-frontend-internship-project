@@ -8,6 +8,7 @@ import JoinRequests from "@/src/components/my-team/JoinRequests";
 import MembersOverview from "@/src/components/my-team/MembersOverview";
 import TeamHero from "@/src/components/my-team/TeamHero";
 import TeamTabs, { type TeamTab } from "@/src/components/my-team/TeamTabs";
+import TeamSettings from "@/src/components/my-team/TeamSettings";
 import { initialRequests, members } from "@/src/components/my-team/data";
 import type { RequestStatus } from "@/src/components/my-team/types";
 import { teams } from "@/src/data/teams";
@@ -60,8 +61,13 @@ export default function MyTeamDetailPage({
         <TeamHero
           name={team.name}
           event={team.event}
-          memberCount={members.length}
-          pendingCount={pendingCount}
+          skills={[
+            "UI/UX",
+            "Front-End",
+            "System Analyst",
+            "Back-End",
+            "Quality Assurance",
+          ]}
         />
         <TeamTabs
           activeTab={activeTab}
@@ -69,11 +75,8 @@ export default function MyTeamDetailPage({
           onChange={setActiveTab}
         />
         {activeTab === "overview" ? (
-          <MembersOverview
-            members={members}
-            onManageRequests={() => setActiveTab("requests")}
-          />
-        ) : (
+          <MembersOverview members={members} />
+        ) : activeTab === "requests" ? (
           <JoinRequests
             requests={filteredRequests}
             search={search}
@@ -82,6 +85,8 @@ export default function MyTeamDetailPage({
             onFilterChange={setActiveFilter}
             onUpdate={updateRequest}
           />
+        ) : (
+          <TeamSettings teamName={team.name} event={team.event} />
         )}
       </main>
       <Footer />

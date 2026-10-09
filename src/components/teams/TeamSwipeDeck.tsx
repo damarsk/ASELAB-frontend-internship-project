@@ -1,8 +1,9 @@
 "use client";
 
-import { Heart, RotateCcw, Users, X } from "lucide-react";
+import { Heart, Info, RotateCcw, Users, X } from "lucide-react";
 import { motion, useMotionValue, useTransform } from "motion/react";
 import { useState } from "react";
+import Link from "next/link";
 import type { Team } from "@/src/components/dashboard/TeamSection";
 
 type TeamSwipeDeckProps = {
@@ -110,6 +111,12 @@ function SwipeCard({
             >
               <Heart className="size-5 fill-current" aria-hidden="true" />
             </button>
+            <Link
+              href={`/teams/${team.name}`}
+              className="flex size-12 items-center justify-center rounded-full border border-text-muted bg-background-white text-text-secondary transition-transform hover:scale-105"
+            >
+              <Info className="size-6 text-text-muted" aria-hidden="true" />
+            </Link>
             <button
               type="button"
               aria-label={`Lewati ${team.name}`}

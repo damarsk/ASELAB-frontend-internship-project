@@ -11,6 +11,7 @@ import {
   Plus,
   Trash2,
   Upload,
+  User,
   X,
 } from "lucide-react";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
@@ -319,9 +320,12 @@ export default function ProfilePage() {
 
             <section className="rounded-2xl border border-slate-200 bg-white shadow-sm lg:col-span-8">
               <div className="border-b border-slate-100 px-6 py-5 sm:px-8">
-                <h2 className="font-semibold text-slate-950">
-                  Informasi dasar
-                </h2>
+                <div className="flex justify-between">
+                  <h2 className="font-semibold text-slate-950">
+                    Informasi dasar
+                  </h2>
+                  <User size={20} className="shrink-0 text-green-600" />
+                </div>
                 <p className="mt-1 text-sm text-slate-500">
                   Ceritakan sedikit tentang dirimu.
                 </p>

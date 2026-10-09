@@ -1,12 +1,10 @@
-import { Mail, MoreHorizontal, UserPlus } from "lucide-react";
+import { Mail, MoreHorizontal } from "lucide-react";
 import type { TeamMember } from "./types";
 
 export default function MembersOverview({
   members,
-  onManageRequests,
 }: {
   members: TeamMember[];
-  onManageRequests: () => void;
 }) {
   return (
     <section className="mt-8" aria-labelledby="members-heading">

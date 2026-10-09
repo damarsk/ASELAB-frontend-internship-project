@@ -65,7 +65,7 @@ export default function JoinRequests({
           </button>
         ))}
       </div>
-      <div className="mt-6 space-y-4">
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
         {requests.length ? (
           requests.map((request) => (
             <RequestCard

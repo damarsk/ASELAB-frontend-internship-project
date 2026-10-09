@@ -1,45 +1,17 @@
 "use client";
 
-import CompetitionSection, {
-  type Competition,
-} from "@/src/components/dashboard/CompetitionSection";
+import CompetitionSection from "@/src/components/dashboard/CompetitionSection";
 import DashboardHero from "@/src/components/dashboard/DashboardHero";
 import DashHeader from "@/src/components/dashboard/DashHeader";
 import ProfileActions from "@/src/components/dashboard/ProfileActions";
 import TeamSection from "@/src/components/dashboard/TeamSection";
 import { teams } from "@/src/data/teams";
 import Footer from "@/src/components/landing/Footer";
+import { competitions } from "@/src/data/competitions";
 import { useEffect, useState } from "react";
 
 type Profile = Record<string, unknown>;
 type ProfileResponse = { data?: Profile };
-
-const competitions: Competition[] = [
-  {
-    name: "GEMASTIK XVIII 2026",
-    category: "UX Design & Software Development",
-    detail: "Ajang prestisius IT mahasiswa se-Indonesia.",
-    prize: "Rp 50.000.000",
-    logo: "GEMASTIK",
-    logoClassName: "border-[10px] border-cyan-800 text-red-600",
-  },
-  {
-    name: "Hackathon FinTech Indonesia",
-    category: "Web3, Micro-lending, & AI Fraud Prevention",
-    detail: "Untuk inklusi finansial UMKM.",
-    prize: "Rp 100.000.000",
-    logo: "HACKATHON",
-    logoClassName: "border border-text-secondary text-text-secondary",
-  },
-  {
-    name: "National Cyber Security Championship",
-    category: "Capture the Flag (CTF Jeopardy)",
-    detail: "Reverse Engineering, dan Web Penetration Testing.",
-    prize: "Rp 35.000.000",
-    logo: "5TH\nEDITION",
-    logoClassName: "border-4 border-black text-black",
-  },
-];
 
 export default function DashboardPage() {
   const [profile, setProfile] = useState<Profile | null>(null);

@@ -1,13 +1,9 @@
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import type { Competition } from "@/src/data/competitions";
+import CompetitionPlaceholder from "@/src/components/competitions/CompetitionPlaceholder";
 
-export type Competition = {
-  name: string;
-  category: string;
-  detail: string;
-  prize: string;
-  logo: string;
-  logoClassName: string;
-};
+export type { Competition } from "@/src/data/competitions";
 
 export default function CompetitionSection({
   competitions,
@@ -23,9 +19,12 @@ export default function CompetitionSection({
         >
           Kompetisi Untukmu!
         </h2>
-        <button className="hidden shrink-0 items-center gap-2 text-lg font-semibold text-brand-primary hover:text-brand-primary-hover sm:flex">
+        <Link
+          href="/competitions"
+          className="hidden shrink-0 items-center gap-2 text-lg font-semibold text-brand-primary hover:text-brand-primary-hover sm:flex"
+        >
           Lihat Semua <ArrowRight className="size-5" aria-hidden="true" />
-        </button>
+        </Link>
       </div>
       <div className="mt-8 grid gap-6 md:grid-cols-3">
         {competitions.map((competition) => (
@@ -33,12 +32,7 @@ export default function CompetitionSection({
             key={competition.name}
             className="flex min-h-101.25 flex-col items-center border border-border bg-white px-6 py-6 text-center transition-shadow hover:shadow-md"
           >
-            <div
-              className={`flex h-36 w-full items-center justify-center whitespace-pre-line text-center text-xl font-bold leading-none ${competition.logoClassName}`}
-              aria-label={`Logo ${competition.name}`}
-            >
-              {competition.logo}
-            </div>
+            <CompetitionPlaceholder />
             <h3 className="mt-6 max-w-xs text-base font-bold leading-6 text-text-primary">
               {competition.name}
             </h3>

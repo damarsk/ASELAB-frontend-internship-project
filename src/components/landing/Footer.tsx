@@ -19,7 +19,7 @@ export default function Footer() {
 
         <nav className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
           <Link
-            href="/"
+            href="/dashboard"
             className="text-base font-medium text-text-secondary transition-colors hover:text-brand-primary"
           >
             Home

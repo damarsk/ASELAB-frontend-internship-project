@@ -22,12 +22,12 @@ export default function MyTeamPage() {
               kompetisimu.
             </p>
           </div>
-          <button
-            type="button"
+          <Link
+            href="/my-teams/create"
             className="flex items-center gap-2 self-start rounded-lg bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover sm:self-auto"
           >
             <Plus className="size-4" aria-hidden="true" /> Buat Tim Baru
-          </button>
+          </Link>
         </div>
         {myTeams.length > 0 ? (
           <section className="mt-8" aria-labelledby="my-teams-heading">
@@ -103,12 +103,12 @@ export default function MyTeamPage() {
               Buat tim untuk kompetisi yang ingin kamu ikuti dan temukan anggota
               dengan skill yang dibutuhkan.
             </p>
-            <button
-              type="button"
+            <Link
+              href="/my-teams/create"
               className="mt-5 flex items-center gap-2 rounded-lg bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-primary-hover"
             >
               <Plus className="size-4" aria-hidden="true" /> Buat Tim Baru
-            </button>
+            </Link>
             <p className="mt-4 text-xs text-text-muted">
               Tim yang kamu buat atau ikuti akan muncul di sini.
             </p>

@@ -112,7 +112,7 @@ function SwipeCard({
               <Heart className="size-5 fill-current" aria-hidden="true" />
             </button>
             <Link
-              href={`/teams/${team.name}`}
+              href={`/teams/${team.id}`}
               className="flex size-12 items-center justify-center rounded-full border border-text-muted bg-background-white text-text-secondary transition-transform hover:scale-105"
             >
               <Info className="size-6 text-text-muted" aria-hidden="true" />

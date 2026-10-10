@@ -139,7 +139,7 @@ export default function DashHeader() {
             </button>
 
             {isNotificationOpen && (
-              <div className="absolute right-0 top-20 z-50 w-80 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
+              <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
                 <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
                   <h2 className="font-semibold text-text-primary">
                     Notifikasi
@@ -233,7 +233,7 @@ export default function DashHeader() {
             </button>
 
             {isProfileOpen && (
-              <div className="absolute right-0 top-20 z-50 w-56 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
+              <div className="absolute right-0 top-12 z-50 w-56 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
                 <div className="border-b border-gray-100 px-4 py-3">
                   <p className="truncate text-sm font-semibold text-text-primary">
                     {session?.user?.name ?? "User"}

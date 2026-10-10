@@ -1,5 +1,5 @@
 import Footer from "@/src/components/landing/Footer";
-import Header from "@/src/components/landing/Header";
+import LandingHeader from "../landing/LandingHeader";
 
 type LegalSection = {
   id: string;
@@ -23,7 +23,7 @@ export default function LegalPage({
 }: LegalPageProps) {
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <LandingHeader />
 
       <main>
         <section

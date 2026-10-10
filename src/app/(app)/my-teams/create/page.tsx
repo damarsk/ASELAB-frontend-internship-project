@@ -251,22 +251,6 @@ export default function CreateTeamPage() {
             </p>
           )}
 
-          {isSubmitted && (
-            <div
-              className="mt-6 flex items-start gap-3 rounded-lg bg-success-light p-4 text-sm text-green-800"
-              role="status"
-            >
-              <CheckCircle2
-                className="mt-0.5 size-5 shrink-0 text-brand-primary"
-                aria-hidden="true"
-              />
-              <p>
-                Tim berhasil dibuat secara lokal. Data akan tersimpan ke server
-                setelah API tersedia.
-              </p>
-            </div>
-          )}
-
           <div className="mt-8 flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:justify-end">
             <Link
               href="/my-teams"
@@ -283,6 +267,41 @@ export default function CreateTeamPage() {
           </div>
         </form>
       </main>
+      {isSubmitted && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/25 px-4"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setIsSubmitted(false);
+          }}
+        >
+          <section
+            className="w-full max-w-md rounded-2xl border border-border bg-white p-6 text-center shadow-xl sm:p-8"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="team-created-title"
+          >
+            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-success-light text-brand-primary">
+              <CheckCircle2 className="size-7" aria-hidden="true" />
+            </div>
+            <h2
+              id="team-created-title"
+              className="mt-4 text-2xl font-bold text-text-primary"
+            >
+              Tim berhasil dibuat!
+            </h2>
+            <p className="mt-2 text-sm font-medium leading-6 text-text-secondary">
+              Kamu sekarang menjadi Team Leader dari {teamName || "tim ini"}.
+            </p>
+            <Link
+              href="/my-teams"
+              className="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
+            >
+              Lihat Tim
+            </Link>
+          </section>
+        </div>
+      )}
       <Footer />
     </>
   );

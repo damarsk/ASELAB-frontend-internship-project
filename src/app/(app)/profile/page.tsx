@@ -235,7 +235,7 @@ export default function ProfilePage() {
   return (
     <>
       <DashHeader />
-      <main className="min-h-screen bg-slate-50 px-5 py-8 sm:px-8 lg:py-12">
+      <main className="min-h-screen px-5 py-8 sm:px-8 lg:py-12">
         <div className="mx-auto max-w-6xl px-8">
           <div className="mb-8 max-w-2xl">
             <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-green-600">
@@ -272,7 +272,7 @@ export default function ProfilePage() {
                 <ImagePlus size={20} className="text-green-600" />
               </div>
 
-              <div className="mt-6 flex flex-col items-center rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-7">
+              <div className="mt-6 flex flex-col items-center rounded-xl border border-dashed border-slate-200 px-4 py-7">
                 <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-green-100 text-4xl font-bold text-green-700 ring-8 ring-green-50">
                   {photo ? (
                     <Image

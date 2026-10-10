@@ -25,7 +25,7 @@ export default function VerifyOTP() {
 
   if (isLoading && !session) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-white px-4">
+      <main className="flex min-h-screen items-center justify-center px-4">
         <div className="w-full max-w-md rounded-2xl border border-[#E5E7EB] bg-white p-8 text-center shadow-sm">
           <p className="text-sm text-[#6B7280]">Memuat sesi registrasi...</p>
         </div>
@@ -35,7 +35,7 @@ export default function VerifyOTP() {
 
   if (!session) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-white px-4">
+      <main className="flex min-h-screen items-center justify-center px-4">
         <div className="w-full max-w-md rounded-2xl border border-[#E5E7EB] bg-white p-8 text-center shadow-sm">
           <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-xl text-red-500">
             !
@@ -62,7 +62,7 @@ export default function VerifyOTP() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-white px-4">
+    <main className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md rounded-2xl border border-[#E5E7EB] bg-white p-8 shadow-sm">
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white text-2xl text-[#111827]">
           <svg

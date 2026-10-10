@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Main() {
   return (
-    <main className="min-h-[calc(100vh-5rem)] bg-background">
+    <main className="min-h-[calc(100vh-5rem)]">
       <section className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl grid-cols-1 items-center gap-16 px-8 py-16 lg:grid-cols-2">
         <div className="max-w-xl">
           <div className="mb-12 flex items-center gap-2 text-lg font-semibold text-brand-primary">

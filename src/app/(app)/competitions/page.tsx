@@ -101,7 +101,7 @@ export default function CompetitionsPage() {
   return (
     <>
       <DashHeader />
-      <main className="bg-white">
+      <main>
         <section className="flex h-64 items-center bg-brand-primary-light py-4">
           <div className="mx-auto w-full max-w-6xl px-8">
             <h1 className="mb-4 text-4xl font-medium text-text-primary">

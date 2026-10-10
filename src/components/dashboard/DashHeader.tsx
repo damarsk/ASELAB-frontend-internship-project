@@ -110,7 +110,7 @@ export default function DashHeader() {
                 key={item.href}
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
-                className={`font-medium text-text-secondary transition-colors duration-200 ${
+                className={`font-medium transition-colors duration-200 ${
                   isActive
                     ? "text-brand-primary"
                     : "text-text-secondary hover:text-brand-primary"

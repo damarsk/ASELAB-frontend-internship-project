@@ -14,6 +14,7 @@ export type JoinRequest = {
 
 export type TeamMember = {
   name: string;
+  department?: string;
   role: string;
   initials: string;
   color: string;

@@ -1,4 +1,5 @@
 import { ArrowRight, Users } from "lucide-react";
+import Link from "next/link";
 import type { Team } from "@/src/components/dashboard/TeamSection";
 
 export default function TeamCard({ team }: { team: Team }) {
@@ -39,9 +40,12 @@ export default function TeamCard({ team }: { team: Team }) {
             style={{ width: `${team.match}%` }}
           />
         </div>
-        <button className="mt-5 flex items-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-primary-hover">
+        <Link
+          href={`/teams/${team.id}`}
+          className="mt-5 flex items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-brand-primary-hover"
+        >
           Lihat Tim <ArrowRight className="size-4" aria-hidden="true" />
-        </button>
+        </Link>
       </div>
     </article>
   );

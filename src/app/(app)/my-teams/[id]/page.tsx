@@ -8,6 +8,7 @@ import Footer from "@/src/components/landing/Footer";
 import JoinRequests from "@/src/components/my-team/JoinRequests";
 import MembersOverview from "@/src/components/my-team/MembersOverview";
 import TeamHero from "@/src/components/my-team/TeamHero";
+import TeamGroupLinks from "@/src/components/my-team/TeamGroupLinks";
 import TeamTabs, { type TeamTab } from "@/src/components/my-team/TeamTabs";
 import TeamSettings from "@/src/components/my-team/TeamSettings";
 import { initialRequests, members } from "@/src/components/my-team/data";
@@ -81,7 +82,9 @@ export default function MyTeamDetailPage({
             "Back-End",
             "Quality Assurance",
           ]}
-        />
+        >
+          <TeamGroupLinks />
+        </TeamHero>
         <TeamTabs
           activeTab={activeTab}
           pendingCount={pendingCount}

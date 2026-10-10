@@ -3,21 +3,31 @@ import type { JoinRequest, TeamMember } from "./types";
 export const members: TeamMember[] = [
   {
     name: "Damar Putra",
+    department: "Rekayasa Perangkat Lunak",
     role: "Team Leader",
     initials: "DP",
     color: "bg-emerald-100 text-emerald-700",
   },
   {
     name: "Nadia Prameswari",
+    department: "Teknik Informatika",
     role: "UI/UX Designer",
     initials: "NP",
     color: "bg-sky-100 text-sky-700",
   },
   {
     name: "Rizky Ramadhan",
+    department: "Sistem Informasi",
     role: "Back-End Developer",
     initials: "RR",
     color: "bg-amber-100 text-amber-700",
+  },
+  {
+    name: "Clarissa Dania",
+    department: "Ilmu Komputer",
+    role: "Quality Assurance & Testing",
+    initials: "CD",
+    color: "bg-lime-100 text-lime-700",
   },
 ];
 

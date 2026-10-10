@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowRight, Search, Users } from "lucide-react";
+import { ArrowRight, Search } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import TeamCard from "@/src/components/teams/TeamCard";
 
 export type Team = {
   id: string;
@@ -59,49 +60,7 @@ export default function TeamSection({ teams }: { teams: Team[] }) {
       {filteredTeams.length > 0 ? (
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           {filteredTeams.map((team) => (
-            <article
-              key={team.name}
-              className="flex min-h-85.5 flex-col items-center border border-border bg-white px-4 py-5 transition-shadow hover:shadow-md"
-            >
-              <div className="flex size-20 items-center justify-center rounded-full bg-background-muted text-4xl">
-                👩🏻‍💼
-              </div>
-              <h3 className="mt-5 text-base font-bold text-text-primary">
-                {team.name}
-              </h3>
-              <p className="mt-5 text-sm text-text-muted">{team.event}</p>
-              <p className="mt-2 flex items-center gap-1 text-xs text-text-secondary">
-                <Users className="size-3.5" aria-hidden="true" /> 2/4 Anggota
-              </p>
-              <p className="mt-2 text-xs text-text-secondary">
-                Skill Dibutuhkan
-              </p>
-              <div className="mt-3 flex gap-2">
-                {team.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="rounded-full bg-success-light px-2.5 py-1 text-[11px] text-brand-primary"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-              <div className="mt-4 w-full">
-                <div className="mb-1 flex justify-between text-[11px] text-text-primary">
-                  <span>Kecocokan</span>
-                  <span>{team.match}%</span>
-                </div>
-                <div className="mb-6 h-1.5 w-full bg-border">
-                  <div
-                    className="h-full bg-brand-primary"
-                    style={{ width: `${team.match}%` }}
-                  />
-                </div>
-              </div>
-              <button className="mt-auto flex items-center gap-2 rounded-md bg-brand-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-primary-hover">
-                Lihat Tim <ArrowRight className="size-4" aria-hidden="true" />
-              </button>
-            </article>
+            <TeamCard key={team.id} team={team} />
           ))}
         </div>
       ) : (

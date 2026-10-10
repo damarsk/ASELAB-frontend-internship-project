@@ -40,12 +40,6 @@ export default function TeamSection({ teams }: { teams: Team[] }) {
           aria-label="Cari tim berdasarkan skill atau kompetisi"
           className="min-w-0 flex-1 bg-transparent py-2 text-sm text-text-primary outline-none placeholder:text-text-secondary sm:text-base"
         />
-        <button
-          type="submit"
-          className="rounded-lg bg-brand-primary px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-primary-hover"
-        >
-          Cari
-        </button>
       </form>
 
       <div className="mt-14 flex items-end justify-between gap-4">

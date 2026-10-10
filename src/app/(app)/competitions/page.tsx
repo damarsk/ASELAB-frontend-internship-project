@@ -141,9 +141,9 @@ export default function CompetitionsPage() {
                 setDraftCategory(category);
                 setIsFilterOpen(true);
               }}
-              className="flex items-center justify-center rounded-lg bg-brand-primary px-8 py-4 text-base font-medium text-white transition-colors hover:bg-brand-primary-hover md:w-auto"
+              className="flex items-center justify-center gap-2 rounded-full border border-brand-primary bg-white px-6 py-3 text-sm font-medium text-brand-primary transition-colors hover:bg-brand-primary-light md:w-auto"
             >
-              <SlidersHorizontal className="mr-1 size-5" aria-hidden="true" />
+              <SlidersHorizontal className="size-4" aria-hidden="true" />
               Filter
             </button>
           </form>

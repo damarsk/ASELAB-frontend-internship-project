@@ -225,7 +225,7 @@ export default function Main() {
         <div className="mx-auto max-w-6xl px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold leading-tight tracking-tight text-text-secondary">
-              Tim yang sesuai skill mu
+              Cari Tim Yang Sesuai Skillmu
             </h2>
           </div>
 

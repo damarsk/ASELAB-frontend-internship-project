@@ -52,12 +52,6 @@ export default function TeamFilters({
           ))}
         </select>
       </label>
-      <button
-        type="submit"
-        className="rounded-xl bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
-      >
-        Cari
-      </button>
     </form>
   );
 }

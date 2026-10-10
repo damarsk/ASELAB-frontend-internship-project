@@ -93,15 +93,15 @@ export default function DashHeader() {
   };
 
   return (
-    <nav className="h-20 bg-white shadow">
-      <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-between px-8">
+    <nav className="h-14 bg-white shadow sm:h-16">
+      <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-8">
         <Link href="/dashboard" className="shrink-0">
-          <h1 className="text-2xl font-bold text-brand-primary">
+          <h1 className="text-base font-bold text-brand-primary sm:text-xl">
             🤝 Partner<span className="text-black">In</span>
           </h1>
         </Link>
 
-        <div className="flex items-center gap-10">
+        <div className="hidden items-center gap-5 sm:flex lg:gap-10">
           {navItems.map((item) => {
             const isActive = item.match(pathname);
 
@@ -110,7 +110,7 @@ export default function DashHeader() {
                 key={item.href}
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
-                className={`font-medium transition-colors duration-200 ${
+                className={`text-xs font-medium transition-colors duration-200 lg:text-sm ${
                   isActive
                     ? "text-brand-primary"
                     : "text-text-secondary hover:text-brand-primary"
@@ -122,7 +122,7 @@ export default function DashHeader() {
           })}
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 sm:gap-5">
           <div className="relative" ref={notificationRef}>
             <button
               type="button"
@@ -131,7 +131,7 @@ export default function DashHeader() {
               aria-label="Notifikasi"
               aria-expanded={isNotificationOpen}
             >
-              <Bell size={28} strokeWidth={2} />
+              <Bell size={21} strokeWidth={2} />
 
               <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold leading-none text-white">
                 3
@@ -217,7 +217,7 @@ export default function DashHeader() {
             <button
               type="button"
               onClick={handleProfileToggle}
-              className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-brand-primary text-white transition-opacity hover:opacity-90"
+              className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-brand-primary text-white transition-opacity hover:opacity-90 sm:h-9 sm:w-9"
               aria-label="Profile"
               aria-expanded={isProfileOpen}
             >

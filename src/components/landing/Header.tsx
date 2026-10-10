@@ -21,17 +21,10 @@ export default function Header() {
           </Link>
 
           <Link
-            href="/cara-kerja"
+            href="/#cara-kerja"
             className="font-medium text-text-secondary transition-colors duration-200 hover:text-brand-primary"
           >
             Cara Kerja
-          </Link>
-
-          <Link
-            href="/tentang-kami"
-            className="font-medium text-text-secondary transition-colors duration-200 hover:text-brand-primary"
-          >
-            Tentang Kami
           </Link>
         </div>
 

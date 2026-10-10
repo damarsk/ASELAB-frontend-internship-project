@@ -93,15 +93,15 @@ export default function DashHeader() {
   };
 
   return (
-    <nav className="h-14 bg-white shadow sm:h-16">
-      <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-8">
+    <nav className="h-20 bg-white shadow">
+      <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-between px-8">
         <Link href="/dashboard" className="shrink-0">
-          <h1 className="text-base font-bold text-brand-primary sm:text-xl">
+          <h1 className="text-2xl font-bold text-brand-primary">
             🤝 Partner<span className="text-black">In</span>
           </h1>
         </Link>
 
-        <div className="hidden items-center gap-5 sm:flex lg:gap-10">
+        <div className="hidden items-center gap-8 sm:flex">
           {navItems.map((item) => {
             const isActive = item.match(pathname);
 
@@ -110,7 +110,7 @@ export default function DashHeader() {
                 key={item.href}
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
-                className={`text-xs font-medium transition-colors duration-200 lg:text-sm ${
+                className={`font-medium text-text-secondary transition-colors duration-200 ${
                   isActive
                     ? "text-brand-primary"
                     : "text-text-secondary hover:text-brand-primary"
@@ -122,7 +122,7 @@ export default function DashHeader() {
           })}
         </div>
 
-        <div className="flex items-center gap-3 sm:gap-5">
+        <div className="flex items-center gap-4">
           <div className="relative" ref={notificationRef}>
             <button
               type="button"
@@ -139,7 +139,7 @@ export default function DashHeader() {
             </button>
 
             {isNotificationOpen && (
-              <div className="absolute right-0 top-14 z-50 w-80 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
+              <div className="absolute right-0 top-20 z-50 w-80 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
                 <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
                   <h2 className="font-semibold text-text-primary">
                     Notifikasi
@@ -217,7 +217,7 @@ export default function DashHeader() {
             <button
               type="button"
               onClick={handleProfileToggle}
-              className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-brand-primary text-white transition-opacity hover:opacity-90 sm:h-9 sm:w-9"
+              className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-brand-primary text-white transition-opacity hover:opacity-90"
               aria-label="Profile"
               aria-expanded={isProfileOpen}
             >
@@ -233,7 +233,7 @@ export default function DashHeader() {
             </button>
 
             {isProfileOpen && (
-              <div className="absolute right-0 top-14 z-50 w-56 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
+              <div className="absolute right-0 top-20 z-50 w-56 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
                 <div className="border-b border-gray-100 px-4 py-3">
                   <p className="truncate text-sm font-semibold text-text-primary">
                     {session?.user?.name ?? "User"}

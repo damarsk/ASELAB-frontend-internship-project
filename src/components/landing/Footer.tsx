@@ -42,6 +42,18 @@ export default function Footer() {
           >
             Tim Saya
           </Link>
+          <Link
+            href="/terms"
+            className="text-base font-medium text-text-secondary transition-colors hover:text-brand-primary"
+          >
+            Syarat &amp; Ketentuan
+          </Link>
+          <Link
+            href="/privacy"
+            className="text-base font-medium text-text-secondary transition-colors hover:text-brand-primary"
+          >
+            Kebijakan Privasi
+          </Link>
         </nav>
       </div>
     </footer>

@@ -23,7 +23,16 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  if (pathname.startsWith("/dashboard")) {
+  const isProtectedRoute = [
+    "/dashboard",
+    "/teams",
+    "/competitions",
+    "/my-teams",
+    "/notifications",
+    "/profile",
+  ].some((route) => pathname === route || pathname.startsWith(`${route}/`));
+
+  if (isProtectedRoute) {
     if (!secret || !backendBaseUrl) {
       return redirectToLogin(request, pathname);
     }
@@ -75,5 +84,14 @@ function redirectToLogin(request: NextRequest, pathname: string) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/teams/:path*",
+    "/competitions/:path*",
+    "/my-teams/:path*",
+    "/notifications/:path*",
+    "/profile/:path*",
+    "/login",
+    "/register/:path*",
+  ],
 };

@@ -9,14 +9,14 @@ export default function JoinRequests({
   activeFilter,
   onSearchChange,
   onFilterChange,
-  onUpdate,
+  onRequestAction,
 }: {
   requests: JoinRequest[];
   search: string;
   activeFilter: "all" | RequestStatus;
   onSearchChange: (value: string) => void;
   onFilterChange: (filter: "all" | RequestStatus) => void;
-  onUpdate: (id: number, status: RequestStatus) => void;
+  onRequestAction: (id: number, status: RequestStatus) => void;
 }) {
   return (
     <section className="mt-8" aria-labelledby="requests-heading">
@@ -71,7 +71,7 @@ export default function JoinRequests({
             <RequestCard
               key={request.id}
               request={request}
-              onUpdate={onUpdate}
+              onRequestAction={onRequestAction}
             />
           ))
         ) : (

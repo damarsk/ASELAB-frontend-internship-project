@@ -1,100 +1,183 @@
 "use client";
 
 import { ArrowRight, Search, SlidersHorizontal, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DashHeader from "@/src/components/dashboard/DashHeader";
 import CompetitionPlaceholder from "@/src/components/competitions/CompetitionPlaceholder";
 import Footer from "@/src/components/landing/Footer";
-import { competitions } from "@/src/data/competitions";
 
 const competitionsPerPage = 6;
+
+type Competition = {
+  id: number;
+  namaLomba: string;
+  penyelenggara: string;
+  kategori: string;
+  deadline: string;
+  infoPendaftaran: string;
+  hadiah: string | null;
+};
+
+type CompetitionsResponse = {
+  data?: Competition[];
+  pagination?: {
+    page: number;
+    totalPages: number;
+  };
+  message?: string;
+  error?: string;
+};
 
 function CompetitionCard({
   competition,
 }: {
-  competition: (typeof competitions)[number];
+  competition: Competition;
 }) {
+  const deadline = new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(competition.deadline));
+
   return (
     <article className="flex min-h-0 flex-col border border-border bg-white px-4 py-5 text-center transition-shadow hover:shadow-md sm:px-5">
-      <CompetitionPlaceholder competition={competition} />
+      <CompetitionPlaceholder competition={{ name: competition.namaLomba }} />
       <h2 className="mt-5 min-h-10 text-xs font-bold leading-5 text-text-primary sm:text-sm">
-        {competition.name}
+        {competition.namaLomba}
       </h2>
       <p className="mt-2 min-h-10 text-[10px] leading-3.5 text-text-secondary sm:text-[11px]">
-        Kategori {competition.category}, {competition.detail}
+        Kategori {competition.kategori}, {competition.penyelenggara}
       </p>
       <p className="mt-3 text-[9px] text-text-secondary">Total Hadiah</p>
       <p className="mt-1 text-xl font-medium text-text-secondary sm:text-2xl">
-        {competition.prize}
+        {competition.hadiah ?? "Tidak tersedia"}
       </p>
       <p className="mt-1 text-[10px] text-text-muted">
-        Deadline: {competition.deadline}
+        Deadline: {deadline}
       </p>
-      <button
-        type="button"
+      <a
+        href={competition.infoPendaftaran}
+        target="_blank"
+        rel="noreferrer"
         className="mx-auto mt-3 inline-flex items-center gap-1 rounded-md bg-brand-primary px-3 py-1.5 text-[10px] font-medium text-white transition-colors hover:bg-brand-primary-hover sm:px-4 sm:text-xs"
       >
         Daftar Kompetisi <ArrowRight className="size-3.5" aria-hidden="true" />
-      </button>
+      </a>
     </article>
   );
 }
 
 export default function CompetitionsPage() {
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [draftCategory, setDraftCategory] = useState("all");
   const [competitionLevel, setCompetitionLevel] = useState("all");
+  const [draftCompetitionLevel, setDraftCompetitionLevel] = useState("all");
   const [registrationFee, setRegistrationFee] = useState("all");
+  const [draftRegistrationFee, setDraftRegistrationFee] = useState("all");
   const [deadline, setDeadline] = useState("all");
+  const [draftDeadline, setDraftDeadline] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const categories = useMemo(
-    () => Array.from(new Set(competitions.map((item) => item.category))).sort(),
-    [],
+    () => Array.from(new Set(competitions.map((item) => item.kategori))).sort(),
+    [competitions],
   );
 
-  const filteredCompetitions = useMemo(() => {
-    const query = search.trim().toLowerCase();
-
-    return competitions.filter((competition) => {
-      const searchableText =
-        `${competition.name} ${competition.category} ${competition.detail}`.toLowerCase();
-      return (
-        (!query || searchableText.includes(query)) &&
-        (category === "all" || competition.category === category)
-      );
+  useEffect(() => {
+    const controller = new AbortController();
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(competitionsPerPage),
     });
-  }, [category, search]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredCompetitions.length / competitionsPerPage),
-  );
+    if (search.trim()) params.set("keyword", search.trim());
+    if (category !== "all") params.set("kategori", category);
+    if (competitionLevel !== "all") {
+      params.set(
+        "tingkatKompetisi",
+        competitionLevel === "national" ? "Nasional" : "Internasional",
+      );
+    }
+    if (registrationFee !== "all") {
+      params.set(
+        "biayaPendaftaran",
+        registrationFee === "free" ? "Gratis" : "Berbayar",
+      );
+    }
+    if (deadline !== "all") params.set("deadline", deadline);
+
+    fetch(`/api/competitions?${params.toString()}`, {
+      credentials: "include",
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        const result = (await response.json().catch(() => null)) as
+          | CompetitionsResponse
+          | null;
+        if (!response.ok) {
+          throw new Error(
+            result?.error ?? result?.message ?? "Gagal memuat kompetisi.",
+          );
+        }
+        return result;
+      })
+      .then((result) => {
+        setCompetitions(result?.data ?? []);
+        setTotalPages(Math.max(1, result?.pagination?.totalPages ?? 1));
+      })
+      .catch((fetchError: unknown) => {
+        if (fetchError instanceof DOMException && fetchError.name === "AbortError") {
+          return;
+        }
+        setError(
+          fetchError instanceof Error
+            ? fetchError.message
+            : "Gagal memuat kompetisi.",
+        );
+        setCompetitions([]);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [category, competitionLevel, deadline, page, registrationFee, search]);
+
   const currentPage = Math.min(page, totalPages);
-  const visibleCompetitions = filteredCompetitions.slice(
-    (currentPage - 1) * competitionsPerPage,
-    currentPage * competitionsPerPage,
-  );
 
   const updateSearch = (value: string) => {
     setSearch(value);
+    setError("");
     setPage(1);
   };
 
   const applyFilters = () => {
     setCategory(draftCategory);
+    setCompetitionLevel(draftCompetitionLevel);
+    setRegistrationFee(draftRegistrationFee);
+    setDeadline(draftDeadline);
+    setError("");
     setPage(1);
     setIsFilterOpen(false);
   };
 
   const resetFilters = () => {
     setDraftCategory("all");
+    setDraftCompetitionLevel("all");
+    setDraftRegistrationFee("all");
+    setDraftDeadline("all");
     setCategory("all");
     setCompetitionLevel("all");
     setRegistrationFee("all");
     setDeadline("all");
+    setError("");
     setPage(1);
   };
 
@@ -139,6 +222,9 @@ export default function CompetitionsPage() {
               type="button"
               onClick={() => {
                 setDraftCategory(category);
+                setDraftCompetitionLevel(competitionLevel);
+                setDraftRegistrationFee(registrationFee);
+                setDraftDeadline(deadline);
                 setIsFilterOpen(true);
               }}
               className="flex items-center justify-center gap-2 rounded-full border border-brand-primary bg-white px-6 py-3 text-sm font-medium text-brand-primary transition-colors hover:bg-brand-primary-light md:w-auto"
@@ -148,7 +234,15 @@ export default function CompetitionsPage() {
             </button>
           </form>
 
-          {visibleCompetitions.length > 0 ? (
+          {isLoading ? (
+            <p className="mt-16 text-center text-text-secondary">
+              Memuat kompetisi...
+            </p>
+          ) : error ? (
+            <p className="mt-16 text-center text-red-600" role="alert">
+              {error}
+            </p>
+          ) : competitions.length > 0 ? (
             <section
               className="mt-14"
               aria-labelledby="competition-list-heading"
@@ -162,7 +256,7 @@ export default function CompetitionsPage() {
                 </h2>
               </div>
               <div className="mt-8 grid gap-6 md:grid-cols-3">
-                {visibleCompetitions.map((competition) => (
+                {competitions.map((competition) => (
                   <CompetitionCard
                     key={competition.id}
                     competition={competition}
@@ -255,8 +349,10 @@ export default function CompetitionsPage() {
               <label className="block text-xs font-medium text-text-secondary">
                 Tingkat Kompetisi
                 <select
-                  value={competitionLevel}
-                  onChange={(event) => setCompetitionLevel(event.target.value)}
+                  value={draftCompetitionLevel}
+                  onChange={(event) =>
+                    setDraftCompetitionLevel(event.target.value)
+                  }
                   className="mt-1.5 w-full rounded-md border border-border-strong bg-white px-3 py-2 text-sm text-text-secondary outline-none focus:border-brand-primary"
                 >
                   <option value="all">Semua</option>
@@ -268,8 +364,10 @@ export default function CompetitionsPage() {
               <label className="block text-xs font-medium text-text-secondary">
                 Biaya Pendaftaran
                 <select
-                  value={registrationFee}
-                  onChange={(event) => setRegistrationFee(event.target.value)}
+                  value={draftRegistrationFee}
+                  onChange={(event) =>
+                    setDraftRegistrationFee(event.target.value)
+                  }
                   className="mt-1.5 w-full rounded-md border border-border-strong bg-white px-3 py-2 text-sm text-text-secondary outline-none focus:border-brand-primary"
                 >
                   <option value="all">Semua</option>
@@ -281,8 +379,8 @@ export default function CompetitionsPage() {
               <label className="block text-xs font-medium text-text-secondary">
                 Deadline
                 <select
-                  value={deadline}
-                  onChange={(event) => setDeadline(event.target.value)}
+                  value={draftDeadline}
+                  onChange={(event) => setDraftDeadline(event.target.value)}
                   className="mt-1.5 w-full rounded-md border border-border-strong bg-white px-3 py-2 text-sm text-text-secondary outline-none focus:border-brand-primary"
                 >
                   <option value="all">Semua</option>
@@ -290,6 +388,7 @@ export default function CompetitionsPage() {
                   <option value="next-month">Bulan depan</option>
                 </select>
               </label>
+
             </div>
 
             <div className="mt-5 flex justify-center gap-5">

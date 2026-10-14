@@ -6,13 +6,6 @@ import { FormEvent, useState } from "react";
 import DashHeader from "@/src/components/dashboard/DashHeader";
 import Footer from "@/src/components/landing/Footer";
 
-const competitionOptions = [
-  "UI/UX Design Competition 2026",
-  "NusaHack 2026",
-  "DataHack 2026",
-  "GEMASTIK XVIII 2026",
-];
-
 const suggestedSkills = [
   "UI/UX Designer",
   "Front-end Developer",
@@ -26,7 +19,7 @@ const inputClassName =
 
 export default function CreateTeamPage() {
   const [teamName, setTeamName] = useState("");
-  const [competition, setCompetition] = useState(competitionOptions[0]);
+  const [competition, setCompetition] = useState("");
   const [description, setDescription] = useState("");
   const [maxMembers, setMaxMembers] = useState("5");
   const [skills, setSkills] = useState<string[]>(["UI/UX Designer"]);
@@ -34,6 +27,7 @@ export default function CreateTeamPage() {
   const [logoName, setLogoName] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const toggleSkill = (skill: string) => {
     setSkills((currentSkills) =>
@@ -51,15 +45,51 @@ export default function CreateTeamPage() {
     }
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (skills.length === 0) {
       setFormError("Pilih setidaknya satu skill yang dibutuhkan.");
       setIsSubmitted(false);
       return;
     }
+
     setFormError("");
-    setIsSubmitted(true);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/teams", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          nama: teamName.trim(),
+          deskripsi: description.trim(),
+          kompetisi: competition.trim(),
+          skillDibutuhkan: skills,
+          kuota: Number(maxMembers),
+          logo: logoName || null,
+        }),
+      });
+      const result = (await response.json().catch(() => null)) as {
+        message?: string;
+        error?: string;
+      } | null;
+
+      if (!response.ok) {
+        throw new Error(
+          result?.error ?? result?.message ?? "Tim gagal dibuat.",
+        );
+      }
+
+      setIsSubmitted(true);
+    } catch (error) {
+      setFormError(
+        error instanceof Error ? error.message : "Tim gagal dibuat.",
+      );
+      setIsSubmitted(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -109,16 +139,14 @@ export default function CreateTeamPage() {
               <span className="text-sm font-semibold text-text-primary">
                 Kompetisi <span className="text-red-500">*</span>
               </span>
-              <select
+              <input
                 required
+                type="text"
                 value={competition}
                 onChange={(event) => setCompetition(event.target.value)}
                 className={inputClassName}
-              >
-                {competitionOptions.map((option) => (
-                  <option key={option}>{option}</option>
-                ))}
-              </select>
+                placeholder="Contoh: GEMASTIK XVIII 2026"
+              />
             </label>
 
             <label className="sm:col-span-2">
@@ -260,9 +288,10 @@ export default function CreateTeamPage() {
             </Link>
             <button
               type="submit"
-              className="inline-flex items-center justify-center rounded-lg bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-primary-hover"
+              disabled={isSubmitting}
+              className="inline-flex items-center justify-center rounded-lg bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Buat Tim
+              {isSubmitting ? "Membuat Tim..." : "Buat Tim"}
             </button>
           </div>
         </form>

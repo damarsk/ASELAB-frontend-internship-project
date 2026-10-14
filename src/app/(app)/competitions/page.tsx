@@ -160,9 +160,6 @@ export default function CompetitionsPage() {
                 >
                   Rekomendasi Untukmu!
                 </h2>
-                <span className="hidden shrink-0 text-lg font-semibold text-brand-primary sm:block">
-                  Lihat Semua →
-                </span>
               </div>
               <div className="mt-8 grid gap-6 md:grid-cols-3">
                 {visibleCompetitions.map((competition) => (

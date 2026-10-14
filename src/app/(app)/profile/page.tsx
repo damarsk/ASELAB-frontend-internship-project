@@ -62,15 +62,20 @@ function TagInput({
   onChange,
   onAdd,
   placeholder,
+  name,
 }: {
   value: string;
   onChange: (value: string) => void;
   onAdd: () => void;
   placeholder: string;
+  name: string;
 }) {
   return (
     <div className="mt-3 flex gap-2">
       <input
+        type="text"
+        name={name}
+        autoComplete="off"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         onKeyDown={(event) => {
@@ -376,6 +381,7 @@ export default function ProfilePage() {
                         addTag(newSkill, skills, setSkills, setNewSkill)
                       }
                       placeholder="Tambah skill"
+                      name="skill"
                     />
                   </div>
                   <div>
@@ -404,6 +410,7 @@ export default function ProfilePage() {
                         )
                       }
                       placeholder="Tambah minat"
+                      name="interest"
                     />
                   </div>
                 </div>

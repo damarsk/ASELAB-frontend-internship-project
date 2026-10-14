@@ -1,8 +1,9 @@
 "use client";
 
-import { Heart, Info, RotateCcw, Users, X } from "lucide-react";
+import { Info, RotateCcw, Users, X } from "lucide-react";
 import { motion, useMotionValue, useTransform } from "motion/react";
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Team } from "@/src/components/dashboard/TeamSection";
 
@@ -51,13 +52,13 @@ function SwipeCard({
         className="pointer-events-none absolute left-5 bottom-5 rounded-lg border-2 border-brand-primary px-3 py-1 text-sm font-bold uppercase text-brand-primary"
         style={{ opacity: likeOpacity, rotate: -10 }}
       >
-        Suka
+        Join
       </motion.span>
       <motion.span
         className="pointer-events-none absolute right-5 bottom-5 rounded-lg border-2 border-danger px-3 py-1 text-sm font-bold uppercase text-danger"
         style={{ opacity: passOpacity, rotate: 10 }}
       >
-        Lewati
+        Skip
       </motion.span>
 
       <div className="flex items-start justify-between gap-3">
@@ -109,7 +110,14 @@ function SwipeCard({
               onClick={() => onRemove(team.name)}
               className="flex size-12 items-center justify-center rounded-full bg-success-light text-brand-primary transition-transform hover:scale-105"
             >
-              <Heart className="size-5 fill-current" aria-hidden="true" />
+              <Image
+                src="/join-request.svg"
+                alt=""
+                width={40}
+                height={40}
+                className="brightness-0 saturate-100 filter-[invert(41%)_sepia(93%)_saturate(1352%)_hue-rotate(101deg)_brightness(91%)_contrast(85%)]"
+                aria-hidden="true"
+              />
             </button>
             <Link
               href={`/teams/${team.id}`}

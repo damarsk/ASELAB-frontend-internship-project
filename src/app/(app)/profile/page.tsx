@@ -112,6 +112,8 @@ export default function ProfilePage() {
   const [photo, setPhoto] = useState<string | null>(null);
   const [cv, setCv] = useState<File | null>(null);
   const [saved, setSaved] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [profileSaveError, setProfileSaveError] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -184,10 +186,41 @@ export default function ProfilePage() {
     if (file) setCv(file);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 3000);
+    setSaved(false);
+    setProfileSaveError("");
+    setIsSavingProfile(true);
+
+    try {
+      const response = await fetch("/api/auth/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          jurusan: major.trim(),
+          skill: skills,
+          minat: interests,
+          pengalamanLomba: experience.trim(),
+        }),
+      });
+      const result = (await response.json().catch(() => null)) as {
+        message?: string;
+      } | null;
+
+      if (!response.ok) {
+        throw new Error(result?.message ?? "Profil gagal disimpan.");
+      }
+
+      setSaved(true);
+      window.setTimeout(() => setSaved(false), 3000);
+    } catch (error) {
+      setProfileSaveError(
+        error instanceof Error ? error.message : "Profil gagal disimpan.",
+      );
+    } finally {
+      setIsSavingProfile(false);
+    }
   };
 
   const handlePasswordSubmit = async () => {
@@ -263,7 +296,12 @@ export default function ProfilePage() {
             )}
           </div>
 
-          <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-12">
+          <div className="grid gap-6 lg:grid-cols-12">
+            <form
+              id="profile-form"
+              onSubmit={handleSubmit}
+              className="contents"
+            >
             <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-4 lg:p-7">
               <div className="flex items-start justify-between">
                 <div>
@@ -297,7 +335,7 @@ export default function ProfilePage() {
                   onClick={() => photoInputRef.current?.click()}
                   className="mt-6 inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
                 >
-                  <Upload size={16} /> Ubah foto
+                  <Upload size={16} /> Ubah Foto
                 </button>
                 <input
                   ref={photoInputRef}
@@ -485,27 +523,43 @@ export default function ProfilePage() {
               </div>
 
               <div className="flex flex-col-reverse gap-3 border-t border-slate-100 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-                <span
-                  className={`flex items-center gap-2 text-sm font-medium ${saved ? "text-green-600" : "text-transparent"}`}
-                  aria-live="polite"
-                >
-                  <Check size={16} /> Profil berhasil disimpan
-                </span>
+                <div className="text-sm font-medium" aria-live="polite">
+                  {saved && (
+                    <span className="flex items-center gap-2 text-green-600">
+                      <Check size={16} /> Profil berhasil disimpan
+                    </span>
+                  )}
+                  {profileSaveError && (
+                    <span className="text-red-600" role="alert">
+                      {profileSaveError}
+                    </span>
+                  )}
+                </div>
                 <button
                   type="submit"
+                  disabled={isSavingProfile}
                   className="inline-flex items-center justify-center rounded-lg bg-green-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-200 focus:ring-offset-2"
                 >
-                  Simpan profil
+                  {isSavingProfile ? "Menyimpan..." : "Simpan Profil"}
                 </button>
               </div>
             </section>
 
+            </form>
+
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                void handlePasswordSubmit();
+              }}
+              className="contents"
+            >
             <section className="rounded-2xl border border-slate-200 bg-white shadow-sm lg:col-span-8 lg:col-start-5">
               <div className="border-b border-slate-100 px-6 py-5 sm:px-8">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <h2 className="font-semibold text-slate-950">
-                      Ganti password
+                      Ganti Password
                     </h2>
                     <p className="mt-1 text-sm text-slate-500">
                       Perbarui password akunmu secara berkala untuk menjaga
@@ -568,8 +622,7 @@ export default function ProfilePage() {
                 )}
                 <div className="flex justify-end">
                   <button
-                    type="button"
-                    onClick={() => void handlePasswordSubmit()}
+                    type="submit"
                     disabled={isChangingPassword}
                     className="inline-flex items-center justify-center rounded-lg bg-green-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
                   >
@@ -578,7 +631,8 @@ export default function ProfilePage() {
                 </div>
               </div>
             </section>
-          </form>
+            </form>
+          </div>
         </div>
       </main>
       <Footer />

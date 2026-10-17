@@ -6,18 +6,9 @@ import DashHeader from "@/src/components/dashboard/DashHeader";
 import CompetitionCardSkeleton from "@/src/components/competitions/CompetitionCardSkeleton";
 import CompetitionPlaceholder from "@/src/components/competitions/CompetitionPlaceholder";
 import Footer from "@/src/components/landing/Footer";
+import type { Competition } from "@/src/types/competition";
 
 const competitionsPerPage = 6;
-
-type Competition = {
-  id: number;
-  namaLomba: string;
-  penyelenggara: string;
-  kategori: string;
-  deadline: string;
-  infoPendaftaran: string;
-  hadiah: string | null;
-};
 
 type CompetitionsResponse = {
   data?: Competition[];

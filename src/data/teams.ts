@@ -1,6 +1,4 @@
-import type { Team } from "@/src/components/dashboard/TeamSection";
-
-export const teams: Team[] = [
+export const teams = [
   {
     id: "nebula-team",
     name: "Nebula Team",

@@ -1,23 +1,8 @@
 import { ArrowRight, Users } from "lucide-react";
 import Link from "next/link";
-import type { Team } from "@/src/components/dashboard/TeamSection";
 import type { BackendTeam } from "@/src/types/team";
 
-type CardTeam = BackendTeam | Team;
-
-function isBackendTeam(team: CardTeam): team is BackendTeam {
-  return "nama" in team;
-}
-
-export default function TeamCard({ team }: { team: CardTeam }) {
-  const backendTeam = isBackendTeam(team);
-  const name = backendTeam ? team.nama : team.name;
-  const competition = backendTeam ? team.kompetisi : team.event;
-  const skills = backendTeam ? team.skillDibutuhkan : team.skills;
-  const description = backendTeam ? team.deskripsi : null;
-  const memberCount = backendTeam ? team.members.length : null;
-  const capacity = backendTeam ? team.kuota : null;
-
+export default function TeamCard({ team }: { team: BackendTeam }) {
   return (
     <article className="flex min-h-72 flex-col rounded-xl border border-border bg-white p-5 transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
@@ -26,22 +11,19 @@ export default function TeamCard({ team }: { team: CardTeam }) {
         </div>
         <span className="flex items-center gap-1 pt-1 text-xs text-text-secondary">
           <Users className="size-3.5" aria-hidden="true" />
-          {backendTeam ? `${memberCount}/${capacity} ` : ""}
-          Anggota
+          {team.members.length}/{team.kuota} Anggota
         </span>
       </div>
-      <h2 className="mt-4 text-lg font-bold text-text-primary">{name}</h2>
-      <p className="mt-1 text-sm text-text-muted">{competition}</p>
-      {description && (
-        <p className="mt-3 line-clamp-2 text-sm text-text-secondary">
-          {description}
-        </p>
-      )}
+      <h2 className="mt-4 text-lg font-bold text-text-primary">{team.nama}</h2>
+      <p className="mt-1 text-sm text-text-muted">{team.kompetisi}</p>
+      <p className="mt-3 line-clamp-2 text-sm text-text-secondary">
+        {team.deskripsi}
+      </p>
       <p className="mt-5 text-xs font-medium text-text-secondary">
         Skill Dibutuhkan
       </p>
       <div className="mt-2 flex flex-wrap gap-2">
-        {skills.map((item) => (
+        {team.skillDibutuhkan.map((item) => (
           <span
             key={item}
             className="rounded-full bg-success-light px-3 py-1 text-xs text-brand-primary"

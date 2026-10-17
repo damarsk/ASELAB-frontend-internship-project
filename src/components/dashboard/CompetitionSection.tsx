@@ -1,9 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import type { Competition } from "@/src/data/competitions";
 import CompetitionPlaceholder from "@/src/components/competitions/CompetitionPlaceholder";
-
-export type { Competition } from "@/src/data/competitions";
+import type { Competition } from "@/src/types/competition";
 
 export default function CompetitionSection({
   competitions,
@@ -29,19 +27,19 @@ export default function CompetitionSection({
       <div className="mt-8 grid gap-6 md:grid-cols-3">
         {competitions.map((competition) => (
           <article
-            key={competition.name}
+            key={competition.id}
             className="flex min-h-101.25 flex-col items-center border border-border bg-white px-6 py-6 text-center transition-shadow hover:shadow-md"
           >
             <CompetitionPlaceholder />
             <h3 className="mt-6 max-w-xs text-base font-bold leading-6 text-text-primary">
-              {competition.name}
+              {competition.namaLomba}
             </h3>
             <p className="mt-4 max-w-xs text-xs leading-4 text-text-secondary">
-              Kategori {competition.category}, {competition.detail}
+              Kategori {competition.kategori}, {competition.penyelenggara}
             </p>
             <p className="mt-3 text-[11px] text-text-secondary">Total Hadiah</p>
             <p className="mt-1 text-2xl font-medium text-text-secondary">
-              {competition.prize}
+              {competition.hadiah ?? "Tidak tersedia"}
             </p>
             <button className="mt-auto inline-flex items-center gap-1 rounded-md bg-brand-primary px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-brand-primary-hover">
               Eksplorasi &amp; Cari Rekan{" "}

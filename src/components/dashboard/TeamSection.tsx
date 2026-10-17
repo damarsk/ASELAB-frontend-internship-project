@@ -4,23 +4,18 @@ import { ArrowRight, Search } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import TeamCard from "@/src/components/teams/TeamCard";
+import type { BackendTeam } from "@/src/types/team";
 
-export type Team = {
-  id: string;
-  name: string;
-  event: string;
-  skills: string[];
-  match: number;
-};
-
-export default function TeamSection({ teams }: { teams: Team[] }) {
+export default function TeamSection({ teams }: { teams: BackendTeam[] }) {
   const [search, setSearch] = useState("");
   const query = search.toLowerCase();
   const filteredTeams = teams.filter(
     (team) =>
-      team.name.toLowerCase().includes(query) ||
-      team.event.toLowerCase().includes(query) ||
-      team.skills.some((skill) => skill.toLowerCase().includes(query)),
+      team.nama.toLowerCase().includes(query) ||
+      team.kompetisi.toLowerCase().includes(query) ||
+      team.skillDibutuhkan.some((skill) =>
+        skill.toLowerCase().includes(query),
+      ),
   );
 
   return (

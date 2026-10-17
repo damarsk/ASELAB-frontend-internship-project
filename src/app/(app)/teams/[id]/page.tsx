@@ -1,15 +1,14 @@
 "use client";
 
 import { ArrowLeft } from "lucide-react";
-import { notFound } from "next/navigation";
-import { use } from "react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { use, useEffect, useState } from "react";
 import DashHeader from "@/src/components/dashboard/DashHeader";
 import Footer from "@/src/components/landing/Footer";
 import TeamHero from "@/src/components/my-team/TeamHero";
 import PublicTeamMembers from "@/src/components/teams/PublicTeamMembers";
-import { members } from "@/src/components/my-team/data";
-import { teams } from "@/src/data/teams";
+import type { BackendTeam } from "@/src/types/team";
 
 export default function TeamDetailPage({
   params,
@@ -17,9 +16,37 @@ export default function TeamDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const team = teams.find((item) => item.id === id);
+  const [team, setTeam] = useState<BackendTeam | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!team) notFound();
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadTeam = async () => {
+      try {
+        const response = await fetch("/api/teams", {
+          credentials: "include",
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error("Gagal memuat detail tim");
+
+        const payload: { data?: BackendTeam[] } = await response.json();
+        setTeam(payload.data?.find((item) => String(item.id) === id) ?? null);
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          setTeam(null);
+        }
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    };
+
+    void loadTeam();
+    return () => controller.abort();
+  }, [id]);
+
+  if (!loading && !team) notFound();
 
   return (
     <>
@@ -32,19 +59,32 @@ export default function TeamDetailPage({
           <ArrowLeft className="size-4" aria-hidden="true" />
           Kembali ke Cari Tim
         </Link>
-        <TeamHero
-          name={team.name}
-          event={team.event}
-          skills={[
-            "UI/UX",
-            "Front-End",
-            "System Analyst",
-            "Back-End",
-            "Quality Assurance",
-          ]}
-          membershipStatus="request"
-        />
-        <PublicTeamMembers members={members} />
+        {loading ? (
+          <p className="py-16 text-center text-text-secondary">
+            Memuat detail tim...
+          </p>
+        ) : (
+          team && (
+            <>
+              <TeamHero
+                name={team.nama}
+                event={team.kompetisi}
+                description={team.deskripsi}
+                leaderName={team.leader?.nama}
+                skills={team.skillDibutuhkan}
+                membershipStatus="request"
+              />
+              <PublicTeamMembers
+                members={team.members.map((member) => ({
+                  name: `Anggota #${member.id}`,
+                  role: "Anggota Tim",
+                  initials: String(member.id).slice(-2),
+                  color: "bg-sky-100 text-sky-700",
+                }))}
+              />
+            </>
+          )
+        )}
       </main>
       <Footer />
     </>

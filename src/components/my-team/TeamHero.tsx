@@ -6,12 +6,16 @@ export default function TeamHero({
   name,
   event,
   skills,
+  description,
+  leaderName,
   children,
   membershipStatus = "joined",
 }: {
   name: string;
   event: string;
   skills: string[];
+  description?: string;
+  leaderName?: string;
   children?: ReactNode;
   membershipStatus?: "joined" | "request";
 }) {
@@ -31,7 +35,8 @@ export default function TeamHero({
                 {event}
               </p>
               <p className="mt-2 text-sm text-text-secondary">
-                Dibuat oleh <strong>Anindya</strong> • Team Leader
+                Dibuat oleh <strong>{leaderName ?? "Anindya"}</strong> • Team
+                Leader
               </p>
             </div>
             <TeamMembershipAction status={membershipStatus} />
@@ -41,10 +46,8 @@ export default function TeamHero({
               Deskripsi Tim Lomba
             </h2>
             <p className="mt-2 max-w-4xl text-sm leading-6 text-text-secondary">
-              Fokus pada pengembangan solusi platform digital inklusif berbasis
-              kecerdasan buatan untuk akselerasi UMKM nasional. Kami mencari
-              talenta yang berdedikasi dan siap berkolaborasi secara intensif
-              menuju babak final kompetisi.
+              {description ??
+                "Belum ada deskripsi yang tersedia untuk tim ini."}
             </p>
           </div>
           <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">

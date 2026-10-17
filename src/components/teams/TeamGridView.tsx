@@ -1,9 +1,9 @@
 import TeamCard from "@/src/components/teams/TeamCard";
 import TeamPagination from "@/src/components/teams/TeamPagination";
-import type { Team } from "@/src/components/dashboard/TeamSection";
+import type { BackendTeam } from "@/src/types/team";
 
 type TeamGridViewProps = {
-  teams: Team[];
+  teams: BackendTeam[];
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -27,7 +27,7 @@ export default function TeamGridView({
     <>
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {teams.map((team) => (
-          <TeamCard key={team.name} team={team} />
+          <TeamCard key={team.id} team={team} />
         ))}
       </div>
       <TeamPagination

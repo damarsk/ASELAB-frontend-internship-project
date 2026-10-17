@@ -5,10 +5,10 @@ import { motion, useMotionValue, useTransform } from "motion/react";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { Team } from "@/src/components/dashboard/TeamSection";
+import type { BackendTeam } from "@/src/types/team";
 
 type TeamSwipeDeckProps = {
-  teams: Team[];
+  teams: BackendTeam[];
 };
 
 function SwipeCard({
@@ -17,10 +17,10 @@ function SwipeCard({
   stackIndex,
   onRemove,
 }: {
-  team: Team;
+  team: BackendTeam;
   isFront: boolean;
   stackIndex: number;
-  onRemove: (teamName: string) => void;
+  onRemove: (teamId: number) => void;
 }) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-180, 180], [-14, 14]);
@@ -45,7 +45,7 @@ function SwipeCard({
       dragElastic={0.9}
       dragSnapToOrigin
       onDragEnd={(_, info) => {
-        if (Math.abs(info.offset.x) > 90) onRemove(team.name);
+        if (Math.abs(info.offset.x) > 90) onRemove(team.id);
       }}
     >
       <motion.span
@@ -67,16 +67,19 @@ function SwipeCard({
         </div>
         <span className="flex items-center gap-1 pt-1 text-xs text-text-secondary">
           <Users className="size-3.5" aria-hidden="true" />
-          2/4 Anggota
+          {team.members.length}/{team.kuota} Anggota
         </span>
       </div>
-      <h2 className="mt-5 text-xl font-bold text-text-primary">{team.name}</h2>
-      <p className="mt-1 text-sm text-text-muted">{team.event}</p>
+      <h2 className="mt-5 text-xl font-bold text-text-primary">{team.nama}</h2>
+      <p className="mt-1 text-sm text-text-muted">{team.kompetisi}</p>
+      <p className="mt-3 line-clamp-2 text-sm text-text-secondary">
+        {team.deskripsi}
+      </p>
       <p className="mt-6 text-xs font-medium text-text-secondary">
         Skill Dibutuhkan
       </p>
       <div className="mt-2 flex flex-wrap gap-2">
-        {team.skills.map((skill) => (
+        {team.skillDibutuhkan.map((skill) => (
           <span
             key={skill}
             className="rounded-full bg-success-light px-3 py-1 text-xs text-brand-primary"
@@ -88,26 +91,24 @@ function SwipeCard({
       <div className="mt-auto">
         <div className="mb-1 flex justify-between text-xs text-text-secondary">
           <span>Kecocokan</span>
-          <span>{team.match}%</span>
+          <span>0%</span>
         </div>
         <div
           className="h-1.5 bg-border"
           role="progressbar"
-          aria-valuenow={team.match}
+          aria-label="Persentase kecocokan"
+          aria-valuenow={0}
           aria-valuemin={0}
           aria-valuemax={100}
         >
-          <div
-            className="h-full bg-brand-primary"
-            style={{ width: `${team.match}%` }}
-          />
+          <div className="h-full bg-brand-primary" style={{ width: "0%" }} />
         </div>
         {isFront && (
           <div className="mt-5 flex justify-center gap-4">
             <button
               type="button"
-              aria-label={`Suka ${team.name}`}
-              onClick={() => onRemove(team.name)}
+              aria-label={`Suka ${team.nama}`}
+              onClick={() => onRemove(team.id)}
               className="flex size-12 items-center justify-center rounded-full bg-success-light text-brand-primary transition-transform hover:scale-105"
             >
               <Image
@@ -127,8 +128,8 @@ function SwipeCard({
             </Link>
             <button
               type="button"
-              aria-label={`Lewati ${team.name}`}
-              onClick={() => onRemove(team.name)}
+              aria-label={`Lewati ${team.nama}`}
+              onClick={() => onRemove(team.id)}
               className="flex size-12 items-center justify-center rounded-full border border-danger bg-danger-light text-danger transition-transform hover:scale-105"
             >
               <X className="size-5" aria-hidden="true" />
@@ -145,8 +146,8 @@ export default function TeamSwipeDeck({
 }: TeamSwipeDeckProps) {
   const [cards, setCards] = useState(filteredTeams);
 
-  const removeCard = (teamName: string) => {
-    setCards((current) => current.filter((team) => team.name !== teamName));
+  const removeCard = (teamId: number) => {
+    setCards((current) => current.filter((team) => team.id !== teamId));
   };
 
   if (cards.length === 0) {
@@ -177,7 +178,7 @@ export default function TeamSwipeDeck({
       <div className="relative grid h-112 w-full max-w-md place-items-center">
         {cards.map((team, index) => (
           <SwipeCard
-            key={team.name}
+            key={team.id}
             team={team}
             isFront={index === cards.length - 1}
             stackIndex={index}

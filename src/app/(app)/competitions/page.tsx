@@ -3,6 +3,7 @@
 import { ArrowRight, Search, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import DashHeader from "@/src/components/dashboard/DashHeader";
+import CompetitionCardSkeleton from "@/src/components/competitions/CompetitionCardSkeleton";
 import CompetitionPlaceholder from "@/src/components/competitions/CompetitionPlaceholder";
 import Footer from "@/src/components/landing/Footer";
 
@@ -28,11 +29,7 @@ type CompetitionsResponse = {
   error?: string;
 };
 
-function CompetitionCard({
-  competition,
-}: {
-  competition: Competition;
-}) {
+function CompetitionCard({ competition }: { competition: Competition }) {
   const deadline = new Intl.DateTimeFormat("id-ID", {
     day: "numeric",
     month: "long",
@@ -52,9 +49,7 @@ function CompetitionCard({
       <p className="mt-1 text-xl font-medium text-text-secondary sm:text-2xl">
         {competition.hadiah ?? "Tidak tersedia"}
       </p>
-      <p className="mt-1 text-[10px] text-text-muted">
-        Deadline: {deadline}
-      </p>
+      <p className="mt-1 text-[10px] text-text-muted">Deadline: {deadline}</p>
       <a
         href={competition.infoPendaftaran}
         target="_blank"
@@ -118,9 +113,9 @@ export default function CompetitionsPage() {
       signal: controller.signal,
     })
       .then(async (response) => {
-        const result = (await response.json().catch(() => null)) as
-          | CompetitionsResponse
-          | null;
+        const result = (await response
+          .json()
+          .catch(() => null)) as CompetitionsResponse | null;
         if (!response.ok) {
           throw new Error(
             result?.error ?? result?.message ?? "Gagal memuat kompetisi.",
@@ -133,7 +128,10 @@ export default function CompetitionsPage() {
         setTotalPages(Math.max(1, result?.pagination?.totalPages ?? 1));
       })
       .catch((fetchError: unknown) => {
-        if (fetchError instanceof DOMException && fetchError.name === "AbortError") {
+        if (
+          fetchError instanceof DOMException &&
+          fetchError.name === "AbortError"
+        ) {
           return;
         }
         setError(
@@ -235,13 +233,25 @@ export default function CompetitionsPage() {
           </form>
 
           {isLoading ? (
-            <p className="mt-16 text-center text-text-secondary">
-              Memuat kompetisi...
-            </p>
+            <section className="mt-14" aria-label="Memuat daftar kompetisi">
+              <div className="flex items-end justify-between gap-4">
+                <div className="h-9 w-64 animate-pulse rounded bg-background-muted sm:h-10" />
+              </div>
+              <div
+                className="mt-8 grid gap-6 md:grid-cols-3"
+                aria-busy="true"
+              >
+                {Array.from({ length: competitionsPerPage }, (_, index) => (
+                  <CompetitionCardSkeleton key={index} />
+                ))}
+              </div>
+            </section>
           ) : error ? (
-            <p className="mt-16 text-center text-red-600" role="alert">
-              {error}
-            </p>
+            <div className="min-h-72">
+              <p className="mt-16 text-center text-red-600" role="alert">
+                {error}
+              </p>
+            </div>
           ) : competitions.length > 0 ? (
             <section
               className="mt-14"
@@ -265,9 +275,11 @@ export default function CompetitionsPage() {
               </div>
             </section>
           ) : (
-            <p className="mt-16 text-center text-text-secondary">
-              Kompetisi yang kamu cari belum tersedia.
-            </p>
+            <div className="min-h-72">
+              <p className="mt-16 text-center text-text-secondary">
+                Kompetisi yang kamu cari belum tersedia.
+              </p>
+            </div>
           )}
 
           {totalPages > 1 && (
@@ -388,7 +400,6 @@ export default function CompetitionsPage() {
                   <option value="next-month">Bulan depan</option>
                 </select>
               </label>
-
             </div>
 
             <div className="mt-5 flex justify-center gap-5">

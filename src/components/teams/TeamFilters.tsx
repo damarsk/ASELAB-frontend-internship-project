@@ -4,17 +4,23 @@ import { Search } from "lucide-react";
 
 type TeamFiltersProps = {
   search: string;
+  category: string;
   skill: string;
+  categories: string[];
   skills: string[];
   onSearchChange: (value: string) => void;
+  onCategoryChange: (value: string) => void;
   onSkillChange: (value: string) => void;
 };
 
 export default function TeamFilters({
   search,
+  category,
   skill,
+  categories,
   skills,
   onSearchChange,
+  onCategoryChange,
   onSkillChange,
 }: TeamFiltersProps) {
   return (
@@ -36,6 +42,22 @@ export default function TeamFilters({
           className="min-w-0 flex-1 bg-transparent py-3 text-sm text-text-primary outline-none placeholder:text-text-secondary"
         />
       </div>
+      <label className="flex items-center rounded-xl border border-border px-4 sm:w-56">
+        <span className="sr-only">Filter berdasarkan kategori kompetisi</span>
+        <select
+          value={category}
+          onChange={(event) => onCategoryChange(event.target.value)}
+          className="w-full bg-transparent py-3 text-sm text-text-primary outline-none"
+          aria-label="Filter berdasarkan kategori kompetisi"
+        >
+          <option value="all">Semua kategori</option>
+          {categories.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+      </label>
       <label className="flex items-center rounded-xl border border-border px-4 sm:w-56">
         <span className="sr-only">Filter berdasarkan skill</span>
         <select

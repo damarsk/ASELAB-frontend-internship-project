@@ -24,8 +24,8 @@ function SwipeCard({
 }) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-180, 180], [-14, 14]);
-  const likeOpacity = useTransform(x, [25, 120], [0, 1]);
-  const passOpacity = useTransform(x, [-120, -25], [1, 0]);
+  const joinOpacity = useTransform(x, [-120, -25], [1, 0]);
+  const skipOpacity = useTransform(x, [25, 120], [0, 1]);
 
   return (
     <motion.article
@@ -48,15 +48,23 @@ function SwipeCard({
         if (Math.abs(info.offset.x) > 90) onRemove(team.id);
       }}
     >
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-10 rounded-2xl bg-brand-primary/25"
+        style={{ opacity: joinOpacity }}
+      />
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-10 rounded-2xl bg-danger/25"
+        style={{ opacity: skipOpacity }}
+      />
       <motion.span
-        className="pointer-events-none absolute left-5 bottom-5 rounded-lg border-2 border-brand-primary px-3 py-1 text-sm font-bold uppercase text-brand-primary"
-        style={{ opacity: likeOpacity, rotate: -10 }}
+        className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center text-6xl font-black uppercase text-brand-primary"
+        style={{ opacity: joinOpacity }}
       >
         Join
       </motion.span>
       <motion.span
-        className="pointer-events-none absolute right-5 bottom-5 rounded-lg border-2 border-danger px-3 py-1 text-sm font-bold uppercase text-danger"
-        style={{ opacity: passOpacity, rotate: 10 }}
+        className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center text-6xl font-black uppercase text-danger"
+        style={{ opacity: skipOpacity }}
       >
         Skip
       </motion.span>
@@ -107,7 +115,7 @@ function SwipeCard({
           <div className="mt-5 flex justify-center gap-4">
             <button
               type="button"
-              aria-label={`Suka ${team.nama}`}
+              aria-label={`Gabung ${team.nama}`}
               onClick={() => onRemove(team.id)}
               className="flex size-12 items-center justify-center rounded-full bg-success-light text-brand-primary transition-transform hover:scale-105"
             >
@@ -187,7 +195,7 @@ export default function TeamSwipeDeck({
         ))}
       </div>
       <p className="mt-4 text-center text-xs text-text-secondary">
-        Geser kartu ke kiri untuk melewati, atau ke kanan untuk menyukai
+        Geser kartu ke kiri untuk join, atau ke kanan untuk skip
       </p>
     </div>
   );

@@ -1,10 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, CircleUserRound, LogOut, User } from "lucide-react";
+import Image from "next/image";
+import { Bell, LogOut, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+
+type ProfileResponse = {
+  data?: {
+    profile?: {
+      fotoProfilUrl?: string | null;
+    } | null;
+  } | null;
+};
 
 const navItems = [
   {
@@ -38,11 +47,54 @@ export default function DashHeader() {
 
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState("/unknown.jpg");
 
   const notificationRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
   const isLoggedIn = status === "authenticated";
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const loadProfileImage = async () => {
+      try {
+        const response = await fetch("/api/auth/profile", {
+          method: "GET",
+          credentials: "include",
+          cache: "no-store",
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error("Gagal memuat foto profil.");
+        }
+
+        const result = (await response.json()) as ProfileResponse;
+        const imageUrl = result.data?.profile?.fotoProfilUrl;
+        setProfileImage(
+          typeof imageUrl === "string" && imageUrl.trim()
+            ? imageUrl
+            : "/unknown.jpg",
+        );
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
+
+        console.error("Gagal memuat foto profil navbar:", error);
+        setProfileImage("/unknown.jpg");
+      }
+    };
+
+    void loadProfileImage();
+
+    return () => controller.abort();
+  }, [isLoggedIn]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -91,6 +143,8 @@ export default function DashHeader() {
       callbackUrl: "/",
     });
   };
+
+  const displayedProfileImage = isLoggedIn ? profileImage : "/unknown.jpg";
 
   return (
     <nav className="h-20 bg-white shadow">
@@ -221,15 +275,15 @@ export default function DashHeader() {
               aria-label="Profile"
               aria-expanded={isProfileOpen}
             >
-              {session?.user?.image ? (
-                <img
-                  src={session.user.image}
-                  alt={session.user.name ?? "Profile"}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <CircleUserRound size={25} strokeWidth={2} />
-              )}
+              <Image
+                src={displayedProfileImage}
+                alt={session?.user?.name ?? "Profile"}
+                width={36}
+                height={36}
+                unoptimized
+                className="h-full w-full object-cover"
+                onError={() => setProfileImage("/unknown.jpg")}
+              />
             </button>
 
             {isProfileOpen && (

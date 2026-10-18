@@ -2,6 +2,7 @@
 
 import DashHeader from "@/src/components/dashboard/DashHeader";
 import Footer from "@/src/components/landing/Footer";
+import { resolveProfileImageUrl } from "@/src/lib/profile-image";
 import Image from "next/image";
 import {
   Check,
@@ -27,6 +28,13 @@ type ProfileResponse = {
       fotoProfilUrl?: string | null;
     } | null;
   };
+};
+
+type ProfileImageResponse = {
+  data?: {
+    fotoProfilUrl?: string | null;
+  };
+  message?: string;
 };
 
 function TagList({
@@ -111,6 +119,7 @@ export default function ProfilePage() {
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [profileError, setProfileError] = useState("");
   const [photo, setPhoto] = useState("/unknown.jpg");
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [cv, setCv] = useState<File | null>(null);
   const [saved, setSaved] = useState(false);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
@@ -153,10 +162,7 @@ export default function ProfilePage() {
         setInterests(profile?.minat ?? []);
         setExperience(profile?.pengalamanLomba ?? "");
         setPhoto(
-          typeof profile?.fotoProfilUrl === "string" &&
-            profile.fotoProfilUrl.trim()
-            ? profile.fotoProfilUrl
-            : "/unknown.jpg",
+          resolveProfileImageUrl(profile?.fotoProfilUrl),
         );
       } catch (error) {
         setProfileError(
@@ -183,9 +189,52 @@ export default function ProfilePage() {
     }
   };
 
-  const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) setPhoto(URL.createObjectURL(file));
+    if (!file) return;
+
+    setProfileSaveError("");
+    setIsUploadingPhoto(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("fotoProfil", file);
+
+      const response = await fetch("/api/auth/profile/image", {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+      const result = (await response.json().catch(() => null)) as
+        | ProfileImageResponse
+        | null;
+
+      if (!response.ok) {
+        throw new Error(result?.message ?? "Gambar profil gagal diperbarui.");
+      }
+
+      const imageUrl = result?.data?.fotoProfilUrl;
+      if (typeof imageUrl !== "string" || !imageUrl.trim()) {
+        throw new Error("URL gambar profil tidak tersedia.");
+      }
+
+      const resolvedImageUrl = resolveProfileImageUrl(imageUrl);
+      setPhoto(resolvedImageUrl);
+      window.dispatchEvent(
+        new CustomEvent("profile-image-updated", {
+          detail: resolvedImageUrl,
+        }),
+      );
+    } catch (error) {
+      setProfileSaveError(
+        error instanceof Error
+          ? error.message
+          : "Gambar profil gagal diperbarui.",
+      );
+    } finally {
+      setIsUploadingPhoto(false);
+      event.target.value = "";
+    }
   };
 
   const handleCvChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -337,9 +386,11 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={() => photoInputRef.current?.click()}
-                    className="mt-6 inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700"
+                    disabled={isUploadingPhoto}
+                    className="mt-6 inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    <Upload size={16} /> Ubah Foto
+                    <Upload size={16} />
+                    {isUploadingPhoto ? "Mengunggah..." : "Ubah Foto"}
                   </button>
                   <input
                     ref={photoInputRef}

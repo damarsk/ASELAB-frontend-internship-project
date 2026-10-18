@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { resolveProfileImageUrl } from "@/src/lib/profile-image";
 import { Bell, LogOut, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
@@ -60,6 +61,17 @@ export default function DashHeader() {
     }
 
     const controller = new AbortController();
+    const handleProfileImageUpdated = (event: Event) => {
+      const imageUrl = (event as CustomEvent<string>).detail;
+      if (typeof imageUrl === "string" && imageUrl.trim()) {
+        setProfileImage(imageUrl);
+      }
+    };
+
+    window.addEventListener(
+      "profile-image-updated",
+      handleProfileImageUpdated,
+    );
 
     const loadProfileImage = async () => {
       try {
@@ -76,11 +88,7 @@ export default function DashHeader() {
 
         const result = (await response.json()) as ProfileResponse;
         const imageUrl = result.data?.profile?.fotoProfilUrl;
-        setProfileImage(
-          typeof imageUrl === "string" && imageUrl.trim()
-            ? imageUrl
-            : "/unknown.jpg",
-        );
+        setProfileImage(resolveProfileImageUrl(imageUrl));
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") {
           return;
@@ -93,7 +101,13 @@ export default function DashHeader() {
 
     void loadProfileImage();
 
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      window.removeEventListener(
+        "profile-image-updated",
+        handleProfileImageUpdated,
+      );
+    };
   }, [isLoggedIn]);
 
   useEffect(() => {

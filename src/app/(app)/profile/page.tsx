@@ -26,6 +26,7 @@ type ProfileResponse = {
       minat?: string[];
       pengalamanLomba?: string;
       fotoProfilUrl?: string | null;
+      cvPath?: string | null;
     } | null;
   };
 };
@@ -35,6 +36,14 @@ type ProfileImageResponse = {
     fotoProfilUrl?: string | null;
   };
   message?: string;
+};
+
+type CvResponse = {
+  data?: {
+    cvUploaded?: boolean;
+  };
+  message?: string;
+  error?: string;
 };
 
 function TagList({
@@ -121,6 +130,9 @@ export default function ProfilePage() {
   const [photo, setPhoto] = useState("/unknown.jpg");
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [cv, setCv] = useState<File | null>(null);
+  const [hasCv, setHasCv] = useState(false);
+  const [isUploadingCv, setIsUploadingCv] = useState(false);
+  const [isDeletingCv, setIsDeletingCv] = useState(false);
   const [saved, setSaved] = useState(false);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSaveError, setProfileSaveError] = useState("");
@@ -161,6 +173,7 @@ export default function ProfilePage() {
         setSkills(profile?.skill ?? []);
         setInterests(profile?.minat ?? []);
         setExperience(profile?.pengalamanLomba ?? "");
+        setHasCv(Boolean(profile?.cvPath));
         setPhoto(
           resolveProfileImageUrl(profile?.fotoProfilUrl),
         );
@@ -237,9 +250,99 @@ export default function ProfilePage() {
     }
   };
 
-  const handleCvChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleCvChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) setCv(file);
+    if (!file || hasCv) return;
+
+    setProfileSaveError("");
+    setIsUploadingCv(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("cv", file);
+      const response = await fetch("/api/auth/profile/cv", {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+      const result = (await response.json().catch(() => null)) as
+        | CvResponse
+        | null;
+
+      if (!response.ok) {
+        throw new Error(
+          result?.message ?? result?.error ?? "CV gagal diunggah.",
+        );
+      }
+
+      setCv(file);
+      setHasCv(Boolean(result?.data?.cvUploaded));
+    } catch (error) {
+      setProfileSaveError(
+        error instanceof Error ? error.message : "CV gagal diunggah.",
+      );
+    } finally {
+      setIsUploadingCv(false);
+      event.target.value = "";
+    }
+  };
+
+  const handleDownloadCv = async () => {
+    setProfileSaveError("");
+
+    try {
+      const response = await fetch("/api/auth/profile/cv", {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        const result = (await response.json().catch(() => null)) as
+          | CvResponse
+          | null;
+        throw new Error(result?.message ?? result?.error ?? "CV gagal diunduh.");
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "CV.pdf";
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      setProfileSaveError(
+        error instanceof Error ? error.message : "CV gagal diunduh.",
+      );
+    }
+  };
+
+  const handleDeleteCv = async () => {
+    setProfileSaveError("");
+    setIsDeletingCv(true);
+
+    try {
+      const response = await fetch("/api/auth/profile/cv", {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const result = (await response.json().catch(() => null)) as
+        | CvResponse
+        | null;
+
+      if (!response.ok) {
+        throw new Error(
+          result?.message ?? result?.error ?? "CV gagal dihapus.",
+        );
+      }
+
+      setCv(null);
+      setHasCv(false);
+    } catch (error) {
+      setProfileSaveError(
+        error instanceof Error ? error.message : "CV gagal dihapus.",
+      );
+    } finally {
+      setIsDeletingCv(false);
+    }
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -301,16 +404,25 @@ export default function ProfilePage() {
     setIsChangingPassword(true);
     try {
       const response = await fetch("/api/auth/change-password", {
-        method: "POST",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currentPassword, newPassword }),
+        credentials: "include",
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+          confirmPassword,
+        }),
       });
 
+      const result = (await response.json().catch(() => null)) as {
+        message?: string;
+        error?: string;
+      } | null;
+
       if (!response.ok) {
-        const result = (await response.json().catch(() => null)) as {
-          message?: string;
-        } | null;
-        throw new Error(result?.message ?? "Password gagal diubah.");
+        throw new Error(
+          result?.message ?? result?.error ?? "Password gagal diubah.",
+        );
       }
 
       setCurrentPassword("");
@@ -540,20 +652,23 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       onClick={() => cvInputRef.current?.click()}
-                      className="mt-2 flex w-full items-center gap-4 rounded-xl border border-dashed border-slate-300 px-4 py-4 text-left transition hover:border-green-500 hover:bg-green-50/40"
+                      disabled={hasCv || isUploadingCv || isDeletingCv}
+                      className="mt-2 flex w-full items-center gap-4 rounded-xl border border-dashed border-slate-300 px-4 py-4 text-left transition hover:border-green-500 hover:bg-green-50/40 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-50 disabled:opacity-70"
                     >
                       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-500">
                         <FileText size={20} />
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-medium text-slate-800">
-                          {cv ? cv.name : "Upload CV kamu"}
+                          {hasCv
+                            ? cv?.name ?? "CV sudah terupload"
+                            : "Upload CV kamu"}
                         </span>
                         <span className="mt-1 block text-xs text-slate-400">
-                          PDF, DOC, atau DOCX hingga 5 MB
+                          PDF hingga 10 MB
                         </span>
                       </span>
-                      {cv ? (
+                      {hasCv ? (
                         <Check size={20} className="shrink-0 text-green-600" />
                       ) : (
                         <Upload size={18} className="shrink-0 text-slate-400" />
@@ -562,18 +677,31 @@ export default function ProfilePage() {
                     <input
                       ref={cvInputRef}
                       type="file"
-                      accept=".pdf,.doc,.docx"
+                      accept=".pdf"
                       onChange={handleCvChange}
+                      disabled={hasCv || isUploadingCv || isDeletingCv}
                       className="hidden"
                     />
-                    {cv && (
-                      <button
-                        type="button"
-                        onClick={() => setCv(null)}
-                        className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-red-500 hover:text-red-700"
-                      >
-                        <Trash2 size={13} /> Hapus CV
-                      </button>
+                    {hasCv && (
+                      <div className="mt-2 flex items-center gap-4">
+                        <button
+                          type="button"
+                          onClick={() => void handleDownloadCv()}
+                          disabled={isDeletingCv}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-green-600 hover:text-green-700 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          <FileText size={13} /> Download CV
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => void handleDeleteCv()}
+                          disabled={isDeletingCv}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-red-500 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          <Trash2 size={13} />
+                          {isDeletingCv ? "Menghapus..." : "Hapus CV"}
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>

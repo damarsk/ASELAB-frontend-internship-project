@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-export async function POST(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
   const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   if (!backendBaseUrl) {
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.text();
     const response = await fetch(`${backendBaseUrl}/auth/change-password`, {
-      method: "POST",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         ...(authorization ? { Authorization: authorization } : {}),

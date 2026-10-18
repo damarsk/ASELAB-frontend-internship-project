@@ -24,6 +24,7 @@ type ProfileResponse = {
       jurusan?: string;
       skill?: string[];
       minat?: string[];
+      tentang?: string;
       pengalamanLomba?: string;
       fotoProfilUrl?: string | null;
       cvPath?: string | null;
@@ -172,6 +173,7 @@ export default function ProfilePage() {
         setMajor(profile?.jurusan ?? "");
         setSkills(profile?.skill ?? []);
         setInterests(profile?.minat ?? []);
+        setAbout(profile?.tentang ?? "");
         setExperience(profile?.pengalamanLomba ?? "");
         setHasCv(Boolean(profile?.cvPath));
         setPhoto(
@@ -360,6 +362,7 @@ export default function ProfilePage() {
           jurusan: major.trim(),
           skill: skills,
           minat: interests,
+          tentang: about.trim(),
           pengalamanLomba: experience.trim(),
         }),
       });
@@ -437,6 +440,21 @@ export default function ProfilePage() {
       setIsChangingPassword(false);
     }
   };
+
+  const profileFields = [
+    name.trim(),
+    major.trim(),
+    skills.length > 0,
+    interests.length > 0,
+    about.trim(),
+    experience.trim(),
+    photo !== "/unknown.jpg",
+    hasCv,
+  ];
+  const completedProfileFields = profileFields.filter(Boolean).length;
+  const profileCompletion = Math.round(
+    (completedProfileFields / profileFields.length) * 100,
+  );
 
   return (
     <>
@@ -516,14 +534,18 @@ export default function ProfilePage() {
                 <div className="mt-6 border-t border-slate-100 pt-5">
                   <div className="flex items-center justify-between text-xs font-medium">
                     <span className="text-slate-600">Kelengkapan profil</span>
-                    <span className="text-green-700">60%</span>
+                    <span className="text-green-700">{profileCompletion}%</span>
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full w-3/5 rounded-full bg-green-500" />
+                    <div
+                      className="h-full rounded-full bg-green-500 transition-all"
+                      style={{ width: `${profileCompletion}%` }}
+                    />
                   </div>
                   <p className="mt-3 text-xs leading-5 text-slate-400">
-                    Profil yang lengkap meningkatkan peluangmu menemukan partner
-                    yang cocok.
+                    {profileCompletion === 100
+                      ? "Profilmu sudah lengkap."
+                      : "Profil yang lengkap meningkatkan peluangmu menemukan partner yang cocok."}
                   </p>
                 </div>
               </aside>

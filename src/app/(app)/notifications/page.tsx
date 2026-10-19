@@ -9,7 +9,6 @@ import {
   UsersRound,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import DashHeader from "@/src/components/dashboard/DashHeader";
 
 type NotificationCategory =
   | "Permintaan Tim"
@@ -140,7 +139,6 @@ export default function NotificationsPage() {
 
   return (
     <>
-      <DashHeader />
       <main className="mx-auto min-h-[calc(100vh-5rem)] max-w-6xl px-6 py-8 sm:px-8 sm:py-10">
         <div className="flex flex-col gap-6 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>

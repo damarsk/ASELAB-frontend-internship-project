@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, ImagePlus, Plus, X } from "lucide-react";
 import { FormEvent, useState } from "react";
-import DashHeader from "@/src/components/dashboard/DashHeader";
 import Footer from "@/src/components/landing/Footer";
 
 const suggestedSkills = [
@@ -94,7 +93,6 @@ export default function CreateTeamPage() {
 
   return (
     <>
-      <DashHeader />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         <Link
           href="/my-teams"

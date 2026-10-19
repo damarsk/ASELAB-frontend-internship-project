@@ -4,7 +4,6 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { use, useEffect, useState } from "react";
-import DashHeader from "@/src/components/dashboard/DashHeader";
 import Footer from "@/src/components/landing/Footer";
 import TeamHero from "@/src/components/my-team/TeamHero";
 import PublicTeamMembers from "@/src/components/teams/PublicTeamMembers";
@@ -50,7 +49,6 @@ export default function TeamDetailPage({
 
   return (
     <>
-      <DashHeader />
       <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
         <Link
           href="/teams"

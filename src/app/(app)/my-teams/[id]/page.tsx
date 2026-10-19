@@ -3,7 +3,6 @@
 import { notFound } from "next/navigation";
 import { use, useMemo, useState } from "react";
 import { Check, X } from "lucide-react";
-import DashHeader from "@/src/components/dashboard/DashHeader";
 import Footer from "@/src/components/landing/Footer";
 import JoinRequests from "@/src/components/my-team/JoinRequests";
 import MembersOverview from "@/src/components/my-team/MembersOverview";
@@ -70,7 +69,6 @@ export default function MyTeamDetailPage({
 
   return (
     <>
-      <DashHeader />
       <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
         <TeamHero
           name={team.name}

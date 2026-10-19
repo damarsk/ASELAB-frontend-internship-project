@@ -2,7 +2,6 @@
 
 import CompetitionSection from "@/src/components/dashboard/CompetitionSection";
 import DashboardHero from "@/src/components/dashboard/DashboardHero";
-import DashHeader from "@/src/components/dashboard/DashHeader";
 import ProfileActions from "@/src/components/dashboard/ProfileActions";
 import TeamSection from "@/src/components/dashboard/TeamSection";
 import TeamCardSkeleton from "@/src/components/teams/TeamCardSkeleton";
@@ -122,7 +121,6 @@ export default function DashboardPage() {
 
   return (
     <>
-      <DashHeader />
       <DashboardHero
         loading={profileLoading}
         error={profileError}

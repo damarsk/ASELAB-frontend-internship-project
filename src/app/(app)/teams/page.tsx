@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import DashHeader from "@/src/components/dashboard/DashHeader";
 import Footer from "@/src/components/landing/Footer";
 import TeamFilters from "@/src/components/teams/TeamFilters";
 import TeamCardSkeleton from "@/src/components/teams/TeamCardSkeleton";
@@ -96,7 +95,6 @@ export default function TeamsPage() {
 
   return (
     <>
-      <DashHeader />
       <main className="mx-auto max-w-6xl px-6 py-10 sm:px-8 lg:py-14">
         <TeamsIntro totalTeams={teams.length} />
         <TeamFilters

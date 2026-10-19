@@ -2,7 +2,6 @@
 
 import { ArrowRight, Search, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import DashHeader from "@/src/components/dashboard/DashHeader";
 import CompetitionCardSkeleton from "@/src/components/competitions/CompetitionCardSkeleton";
 import CompetitionPlaceholder from "@/src/components/competitions/CompetitionPlaceholder";
 import Footer from "@/src/components/landing/Footer";
@@ -172,7 +171,6 @@ export default function CompetitionsPage() {
 
   return (
     <>
-      <DashHeader />
       <main>
         <section className="flex h-64 items-center bg-brand-primary-light py-4">
           <div className="mx-auto w-full max-w-6xl px-8">

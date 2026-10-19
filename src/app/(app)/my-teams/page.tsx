@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight, Clock3, Plus, UsersRound } from "lucide-react";
-import DashHeader from "@/src/components/dashboard/DashHeader";
 import Footer from "@/src/components/landing/Footer";
 import { teams } from "@/src/data/teams";
 
@@ -10,7 +9,6 @@ export default function MyTeamPage() {
 
   return (
     <>
-      <DashHeader />
       <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
         <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
           <div>

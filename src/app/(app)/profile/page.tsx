@@ -1,6 +1,5 @@
 "use client";
 
-import DashHeader from "@/src/components/dashboard/DashHeader";
 import Footer from "@/src/components/landing/Footer";
 import { resolveProfileImageUrl } from "@/src/lib/profile-image";
 import Image from "next/image";
@@ -458,7 +457,6 @@ export default function ProfilePage() {
 
   return (
     <>
-      <DashHeader />
       <main className="min-h-screen px-5 py-8 sm:px-8 lg:py-12">
         <div className="mx-auto max-w-6xl px-8">
           <div className="mb-8 max-w-2xl">

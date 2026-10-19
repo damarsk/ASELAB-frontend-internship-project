@@ -41,9 +41,7 @@ export default function CreateTeamPage() {
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [blacklistQuery, setBlacklistQuery] = useState("");
-  const [blacklistedUsers, setBlacklistedUsers] = useState<BlacklistUser[]>(
-    [],
-  );
+  const [blacklistedUsers, setBlacklistedUsers] = useState<BlacklistUser[]>([]);
   const [isBlacklistDropdownOpen, setIsBlacklistDropdownOpen] = useState(false);
   const blacklistSearchRef = useRef<HTMLDivElement>(null);
 
@@ -337,7 +335,7 @@ export default function CreateTeamPage() {
               <span className="font-normal text-text-muted">(opsional)</span>
             </legend>
             <p className="mt-1 text-xs text-text-secondary">
-            Cari berdasarkan nama untuk memilih user yang tidak dapat
+              Cari berdasarkan nama untuk memilih user yang tidak dapat
               mengajukan permintaan bergabung ke tim ini.
             </p>
             <div ref={blacklistSearchRef} className="relative mt-3">

@@ -1,6 +1,6 @@
-# <...>
+# Troov
 
-Platform untuk membantu mahasiswa dan peserta kompetisi menemukan partner lomba, membentuk tim, dan mengelola anggota tim. Repository ini berisi aplikasi frontend; data autentikasi dan profil diambil dari backend Partnerin.
+Platform untuk membantu mahasiswa dan peserta kompetisi menemukan lomba, membentuk tim, dan mengelola anggota tim. Repository ini berisi aplikasi frontend; data autentikasi dan profil diambil dari backend Troov.
 
 ## Fitur
 
@@ -15,11 +15,11 @@ Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, NextAuth 4 (JWT),
 
 ## Memulai
 
-Prasyarat: Node.js yang kompatibel dengan Next.js 16, pnpm, dan backend Partnerin yang sedang berjalan.
+Prasyarat: Node.js yang kompatibel dengan Next.js 16, pnpm, dan backend Troov yang sedang berjalan.
 
 ```bash
 git clone https://github.com/damarsk/ASELAB-frontend-internship-project/tree/main
-cd partnerin
+cd Troov
 pnpm install
 cp .env.example .env.local   # lalu isi nilainya
 pnpm dev

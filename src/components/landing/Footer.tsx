@@ -14,12 +14,11 @@ export default function Footer() {
           <div className="flex items-center gap-2">
             <span className="text-2xl">🤝</span>
             <span className="text-xl font-bold">
-              <span className="text-brand-primary">Partner</span>
-              <span className="text-foreground"> In</span>
+              <span className="text-brand-primary">Troov</span>
             </span>
           </div>
           <p className="text-sm text-text-muted">
-            © 2026 PartnerIn. All Right Reserved
+            © 2026 Troov. All Right Reserved
           </p>
         </div>
 

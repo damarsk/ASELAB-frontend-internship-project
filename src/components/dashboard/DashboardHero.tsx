@@ -28,7 +28,7 @@ export default function DashboardHero({
             </div>
           ) : (
             <>
-              <h1 className="mb-4 text-4xl font-medium">Halo, {username} 👋</h1>
+              <h1 className="text-4xl font-medium">Halo, {username} 👋</h1>
               <p className="text-4xl font-medium">Temukan Tim yang Cocok</p>
               <p className="text-4xl font-medium text-brand-primary">
                 Berdasarkan skill dan minatmu

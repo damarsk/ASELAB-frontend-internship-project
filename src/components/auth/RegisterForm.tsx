@@ -35,7 +35,7 @@ export default function RegisterForm() {
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm font-semibold tracking-wide text-brand-primary">
             <span className="inline-block h-2.5 w-2.5 rounded-full bg-brand-primary" />
-            Partner In
+            Troov
           </div>
 
           <span className="text-xs tracking-wider text-gray-300">SDGs 17</span>

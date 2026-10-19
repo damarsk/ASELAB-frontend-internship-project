@@ -1,22 +1,22 @@
 import LegalPage from "@/src/components/legal/LegalPage";
 
 export const metadata = {
-  title: "Syarat & Ketentuan | Partnerin",
-  description: "Syarat dan ketentuan penggunaan platform Partnerin.",
+  title: "Syarat & Ketentuan | Troov",
+  description: "Syarat dan ketentuan penggunaan platform Troov.",
 };
 
 export default function TermsPage() {
   return (
     <LegalPage
       title="Syarat & Ketentuan"
-      description="Aturan penggunaan Partnerin agar proses menemukan partner lomba tetap aman, nyaman, dan saling menghargai."
+      description="Aturan penggunaan Troov agar proses menemukan partner lomba tetap aman, nyaman, dan saling menghargai."
       updatedAt="10 Oktober 2026"
       sections={[
         {
-          id: "tentang-partnerin",
-          title: "1. Tentang Partnerin",
+          id: "tentang-Troov",
+          title: "1. Tentang Troov",
           paragraphs: [
-            "Partnerin adalah platform yang membantu pengguna menemukan partner dan membentuk tim untuk mengikuti kompetisi. Dengan membuat akun atau menggunakan layanan Partnerin, kamu menyetujui syarat dan ketentuan ini.",
+            "Troov adalah platform yang membantu pengguna menemukan partner dan membentuk tim untuk mengikuti kompetisi. Dengan membuat akun atau menggunakan layanan Troov, kamu menyetujui syarat dan ketentuan ini.",
           ],
         },
         {
@@ -28,14 +28,14 @@ export default function TermsPage() {
           items: [
             "Pengguna harus berusia cukup untuk menggunakan layanan sesuai peraturan yang berlaku.",
             "Jangan menggunakan identitas, email, atau informasi milik orang lain.",
-            "Segera beri tahu Partnerin jika mengetahui adanya penggunaan akun tanpa izin.",
+            "Segera beri tahu Troov jika mengetahui adanya penggunaan akun tanpa izin.",
           ],
         },
         {
           id: "penggunaan-layanan",
           title: "3. Penggunaan Layanan",
           paragraphs: [
-            "Partnerin dapat digunakan untuk membuat profil, mencari tim, melihat kompetisi, mengirim permintaan bergabung, dan mengelola keanggotaan tim. Informasi profil dan skill sebaiknya dibuat relevan agar calon partner dapat mengambil keputusan dengan baik.",
+            "Troov dapat digunakan untuk membuat profil, mencari tim, melihat kompetisi, mengirim permintaan bergabung, dan mengelola keanggotaan tim. Informasi profil dan skill sebaiknya dibuat relevan agar calon partner dapat mengambil keputusan dengan baik.",
           ],
           items: [
             "Dilarang mengunggah konten palsu, menyesatkan, melanggar hukum, atau merugikan pihak lain.",
@@ -47,29 +47,29 @@ export default function TermsPage() {
           id: "tim-dan-permintaan-bergabung",
           title: "4. Tim dan Permintaan Bergabung",
           paragraphs: [
-            "Permintaan bergabung, penerimaan anggota, pembagian peran, komunikasi, dan hasil kompetisi merupakan tanggung jawab pengguna dan anggota tim. Partnerin membantu mempertemukan pengguna, tetapi tidak menjamin kecocokan, penerimaan permintaan, atau hasil kompetisi.",
+            "Permintaan bergabung, penerimaan anggota, pembagian peran, komunikasi, dan hasil kompetisi merupakan tanggung jawab pengguna dan anggota tim. Troov membantu mempertemukan pengguna, tetapi tidak menjamin kecocokan, penerimaan permintaan, atau hasil kompetisi.",
           ],
         },
         {
           id: "konten-dan-moderasi",
           title: "5. Konten dan Moderasi",
           paragraphs: [
-            "Kamu tetap memiliki hak atas konten yang kamu masukkan ke Partnerin. Dengan menggunakannya, kamu memberikan izin kepada Partnerin untuk menampilkan dan memproses konten tersebut sejauh diperlukan untuk menjalankan layanan.",
-            "Partnerin dapat meninjau, membatasi, atau menghapus konten dan akun yang melanggar ketentuan ini atau membahayakan pengguna lain.",
+            "Kamu tetap memiliki hak atas konten yang kamu masukkan ke Troov. Dengan menggunakannya, kamu memberikan izin kepada Troov untuk menampilkan dan memproses konten tersebut sejauh diperlukan untuk menjalankan layanan.",
+            "Troov dapat meninjau, membatasi, atau menghapus konten dan akun yang melanggar ketentuan ini atau membahayakan pengguna lain.",
           ],
         },
         {
           id: "perubahan-dan-penghentian-layanan",
           title: "6. Perubahan dan Penghentian Layanan",
           paragraphs: [
-            "Partnerin dapat memperbarui fitur, menangguhkan akses, atau menghentikan layanan tertentu untuk pemeliharaan, keamanan, atau alasan operasional. Kami akan berusaha memberikan informasi yang wajar untuk perubahan penting.",
+            "Troov dapat memperbarui fitur, menangguhkan akses, atau menghentikan layanan tertentu untuk pemeliharaan, keamanan, atau alasan operasional. Kami akan berusaha memberikan informasi yang wajar untuk perubahan penting.",
           ],
         },
         {
           id: "hubungi-kami",
           title: "7. Hubungi Kami",
           paragraphs: [
-            "Jika kamu memiliki pertanyaan atau ingin melaporkan pelanggaran, gunakan kanal kontak resmi Partnerin yang tersedia di aplikasi.",
+            "Jika kamu memiliki pertanyaan atau ingin melaporkan pelanggaran, gunakan kanal kontak resmi Troov yang tersedia di aplikasi.",
           ],
         },
       ]}

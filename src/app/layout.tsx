@@ -9,7 +9,7 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: "Partnerin",
+  title: "Troov | Aplikasi Pencari Partner Lomba",
   description: "Platform untuk mencari partner lomba",
 };
 

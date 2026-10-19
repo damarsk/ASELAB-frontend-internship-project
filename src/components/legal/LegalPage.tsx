@@ -30,7 +30,7 @@ export default function LegalPage({
           id="overview"
           className="scroll-mt-24 border-b border-border bg-brand-primary-light"
         >
-          <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
+          <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20">
             <h1 className="mt-3 text-4xl font-bold tracking-tight text-text-primary sm:text-5xl">
               {title}
             </h1>
@@ -43,7 +43,7 @@ export default function LegalPage({
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-5 py-12 sm:px-8 sm:py-16 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-16">
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 py-12 sm:px-8 sm:py-16 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-16">
           <aside className="lg:sticky lg:top-24 lg:h-fit">
             <p className="mb-4 text-sm font-semibold text-text-primary">
               Daftar Isi

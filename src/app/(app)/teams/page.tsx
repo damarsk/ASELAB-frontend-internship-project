@@ -95,7 +95,7 @@ export default function TeamsPage() {
 
   return (
     <>
-      <main className="mx-auto max-w-6xl px-6 py-10 sm:px-8 lg:py-14">
+      <main className="mx-auto max-w-7xl px-6 py-10 sm:px-8 lg:py-14">
         <TeamsIntro totalTeams={teams.length} />
         <TeamFilters
           search={search}

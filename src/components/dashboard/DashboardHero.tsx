@@ -12,7 +12,7 @@ export default function DashboardHero({
   return (
     <section>
       <div className="flex h-64 items-center bg-brand-primary-light py-4">
-        <div className="mx-auto w-full max-w-6xl px-8">
+        <div className="mx-auto w-full max-w-7xl px-8">
           {loading ? (
             <div className="space-y-4">
               <div className="h-10 w-72 animate-pulse rounded-md bg-white/70" />
@@ -28,7 +28,9 @@ export default function DashboardHero({
             </div>
           ) : (
             <>
-              <h1 className="text-4xl font-medium">Halo, {username} 👋</h1>
+              <h1 className="text-4xl font-medium">
+                Halo, <span className="font-semibold">{username}</span> 👋
+              </h1>
               <p className="text-4xl font-medium">Temukan Tim yang Cocok</p>
               <p className="text-4xl font-medium text-brand-primary">
                 Berdasarkan skill dan minatmu

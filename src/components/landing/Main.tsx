@@ -54,7 +54,7 @@ export default function Main() {
   return (
     <main className="min-h-[calc(100vh-5rem)]">
       <div className="bg-brand-primary-light">
-        <section className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl grid-cols-1 items-center gap-16 px-8 py-16 lg:grid-cols-2">
+        <section className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl grid-cols-1 items-center gap-16 px-8 py-16 lg:grid-cols-2">
           <div className="max-w-xl">
             <div className="mb-12 flex items-center gap-2 text-lg font-semibold text-brand-primary">
               <span className="text-xl">✦</span>
@@ -159,7 +159,7 @@ export default function Main() {
       </div>
 
       <section className="bg-background py-20">
-        <div className="mx-auto max-w-6xl px-8">
+        <div className="mx-auto max-w-7xl px-8">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-4xl font-extrabold leading-tight tracking-tight text-text-primary sm:text-5xl">
               Temukan Tim yang Tepat,{" "}
@@ -213,7 +213,7 @@ export default function Main() {
       </section>
 
       <section className="bg-background py-20" id="cara-kerja">
-        <div className="mx-auto max-w-6xl px-8">
+        <div className="mx-auto max-w-7xl px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-4xl font-extrabold leading-tight tracking-tight text-text-primary sm:text-5xl">
               Cara Kerja
@@ -274,7 +274,7 @@ export default function Main() {
       </section>
 
       <section className="bg-background py-20">
-        <div className="mx-auto max-w-6xl px-8">
+        <div className="mx-auto max-w-7xl px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold leading-tight tracking-tight text-text-secondary">
               Cari Tim Yang Sesuai Skillmu

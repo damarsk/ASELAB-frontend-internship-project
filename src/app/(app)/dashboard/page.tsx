@@ -126,7 +126,7 @@ export default function DashboardPage() {
         error={profileError}
         username={username}
       />
-      <main className="mx-auto max-w-6xl px-8 py-10 lg:py-16">
+      <main className="mx-auto max-w-7xl px-8 py-10 lg:py-16">
         {contentLoading ? (
           <>
             <section

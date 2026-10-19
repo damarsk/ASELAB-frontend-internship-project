@@ -49,7 +49,7 @@ export default function TeamDetailPage({
 
   return (
     <>
-      <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
+      <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-12">
         <Link
           href="/teams"
           className="mb-5 inline-flex items-center gap-2 text-sm font-medium text-text-secondary transition-colors hover:text-brand-primary"
@@ -82,7 +82,8 @@ export default function TeamDetailPage({
                 members={team.members.map((member) => ({
                   name: member.user.nama,
                   department: member.user.profile?.jurusan ?? undefined,
-                  role: member.role === "LEADER" ? "Team Leader" : "Anggota Tim",
+                  role:
+                    member.role === "LEADER" ? "Team Leader" : "Anggota Tim",
                   initials: member.user.nama
                     .split(/\s+/)
                     .map((part) => part[0])

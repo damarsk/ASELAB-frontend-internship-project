@@ -69,7 +69,7 @@ export default function MyTeamDetailPage({
 
   return (
     <>
-      <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
+      <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-12">
         <TeamHero
           name={team.name}
           event={team.event}

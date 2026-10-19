@@ -57,7 +57,11 @@ function getGroup(createdAt: string): Notification["group"] {
   const date = new Date(createdAt);
   const today = new Date();
   const dayDifference = Math.floor(
-    (new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime() -
+    (new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    ).getTime() -
       new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()) /
       86400000,
   );
@@ -146,7 +150,10 @@ export default function NotificationsPage() {
         }
         setNotifications((result.data ?? []).map(mapNotification));
       } catch (loadError) {
-        if (loadError instanceof DOMException && loadError.name === "AbortError") {
+        if (
+          loadError instanceof DOMException &&
+          loadError.name === "AbortError"
+        ) {
           return;
         }
         setError(
@@ -222,7 +229,7 @@ export default function NotificationsPage() {
 
   return (
     <>
-      <main className="mx-auto min-h-[calc(100vh-5rem)] max-w-6xl px-6 py-8 sm:px-8 sm:py-10">
+      <main className="mx-auto min-h-[calc(100vh-5rem)] max-w-7xl px-6 py-8 sm:px-8 sm:py-10">
         <div className="flex flex-col gap-6 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
@@ -271,7 +278,7 @@ export default function NotificationsPage() {
                 : notifications.filter(
                     (notification) =>
                       notification.category === category &&
-                        !notification.isRead,
+                      !notification.isRead,
                   ).length;
 
             return (
@@ -312,123 +319,125 @@ export default function NotificationsPage() {
             {error}
           </p>
         ) : (
-        <div className="mt-7 space-y-3">
-          {["Hari ini", "Kemarin", "Sebelumnya"].map((group) => {
-            const groupNotifications = visibleNotifications.filter(
-              (notification) => notification.group === group,
-            );
+          <div className="mt-7 space-y-3">
+            {["Hari ini", "Kemarin", "Sebelumnya"].map((group) => {
+              const groupNotifications = visibleNotifications.filter(
+                (notification) => notification.group === group,
+              );
 
-            if (groupNotifications.length === 0) return null;
+              if (groupNotifications.length === 0) return null;
 
-            return (
-              <section key={group} aria-labelledby={`notifications-${group}`}>
-                <h2
-                  id={`notifications-${group}`}
-                  className="mb-3 px-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted"
-                >
-                  {group}
-                </h2>
-                <div className="space-y-3">
-                  {groupNotifications.map((notification) => {
-                    const isRead = notification.isRead;
+              return (
+                <section key={group} aria-labelledby={`notifications-${group}`}>
+                  <h2
+                    id={`notifications-${group}`}
+                    className="mb-3 px-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted"
+                  >
+                    {group}
+                  </h2>
+                  <div className="space-y-3">
+                    {groupNotifications.map((notification) => {
+                      const isRead = notification.isRead;
 
-                    return (
-                      <article
-                        key={notification.id}
-                        onClick={() =>
-                          void markAsRead(notification.id).catch((markError) => {
-                            setError(
-                              markError instanceof Error
-                                ? markError.message
-                                : "Gagal menandai notifikasi.",
-                            );
-                          })
-                        }
-                        className={`group relative flex cursor-pointer gap-4 rounded-xl border bg-white p-4 transition-shadow hover:shadow-md sm:p-5 ${isRead ? "border-border" : "border-brand-primary-muted"}`}
-                      >
-                        {!isRead && (
-                          <span
-                            className="absolute left-3 top-7 size-2 rounded-full bg-brand-primary"
-                            aria-label="Belum dibaca"
-                          />
-                        )}
-                        <div
-                          className={`ml-3 flex size-10 shrink-0 items-center justify-center rounded-full ${iconStyles[notification.icon]}`}
+                      return (
+                        <article
+                          key={notification.id}
+                          onClick={() =>
+                            void markAsRead(notification.id).catch(
+                              (markError) => {
+                                setError(
+                                  markError instanceof Error
+                                    ? markError.message
+                                    : "Gagal menandai notifikasi.",
+                                );
+                              },
+                            )
+                          }
+                          className={`group relative flex cursor-pointer gap-4 rounded-xl border bg-white p-4 transition-shadow hover:shadow-md sm:p-5 ${isRead ? "border-border" : "border-brand-primary-muted"}`}
                         >
-                          <NotificationIcon type={notification.icon} />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-                            <h3 className="text-sm font-bold text-text-primary">
-                              {notification.title}
-                            </h3>
-                            <time className="shrink-0 text-[11px] text-text-muted">
-                              {notification.time}
-                            </time>
+                          {!isRead && (
+                            <span
+                              className="absolute left-3 top-7 size-2 rounded-full bg-brand-primary"
+                              aria-label="Belum dibaca"
+                            />
+                          )}
+                          <div
+                            className={`ml-3 flex size-10 shrink-0 items-center justify-center rounded-full ${iconStyles[notification.icon]}`}
+                          >
+                            <NotificationIcon type={notification.icon} />
                           </div>
-                          <p className="mt-1 max-w-3xl text-xs leading-5 text-text-secondary sm:text-sm">
-                            {notification.description}
-                          </p>
-                          {notification.id === 1 && (
-                            <div className="mt-3 flex flex-wrap gap-2">
-                              <button
-                                type="button"
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  markAsRead(notification.id);
-                                }}
-                                className="rounded-md bg-brand-primary px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-brand-primary-hover"
-                              >
-                                Terima
-                              </button>
-                              <button
-                                type="button"
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  markAsRead(notification.id);
-                                }}
-                                className="rounded-md border border-border px-3 py-1.5 text-[11px] font-semibold text-text-secondary hover:border-brand-primary hover:text-brand-primary"
-                              >
-                                Tolak
-                              </button>
-                              <button
-                                type="button"
-                                className="px-1 text-[11px] font-medium text-text-muted hover:text-brand-primary"
-                              >
-                                Lihat Detail Tim
-                              </button>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                              <h3 className="text-sm font-bold text-text-primary">
+                                {notification.title}
+                              </h3>
+                              <time className="shrink-0 text-[11px] text-text-muted">
+                                {notification.time}
+                              </time>
                             </div>
-                          )}
-                          {notification.id === 2 && (
-                            <button
-                              type="button"
-                              className="mt-3 text-[11px] font-semibold text-brand-primary hover:underline"
-                            >
-                              Buka Ruang Tim →
-                            </button>
-                          )}
-                          {notification.id === 4 && (
-                            <button
-                              type="button"
-                              className="mt-3 text-[11px] font-semibold text-text-primary hover:text-brand-primary"
-                            >
-                              Lihat Timeline Kompetisi →
-                            </button>
-                          )}
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-              </section>
-            );
-          })}
-          {visibleNotifications.length === 0 && (
-            <div className="rounded-xl border border-dashed border-border-strong bg-white px-6 py-14 text-center text-sm text-text-secondary">
-              Belum ada notifikasi di kategori ini.
-            </div>
-          )}
-        </div>
+                            <p className="mt-1 max-w-3xl text-xs leading-5 text-text-secondary sm:text-sm">
+                              {notification.description}
+                            </p>
+                            {notification.id === 1 && (
+                              <div className="mt-3 flex flex-wrap gap-2">
+                                <button
+                                  type="button"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    markAsRead(notification.id);
+                                  }}
+                                  className="rounded-md bg-brand-primary px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-brand-primary-hover"
+                                >
+                                  Terima
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    markAsRead(notification.id);
+                                  }}
+                                  className="rounded-md border border-border px-3 py-1.5 text-[11px] font-semibold text-text-secondary hover:border-brand-primary hover:text-brand-primary"
+                                >
+                                  Tolak
+                                </button>
+                                <button
+                                  type="button"
+                                  className="px-1 text-[11px] font-medium text-text-muted hover:text-brand-primary"
+                                >
+                                  Lihat Detail Tim
+                                </button>
+                              </div>
+                            )}
+                            {notification.id === 2 && (
+                              <button
+                                type="button"
+                                className="mt-3 text-[11px] font-semibold text-brand-primary hover:underline"
+                              >
+                                Buka Ruang Tim →
+                              </button>
+                            )}
+                            {notification.id === 4 && (
+                              <button
+                                type="button"
+                                className="mt-3 text-[11px] font-semibold text-text-primary hover:text-brand-primary"
+                              >
+                                Lihat Timeline Kompetisi →
+                              </button>
+                            )}
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </section>
+              );
+            })}
+            {visibleNotifications.length === 0 && (
+              <div className="rounded-xl border border-dashed border-border-strong bg-white px-6 py-14 text-center text-sm text-text-secondary">
+                Belum ada notifikasi di kategori ini.
+              </div>
+            )}
+          </div>
         )}
       </main>
     </>

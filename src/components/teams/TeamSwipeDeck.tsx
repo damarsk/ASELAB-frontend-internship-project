@@ -24,6 +24,7 @@ function SwipeCard({
 }) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-180, 180], [-14, 14]);
+  const labelRotate = useTransform(x, [-180, 180], [14, -14]);
   const joinOpacity = useTransform(x, [-120, -25], [1, 0]);
   const skipOpacity = useTransform(x, [25, 120], [0, 1]);
 
@@ -58,13 +59,13 @@ function SwipeCard({
       />
       <motion.span
         className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center text-6xl font-black uppercase text-brand-primary"
-        style={{ opacity: joinOpacity }}
+        style={{ opacity: joinOpacity, rotate: labelRotate }}
       >
         Join
       </motion.span>
       <motion.span
         className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center text-6xl font-black uppercase text-danger"
-        style={{ opacity: skipOpacity }}
+        style={{ opacity: skipOpacity, rotate: labelRotate }}
       >
         Skip
       </motion.span>

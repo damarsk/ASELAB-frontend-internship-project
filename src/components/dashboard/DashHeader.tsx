@@ -263,7 +263,7 @@ export default function DashHeader() {
 
   return (
     <nav className="h-20 bg-white shadow">
-      <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-between px-8">
+      <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between px-8">
         <Link href="/dashboard" className="shrink-0">
           <h1 className="flex items-center gap-2 text-2xl font-bold text-brand-primary">
             <Image src="/Frame.svg" alt="" width={36} height={36} />

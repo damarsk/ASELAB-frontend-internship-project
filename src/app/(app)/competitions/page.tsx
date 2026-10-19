@@ -173,7 +173,7 @@ export default function CompetitionsPage() {
     <>
       <main>
         <section className="flex h-64 items-center bg-brand-primary-light py-4">
-          <div className="mx-auto w-full max-w-6xl px-8">
+          <div className="mx-auto w-full max-w-7xl px-8">
             <h1 className="text-4xl font-medium text-text-primary">
               Find Your Perfect Competition
             </h1>
@@ -186,7 +186,7 @@ export default function CompetitionsPage() {
           </div>
         </section>
 
-        <div className="mx-auto max-w-6xl px-8 py-10 lg:py-16">
+        <div className="mx-auto max-w-7xl px-8 py-10 lg:py-16">
           <form
             className="flex flex-col gap-3 md:flex-row md:items-center"
             onSubmit={(event) => event.preventDefault()}

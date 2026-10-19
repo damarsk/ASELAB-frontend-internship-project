@@ -175,9 +175,7 @@ export default function ProfilePage() {
         setAbout(profile?.tentang ?? "");
         setExperience(profile?.pengalamanLomba ?? "");
         setHasCv(Boolean(profile?.cvPath));
-        setPhoto(
-          resolveProfileImageUrl(profile?.fotoProfilUrl),
-        );
+        setPhoto(resolveProfileImageUrl(profile?.fotoProfilUrl));
       } catch (error) {
         setProfileError(
           error instanceof Error ? error.message : "Gagal memuat profil.",
@@ -219,9 +217,9 @@ export default function ProfilePage() {
         credentials: "include",
         body: formData,
       });
-      const result = (await response.json().catch(() => null)) as
-        | ProfileImageResponse
-        | null;
+      const result = (await response
+        .json()
+        .catch(() => null)) as ProfileImageResponse | null;
 
       if (!response.ok) {
         throw new Error(result?.message ?? "Gambar profil gagal diperbarui.");
@@ -266,9 +264,9 @@ export default function ProfilePage() {
         credentials: "include",
         body: formData,
       });
-      const result = (await response.json().catch(() => null)) as
-        | CvResponse
-        | null;
+      const result = (await response
+        .json()
+        .catch(() => null)) as CvResponse | null;
 
       if (!response.ok) {
         throw new Error(
@@ -296,10 +294,12 @@ export default function ProfilePage() {
         credentials: "include",
       });
       if (!response.ok) {
-        const result = (await response.json().catch(() => null)) as
-          | CvResponse
-          | null;
-        throw new Error(result?.message ?? result?.error ?? "CV gagal diunduh.");
+        const result = (await response
+          .json()
+          .catch(() => null)) as CvResponse | null;
+        throw new Error(
+          result?.message ?? result?.error ?? "CV gagal diunduh.",
+        );
       }
 
       const blob = await response.blob();
@@ -325,9 +325,9 @@ export default function ProfilePage() {
         method: "DELETE",
         credentials: "include",
       });
-      const result = (await response.json().catch(() => null)) as
-        | CvResponse
-        | null;
+      const result = (await response
+        .json()
+        .catch(() => null)) as CvResponse | null;
 
       if (!response.ok) {
         throw new Error(
@@ -458,7 +458,7 @@ export default function ProfilePage() {
   return (
     <>
       <main className="min-h-screen px-5 py-8 sm:px-8 lg:py-12">
-        <div className="mx-auto max-w-6xl px-8">
+        <div className="mx-auto max-w-7xl px-8">
           <div className="mb-8 max-w-2xl">
             <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-green-600">
               Profil kamu
@@ -681,7 +681,7 @@ export default function ProfilePage() {
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-medium text-slate-800">
                           {hasCv
-                            ? cv?.name ?? "CV sudah terupload"
+                            ? (cv?.name ?? "CV sudah terupload")
                             : "Upload CV kamu"}
                         </span>
                         <span className="mt-1 block text-xs text-slate-400">

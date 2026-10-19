@@ -66,7 +66,7 @@ export default function ProfileActions({
   ];
 
   return (
-    <section className="mx-auto grid max-w-6xl gap-8 pt-10 lg:grid-cols-2 lg:pt-14">
+    <section className="mx-auto grid max-w-7xl gap-8 pt-10 lg:grid-cols-2 lg:pt-14">
       <article className="rounded-xl border border-brand-primary-muted bg-brand-primary-light/50 px-8 py-7 text-center sm:px-10">
         <div className="flex items-center gap-3 text-left">
           <div className="flex size-9 items-center justify-center bg-white">

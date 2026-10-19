@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useLoginForm } from "@/src/features/auth/hooks/useLoginForm";
 import { Alert } from "@/src/components/ui/Alert";
+import AuthImageGallery from "@/src/components/auth/AuthImageGallery";
 
 export default function LoginForm({
   registrationSuccess,
@@ -33,13 +33,7 @@ export default function LoginForm({
   return (
     <div className="grid h-screen w-screen grid-cols-1 overflow-hidden bg-white lg:grid-cols-2">
       <div className="relative hidden flex-col justify-between overflow-hidden rounded-tr-2xl rounded-br-2xl p-12 text-white lg:flex">
-        <Image
-          src="/images/hero-hackathon.jpg"
-          alt="Hackathon Team"
-          fill
-          priority
-          className="object-cover"
-        />
+        <AuthImageGallery />
         <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-black/60" />
 
         <div className="relative z-10 flex items-center justify-between">

@@ -7,6 +7,10 @@ import { Bell, LogOut, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import type {
+  BackendNotification,
+  NotificationsResponse,
+} from "@/src/types/notification";
 
 type ProfileResponse = {
   data?: {
@@ -15,6 +19,13 @@ type ProfileResponse = {
     } | null;
   } | null;
 };
+
+function formatNotificationTime(createdAt: string) {
+  return new Intl.RelativeTimeFormat("id", { numeric: "auto" }).format(
+    Math.round((new Date(createdAt).getTime() - Date.now()) / 60000),
+    "minute",
+  );
+}
 
 const navItems = [
   {
@@ -49,6 +60,9 @@ export default function DashHeader() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [profileImage, setProfileImage] = useState("/unknown.jpg");
+  const [notifications, setNotifications] = useState<BackendNotification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
 
   const notificationRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -111,6 +125,58 @@ export default function DashHeader() {
   }, [isLoggedIn]);
 
   useEffect(() => {
+    if (!isLoggedIn) {
+      return;
+    }
+
+    const controller = new AbortController();
+    const loadNotifications = async () => {
+      setIsLoadingNotifications(true);
+      try {
+        const response = await fetch("/api/notifications?page=1&limit=5", {
+          credentials: "include",
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        const result = (await response.json()) as NotificationsResponse;
+
+        if (!response.ok) {
+          throw new Error(
+            result.error ?? result.message ?? "Gagal memuat notifikasi.",
+          );
+        }
+
+        setNotifications(result.data ?? []);
+        setUnreadCount(result.unreadCount ?? 0);
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          console.error("Gagal memuat notifikasi navbar:", error);
+        }
+      } finally {
+        if (!controller.signal.aborted) setIsLoadingNotifications(false);
+      }
+    };
+
+    const handleNotificationsUpdated = () => {
+      void loadNotifications();
+    };
+
+    window.addEventListener(
+      "notifications-updated",
+      handleNotificationsUpdated,
+    );
+    void loadNotifications();
+
+    return () => {
+      controller.abort();
+      window.removeEventListener(
+        "notifications-updated",
+        handleNotificationsUpdated,
+      );
+    };
+  }, [isLoggedIn]);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
 
@@ -150,6 +216,44 @@ export default function DashHeader() {
   const handleProfileToggle = () => {
     setIsProfileOpen((prev) => !prev);
     setIsNotificationOpen(false);
+  };
+
+  const markAllNotificationsAsRead = async () => {
+    if (unreadCount === 0) return;
+
+    const response = await fetch("/api/notifications/read-all", {
+      method: "PATCH",
+      credentials: "include",
+    });
+    if (!response.ok) {
+      throw new Error("Gagal menandai semua notifikasi.");
+    }
+
+    setNotifications((current) =>
+      current.map((notification) => ({ ...notification, isRead: true })),
+    );
+    setUnreadCount(0);
+    window.dispatchEvent(new Event("notifications-updated"));
+  };
+
+  const markNotificationAsRead = async (notification: BackendNotification) => {
+    if (notification.isRead) return;
+
+    const response = await fetch(`/api/notifications/${notification.id}/read`, {
+      method: "PATCH",
+      credentials: "include",
+    });
+    if (!response.ok) {
+      throw new Error("Gagal menandai notifikasi.");
+    }
+
+    setNotifications((current) =>
+      current.map((item) =>
+        item.id === notification.id ? { ...item, isRead: true } : item,
+      ),
+    );
+    setUnreadCount((current) => Math.max(0, current - 1));
+    window.dispatchEvent(new Event("notifications-updated"));
   };
 
   const handleLogout = async () => {
@@ -201,9 +305,11 @@ export default function DashHeader() {
             >
               <Bell size={21} strokeWidth={2} />
 
-              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold leading-none text-white">
-                3
-              </span>
+              {unreadCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold leading-none text-white">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
             </button>
 
             {isNotificationOpen && (
@@ -215,59 +321,68 @@ export default function DashHeader() {
 
                   <button
                     type="button"
-                    className="text-xs font-medium text-brand-primary hover:underline"
+                    onClick={() =>
+                      void markAllNotificationsAsRead().catch((error) => {
+                        console.error(
+                          "Gagal menandai semua notifikasi:",
+                          error,
+                        );
+                      })
+                    }
+                    disabled={unreadCount === 0}
+                    className="text-xs font-medium text-brand-primary hover:underline disabled:cursor-default disabled:text-text-muted"
                   >
                     Tandai semua
                   </button>
                 </div>
 
                 <div className="max-h-96 overflow-y-auto">
-                  <div className="flex cursor-pointer gap-3 border-b border-gray-100 px-4 py-3 transition-colors hover:bg-gray-50">
-                    <div className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-brand-primary" />
-
-                    <div>
-                      <p className="text-sm font-medium text-text-primary">
-                        Permintaan bergabung dengan tim
-                      </p>
-                      <p className="mt-1 text-xs text-text-secondary">
-                        Andi mengirim permintaan untuk bergabung ke tim kamu.
-                      </p>
-                      <p className="mt-2 text-[11px] text-gray-400">
-                        5 menit yang lalu
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex cursor-pointer gap-3 border-b border-gray-100 px-4 py-3 transition-colors hover:bg-gray-50">
-                    <div className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-brand-primary" />
-
-                    <div>
-                      <p className="text-sm font-medium text-text-primary">
-                        Kompetisi baru tersedia
-                      </p>
-                      <p className="mt-1 text-xs text-text-secondary">
-                        Ada kompetisi baru yang mungkin sesuai dengan profil
-                        kamu.
-                      </p>
-                      <p className="mt-2 text-[11px] text-gray-400">
-                        1 jam yang lalu
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex cursor-pointer gap-3 px-4 py-3 transition-colors hover:bg-gray-50">
-                    <div className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-brand-primary" />
-
-                    <div>
-                      <p className="text-sm font-medium text-text-primary">
-                        Profil berhasil diperbarui
-                      </p>
-                      <p className="mt-1 text-xs text-text-secondary">
-                        Informasi profil kamu berhasil disimpan.
-                      </p>
-                      <p className="mt-2 text-[11px] text-gray-400">Kemarin</p>
-                    </div>
-                  </div>
+                  {isLoadingNotifications ? (
+                    <p className="px-4 py-8 text-center text-xs text-text-secondary">
+                      Memuat notifikasi...
+                    </p>
+                  ) : notifications.length === 0 ? (
+                    <p className="px-4 py-8 text-center text-xs text-text-secondary">
+                      Belum ada notifikasi.
+                    </p>
+                  ) : (
+                    notifications.map((notification) => (
+                      <button
+                        key={notification.id}
+                        type="button"
+                        onClick={() =>
+                          void markNotificationAsRead(notification).catch(
+                            (error) => {
+                              console.error(
+                                "Gagal menandai notifikasi:",
+                                error,
+                              );
+                            },
+                          )
+                        }
+                        className="flex w-full gap-3 border-b border-gray-100 px-4 py-3 text-left transition-colors hover:bg-gray-50"
+                      >
+                        <div
+                          className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${
+                            notification.isRead
+                              ? "bg-transparent"
+                              : "bg-brand-primary"
+                          }`}
+                        />
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium text-text-primary">
+                            {notification.title}
+                          </p>
+                          <p className="mt-1 line-clamp-2 text-xs text-text-secondary">
+                            {notification.message}
+                          </p>
+                          <p className="mt-2 text-[11px] text-gray-400">
+                            {formatNotificationTime(notification.createdAt)}
+                          </p>
+                        </div>
+                      </button>
+                    ))
+                  )}
                 </div>
 
                 <Link

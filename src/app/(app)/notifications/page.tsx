@@ -8,7 +8,11 @@ import {
   Trophy,
   UsersRound,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type {
+  BackendNotification,
+  NotificationsResponse,
+} from "@/src/types/notification";
 
 type NotificationCategory =
   | "Permintaan Tim"
@@ -22,65 +26,74 @@ type Notification = {
   title: string;
   description: string;
   time: string;
-  group: "Hari ini" | "Kemarin";
-  unread?: boolean;
+  group: "Hari ini" | "Kemarin" | "Sebelumnya";
+  isRead: boolean;
   icon: "team" | "party" | "message" | "competition" | "search";
 };
 
-const notifications: Notification[] = [
-  {
-    id: 1,
-    category: "Undangan",
-    title: "Undangan Bergabung Tim",
-    description:
-      "Tim Hackathon AI Innovate mengundang Anda untuk bergabung sebagai UI/UX Designer pada perlombaan Gemastik XVI.",
-    time: "10 menit yang lalu",
-    group: "Hari ini",
-    unread: true,
-    icon: "team",
-  },
-  {
-    id: 2,
-    category: "Permintaan Tim",
-    title: "Permintaan Disetujui",
-    description:
-      "Permintaan Anda untuk bergabung dengan tim ByteCraft Web Dev telah diterima oleh Ketua Tim. Anda sekarang dapat mengakses ruang diskusi tim.",
-    time: "1 jam yang lalu",
-    group: "Hari ini",
-    unread: true,
-    icon: "party",
-  },
-  {
-    id: 3,
-    category: "Sistem",
-    title: "Pesan Baru dari Diskusi Tim",
-    description:
-      'Budi Santoso: "Halo teman-teman, draft submission proposal sudah diunggah di repository, silakan dicek ya!"',
-    time: "3 jam yang lalu",
-    group: "Hari ini",
-    icon: "message",
-  },
-  {
-    id: 4,
-    category: "Kompetisi",
-    title: "Pengingat Kompetisi",
-    description:
-      "Pendaftaran untuk gelombang ke-2 National Tech Fest 2025 akan ditutup dalam kurun waktu 3 hari lagi. Pastikan berkas tim Anda sudah lengkap.",
-    time: "Kemarin, 14:20",
-    group: "Kemarin",
-    icon: "competition",
-  },
-  {
-    id: 5,
-    category: "Sistem",
-    title: "Kunjungan Profil",
-    description:
-      "Profil keahlian Anda telah dilihat oleh 3 pencari tim yang membutuhkan posisi Frontend Developer.",
-    time: "Kemarin, 09:15",
-    group: "Kemarin",
-    icon: "search",
-  },
-];
+function getCategory(notification: BackendNotification): NotificationCategory {
+  const text = `${notification.title} ${notification.message}`.toLowerCase();
+  if (text.includes("kompetisi") || text.includes("lomba")) {
+    return "Kompetisi";
+  }
+  if (
+    text.includes("undang") ||
+    text.includes("diterima") ||
+    text.includes("ditolak") ||
+    text.includes("bergabung")
+  ) {
+    return "Permintaan Tim";
+  }
+  return "Sistem";
+}
+
+function getIcon(category: NotificationCategory): Notification["icon"] {
+  if (category === "Kompetisi") return "competition";
+  if (category === "Permintaan Tim") return "team";
+  return "message";
+}
+
+function getGroup(createdAt: string): Notification["group"] {
+  const date = new Date(createdAt);
+  const today = new Date();
+  const dayDifference = Math.floor(
+    (new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime() -
+      new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()) /
+      86400000,
+  );
+  if (dayDifference === 0) return "Hari ini";
+  if (dayDifference === 1) return "Kemarin";
+  return "Sebelumnya";
+}
+
+function formatNotificationTime(createdAt: string) {
+  const date = new Date(createdAt);
+  const diffMinutes = Math.round((date.getTime() - Date.now()) / 60000);
+  if (Math.abs(diffMinutes) < 60) {
+    return new Intl.RelativeTimeFormat("id", { numeric: "auto" }).format(
+      diffMinutes,
+      "minute",
+    );
+  }
+  return new Intl.DateTimeFormat("id-ID", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
+function mapNotification(notification: BackendNotification): Notification {
+  const category = getCategory(notification);
+  return {
+    id: notification.id,
+    category,
+    title: notification.title,
+    description: notification.message,
+    time: formatNotificationTime(notification.createdAt),
+    group: getGroup(notification.createdAt),
+    isRead: notification.isRead,
+    icon: getIcon(category),
+  };
+}
 
 const iconStyles = {
   team: "bg-emerald-50 text-brand-primary",
@@ -108,15 +121,63 @@ export default function NotificationsPage() {
   const [activeCategory, setActiveCategory] = useState<
     "Semua" | NotificationCategory
   >("Semua");
-  const [readIds, setReadIds] = useState<number[]>(
-    notifications
-      .filter((notification) => !notification.unread)
-      .map((notification) => notification.id),
-  );
-
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const unreadCount = notifications.filter(
-    (notification) => !readIds.includes(notification.id),
+    (notification) => !notification.isRead,
   ).length;
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadNotifications = async () => {
+      try {
+        const response = await fetch("/api/notifications?page=1&limit=100", {
+          credentials: "include",
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        const result = (await response.json()) as NotificationsResponse;
+        if (!response.ok) {
+          throw new Error(
+            result.error ?? result.message ?? "Gagal memuat notifikasi.",
+          );
+        }
+        setNotifications((result.data ?? []).map(mapNotification));
+      } catch (loadError) {
+        if (loadError instanceof DOMException && loadError.name === "AbortError") {
+          return;
+        }
+        setError(
+          loadError instanceof Error
+            ? loadError.message
+            : "Gagal memuat notifikasi.",
+        );
+      } finally {
+        if (!controller.signal.aborted) setIsLoading(false);
+      }
+    };
+
+    const handleNotificationsUpdated = () => {
+      void loadNotifications();
+    };
+
+    window.addEventListener(
+      "notifications-updated",
+      handleNotificationsUpdated,
+    );
+    void loadNotifications();
+
+    return () => {
+      controller.abort();
+      window.removeEventListener(
+        "notifications-updated",
+        handleNotificationsUpdated,
+      );
+    };
+  }, []);
+
   const visibleNotifications = useMemo(
     () =>
       notifications.filter(
@@ -124,17 +185,39 @@ export default function NotificationsPage() {
           activeCategory === "Semua" ||
           notification.category === activeCategory,
       ),
-    [activeCategory],
+    [activeCategory, notifications],
   );
 
-  const markAllAsRead = () => {
-    setReadIds(notifications.map((notification) => notification.id));
+  const markAllAsRead = async () => {
+    if (unreadCount === 0) return;
+    const response = await fetch("/api/notifications/read-all", {
+      method: "PATCH",
+      credentials: "include",
+    });
+    if (!response.ok) throw new Error("Gagal menandai semua notifikasi.");
+
+    setNotifications((current) =>
+      current.map((notification) => ({ ...notification, isRead: true })),
+    );
+    window.dispatchEvent(new Event("notifications-updated"));
   };
 
-  const markAsRead = (id: number) => {
-    setReadIds((current) =>
-      current.includes(id) ? current : [...current, id],
+  const markAsRead = async (id: number) => {
+    const notification = notifications.find((item) => item.id === id);
+    if (!notification || notification.isRead) return;
+
+    const response = await fetch(`/api/notifications/${id}/read`, {
+      method: "PATCH",
+      credentials: "include",
+    });
+    if (!response.ok) throw new Error("Gagal menandai notifikasi.");
+
+    setNotifications((current) =>
+      current.map((item) =>
+        item.id === id ? { ...item, isRead: true } : item,
+      ),
     );
+    window.dispatchEvent(new Event("notifications-updated"));
   };
 
   return (
@@ -151,7 +234,15 @@ export default function NotificationsPage() {
           </div>
           <button
             type="button"
-            onClick={markAllAsRead}
+            onClick={() =>
+              void markAllAsRead().catch((markError) => {
+                setError(
+                  markError instanceof Error
+                    ? markError.message
+                    : "Gagal menandai semua notifikasi.",
+                );
+              })
+            }
             disabled={unreadCount === 0}
             className="inline-flex items-center gap-2 self-start text-sm font-medium text-brand-primary transition-colors hover:text-brand-primary-hover disabled:cursor-default disabled:text-text-muted sm:self-auto"
           >
@@ -180,7 +271,7 @@ export default function NotificationsPage() {
                 : notifications.filter(
                     (notification) =>
                       notification.category === category &&
-                      !readIds.includes(notification.id),
+                        !notification.isRead,
                   ).length;
 
             return (
@@ -209,8 +300,20 @@ export default function NotificationsPage() {
           })}
         </div>
 
+        {isLoading ? (
+          <p className="mt-7 rounded-xl border border-border bg-white px-6 py-14 text-center text-sm text-text-secondary">
+            Memuat notifikasi...
+          </p>
+        ) : error ? (
+          <p
+            className="mt-7 rounded-xl border border-red-200 bg-red-50 px-6 py-14 text-center text-sm text-red-700"
+            role="alert"
+          >
+            {error}
+          </p>
+        ) : (
         <div className="mt-7 space-y-3">
-          {["Hari ini", "Kemarin"].map((group) => {
+          {["Hari ini", "Kemarin", "Sebelumnya"].map((group) => {
             const groupNotifications = visibleNotifications.filter(
               (notification) => notification.group === group,
             );
@@ -227,12 +330,20 @@ export default function NotificationsPage() {
                 </h2>
                 <div className="space-y-3">
                   {groupNotifications.map((notification) => {
-                    const isRead = readIds.includes(notification.id);
+                    const isRead = notification.isRead;
 
                     return (
                       <article
                         key={notification.id}
-                        onClick={() => markAsRead(notification.id)}
+                        onClick={() =>
+                          void markAsRead(notification.id).catch((markError) => {
+                            setError(
+                              markError instanceof Error
+                                ? markError.message
+                                : "Gagal menandai notifikasi.",
+                            );
+                          })
+                        }
                         className={`group relative flex cursor-pointer gap-4 rounded-xl border bg-white p-4 transition-shadow hover:shadow-md sm:p-5 ${isRead ? "border-border" : "border-brand-primary-muted"}`}
                       >
                         {!isRead && (
@@ -318,6 +429,7 @@ export default function NotificationsPage() {
             </div>
           )}
         </div>
+        )}
       </main>
     </>
   );

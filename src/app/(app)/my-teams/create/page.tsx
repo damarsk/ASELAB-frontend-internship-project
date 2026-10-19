@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, ImagePlus, Plus, X } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Footer from "@/src/components/landing/Footer";
 
 const suggestedSkills = [
@@ -16,6 +16,19 @@ const suggestedSkills = [
 const inputClassName =
   "mt-2 w-full rounded-lg border border-border-strong bg-white px-4 py-3 text-sm text-text-primary outline-none transition placeholder:text-text-muted focus:border-brand-primary focus:ring-2 focus:ring-brand-primary-light";
 
+type BlacklistUser = {
+  id: number;
+  nama: string;
+};
+
+const mockUsers: BlacklistUser[] = [
+  { id: 1, nama: "Alya Putri" },
+  { id: 2, nama: "Bagas Pratama" },
+  { id: 3, nama: "Citra Lestari" },
+  { id: 4, nama: "Dimas Saputra" },
+  { id: 5, nama: "Elvina Sari" },
+];
+
 export default function CreateTeamPage() {
   const [teamName, setTeamName] = useState("");
   const [competition, setCompetition] = useState("");
@@ -27,6 +40,38 @@ export default function CreateTeamPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [blacklistQuery, setBlacklistQuery] = useState("");
+  const [blacklistedUsers, setBlacklistedUsers] = useState<BlacklistUser[]>(
+    [],
+  );
+  const [isBlacklistDropdownOpen, setIsBlacklistDropdownOpen] = useState(false);
+  const blacklistSearchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        blacklistSearchRef.current &&
+        !blacklistSearchRef.current.contains(target)
+      ) {
+        setIsBlacklistDropdownOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsBlacklistDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
 
   const toggleSkill = (skill: string) => {
     setSkills((currentSkills) =>
@@ -42,6 +87,24 @@ export default function CreateTeamPage() {
       setSkills((currentSkills) => [...currentSkills, skill]);
       setNewSkill("");
     }
+  };
+
+  const blacklistSuggestions = mockUsers.filter(
+    (user) =>
+      !blacklistedUsers.some((selectedUser) => selectedUser.id === user.id) &&
+      user.nama.toLowerCase().includes(blacklistQuery.trim().toLowerCase()),
+  );
+
+  const selectBlacklistUser = (user: BlacklistUser) => {
+    setBlacklistedUsers((currentUsers) => [...currentUsers, user]);
+    setBlacklistQuery("");
+    setIsBlacklistDropdownOpen(false);
+  };
+
+  const removeBlacklistUser = (userId: number) => {
+    setBlacklistedUsers((currentUsers) =>
+      currentUsers.filter((user) => user.id !== userId),
+    );
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -266,6 +329,80 @@ export default function CreateTeamPage() {
                 <Plus className="size-4" aria-hidden="true" /> Tambah
               </button>
             </div>
+          </fieldset>
+
+          <fieldset className="mt-6 border-t border-border pt-6">
+            <legend className="text-sm font-semibold text-text-primary">
+              Blacklist User{" "}
+              <span className="font-normal text-text-muted">(opsional)</span>
+            </legend>
+            <p className="mt-1 text-xs text-text-secondary">
+            Cari berdasarkan nama untuk memilih user yang tidak dapat
+              mengajukan permintaan bergabung ke tim ini.
+            </p>
+            <div ref={blacklistSearchRef} className="relative mt-3">
+              <input
+                value={blacklistQuery}
+                onFocus={() => setIsBlacklistDropdownOpen(true)}
+                onChange={(event) => {
+                  setBlacklistQuery(event.target.value);
+                  setIsBlacklistDropdownOpen(true);
+                }}
+                className="w-full rounded-lg border border-border-strong bg-white px-4 py-3 text-sm text-text-primary outline-none transition placeholder:text-text-muted focus:border-brand-primary focus:ring-2 focus:ring-brand-primary-light"
+                placeholder="Ketik nama user..."
+                aria-label="Cari user untuk blacklist"
+                aria-controls="blacklist-user-options"
+              />
+              {isBlacklistDropdownOpen && (
+                <div
+                  id="blacklist-user-options"
+                  className="absolute inset-x-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-lg border border-border bg-white py-1 shadow-lg"
+                  role="listbox"
+                >
+                  {blacklistSuggestions.length > 0 ? (
+                    blacklistSuggestions.map((user) => (
+                      <button
+                        key={user.id}
+                        type="button"
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => selectBlacklistUser(user)}
+                        className="flex w-full items-center justify-between px-4 py-3 text-left text-sm transition-colors hover:bg-brand-primary-light"
+                        role="option"
+                        aria-selected="false"
+                      >
+                        <span className="font-medium text-text-primary">
+                          {user.nama}
+                        </span>
+                      </button>
+                    ))
+                  ) : (
+                    <p className="px-4 py-3 text-sm text-text-secondary">
+                      User tidak ditemukan.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+            {blacklistedUsers.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {blacklistedUsers.map((user) => (
+                  <span
+                    key={user.id}
+                    className="inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700"
+                  >
+                    {user.nama}
+                    <button
+                      type="button"
+                      onClick={() => removeBlacklistUser(user.id)}
+                      className="rounded-full text-red-500 hover:text-red-800"
+                      aria-label={`Hapus ${user.nama} dari blacklist`}
+                    >
+                      <X className="size-3.5" aria-hidden="true" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </fieldset>
 
           {formError && (

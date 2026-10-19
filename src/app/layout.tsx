@@ -11,6 +11,9 @@ const poppins = Poppins({
 export const metadata = {
   title: "Troov | Aplikasi Pencari Partner Lomba",
   description: "Platform untuk mencari partner lomba",
+  icons: {
+    icon: "/Frame.svg",
+  },
 };
 
 export default function RootLayout({

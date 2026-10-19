@@ -2,7 +2,15 @@ import { ArrowRight, Users } from "lucide-react";
 import Link from "next/link";
 import type { BackendTeam } from "@/src/types/team";
 
-export default function TeamCard({ team }: { team: BackendTeam }) {
+export default function TeamCard({
+  team,
+  match = 0,
+  href,
+}: {
+  team: BackendTeam;
+  match?: number;
+  href?: string;
+}) {
   return (
     <article className="flex min-h-72 flex-col rounded-xl border border-border bg-white p-5 transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
@@ -35,20 +43,23 @@ export default function TeamCard({ team }: { team: BackendTeam }) {
       <div className="mt-auto pt-5">
         <div className="mb-1 flex justify-between text-xs text-text-secondary">
           <span>Kecocokan</span>
-          <span>0%</span>
+          <span>{match}%</span>
         </div>
         <div
           className="h-1.5 bg-border"
           role="progressbar"
           aria-label="Persentase kecocokan"
-          aria-valuenow={0}
+          aria-valuenow={match}
           aria-valuemin={0}
           aria-valuemax={100}
         >
-          <div className="h-full bg-brand-primary" style={{ width: "0%" }} />
+          <div
+            className="h-full bg-brand-primary"
+            style={{ width: `${match}%` }}
+          />
         </div>
         <Link
-          href={`/teams/${team.id}`}
+          href={href ?? `/teams/${team.id}`}
           className="mt-5 flex items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-brand-primary-hover"
         >
           Lihat Tim <ArrowRight className="size-4" aria-hidden="true" />

@@ -1,4 +1,54 @@
 import Link from "next/link";
+import TeamCard from "@/src/components/teams/TeamCard";
+import type { BackendTeam } from "@/src/types/team";
+
+const landingTeams: Array<{ team: BackendTeam; match: number }> = [
+  {
+    team: {
+      id: 1,
+      nama: "Nebula Team",
+      deskripsi: "Tim yang mencari partner untuk membangun solusi digital.",
+      kompetisi: "NusaHack 2026",
+      skillDibutuhkan: ["UI/UX", "Front-End"],
+      leaderId: 1,
+      createdAt: "",
+      updatedAt: "",
+      kuota: 4,
+      members: [{ id: 1 }, { id: 2 }],
+    },
+    match: 92,
+  },
+  {
+    team: {
+      id: 2,
+      nama: "Pixel Squad",
+      deskripsi: "Berkolaborasi membuat produk teknologi yang berdampak.",
+      kompetisi: "DataHack 2026",
+      skillDibutuhkan: ["Back-End", "Front-End"],
+      leaderId: 2,
+      createdAt: "",
+      updatedAt: "",
+      kuota: 4,
+      members: [{ id: 1 }, { id: 2 }],
+    },
+    match: 87,
+  },
+  {
+    team: {
+      id: 3,
+      nama: "InnovateX",
+      deskripsi: "Membangun inovasi bisnis melalui teknologi dan data.",
+      kompetisi: "Java Business 2026",
+      skillDibutuhkan: ["Data", "Business"],
+      leaderId: 3,
+      createdAt: "",
+      updatedAt: "",
+      kuota: 4,
+      members: [{ id: 1 }, { id: 2 }],
+    },
+    match: 84,
+  },
+];
 
 export default function Main() {
   return (
@@ -232,136 +282,9 @@ export default function Main() {
           </div>
 
           <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="rounded-xl border border-border bg-background-white p-6 text-center shadow-sm">
-              <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-background-muted">
-                <span className="text-3xl">👩‍💼</span>
-              </div>
-              <h3 className="text-lg font-bold text-text-primary mb-4">
-                Nebula Team
-              </h3>
-              <p className="mt-1 text-sm text-text-secondary">NusaHack 2026</p>
-              <p className="mt-2 text-sm text-text-primary">
-                👥 <span className="font-medium">2/4 Anggota</span>
-              </p>
-              <p className="mt-2 text-xs text-text-secondary">
-                Skill Dibutuhkan
-              </p>
-              <div className="mt-2 flex flex-wrap justify-center gap-2 mb-4">
-                <span className="rounded-full bg-brand-primary-light px-3 py-1 text-xs font-medium text-brand-primary">
-                  UI/UX
-                </span>
-                <span className="rounded-full bg-brand-primary-light px-3 py-1 text-xs font-medium text-brand-primary">
-                  Front-End
-                </span>
-              </div>
-              <div className="mt-4">
-                <div className="mb-1 flex items-center justify-between text-sm">
-                  <span className="font-medium text-text-primary">
-                    Kecocokan
-                  </span>
-                  <span className="font-medium text-text-primary">92%</span>
-                </div>
-                <div className="h-2 w-full bg-background-muted">
-                  <div className="h-full w-[92%] bg-brand-primary" />
-                </div>
-              </div>
-              <div className="mt-6">
-                <a
-                  href="#"
-                  className="inline-flex h-10 items-center justify-center rounded-lg bg-brand-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
-                >
-                  Lihat Tim →
-                </a>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-border bg-background-white p-6 text-center shadow-sm">
-              <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-background-muted">
-                <span className="text-3xl">👩‍💼</span>
-              </div>
-              <h3 className="text-lg font-bold text-text-primary mb-4">
-                Pixel Squad
-              </h3>
-              <p className="mt-1 text-sm text-text-secondary">DataHack 2026</p>
-              <p className="mt-2 text-sm text-text-primary">
-                👥 <span className="font-medium">2/4 Anggota</span>
-              </p>
-              <p className="mt-2 text-xs text-text-secondary">
-                Skill Dibutuhkan
-              </p>
-              <div className="mt-2 flex flex-wrap justify-center gap-2 mb-4">
-                <span className="rounded-full bg-brand-primary-light px-3 py-1 text-xs font-medium text-brand-primary">
-                  Back-End
-                </span>
-                <span className="rounded-full bg-brand-primary-light px-3 py-1 text-xs font-medium text-brand-primary">
-                  Front-End
-                </span>
-              </div>
-              <div className="mt-4">
-                <div className="mb-1 flex items-center justify-between text-sm">
-                  <span className="font-medium text-text-primary">
-                    Kecocokan
-                  </span>
-                  <span className="font-medium text-text-primary">87%</span>
-                </div>
-                <div className="h-2 w-full bg-background-muted">
-                  <div className="h-full w-[87%] bg-brand-primary" />
-                </div>
-              </div>
-              <div className="mt-6">
-                <a
-                  href="#"
-                  className="inline-flex h-10 items-center justify-center rounded-lg bg-brand-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
-                >
-                  Lihat Tim →
-                </a>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-border bg-background-white p-6 text-center shadow-sm">
-              <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-background-muted">
-                <span className="text-3xl">👩‍💼</span>
-              </div>
-              <h3 className="text-lg font-bold text-text-primary mb-4">
-                InnovateX
-              </h3>
-              <p className="mt-1 text-sm text-text-secondary">
-                Java Business 2026
-              </p>
-              <p className="mt-2 text-sm text-text-primary">
-                👥 <span className="font-medium">2/4 Anggota</span>
-              </p>
-              <p className="mt-2 text-xs text-text-secondary">
-                Skill Dibutuhkan
-              </p>
-              <div className="mt-2 flex flex-wrap justify-center gap-2 mb-4">
-                <span className="rounded-full bg-brand-primary-light px-3 py-1 text-xs font-medium text-brand-primary">
-                  Data
-                </span>
-                <span className="rounded-full bg-brand-primary-light px-3 py-1 text-xs font-medium text-brand-primary">
-                  Business
-                </span>
-              </div>
-              <div className="mt-4">
-                <div className="mb-1 flex items-center justify-between text-sm">
-                  <span className="font-medium text-text-primary">
-                    Kecocokan
-                  </span>
-                  <span className="font-medium text-text-primary">84%</span>
-                </div>
-                <div className="h-2 w-full bg-background-muted">
-                  <div className="h-full w-[84%] bg-brand-primary" />
-                </div>
-              </div>
-              <div className="mt-6">
-                <a
-                  href="#"
-                  className="inline-flex h-10 items-center justify-center rounded-lg bg-brand-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
-                >
-                  Lihat Tim →
-                </a>
-              </div>
-            </div>
+            {landingTeams.map(({ team, match }) => (
+              <TeamCard key={team.id} team={team} match={match} href="#" />
+            ))}
           </div>
         </div>
       </section>

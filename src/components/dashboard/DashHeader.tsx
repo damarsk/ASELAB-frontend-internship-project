@@ -265,7 +265,10 @@ export default function DashHeader() {
     <nav className="h-20 bg-white shadow">
       <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-between px-8">
         <Link href="/dashboard" className="shrink-0">
-          <h1 className="text-2xl font-bold text-brand-primary">🤝 Troov</h1>
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-brand-primary">
+            <Image src="/Frame.svg" alt="" width={36} height={36} />
+            Troov
+          </h1>
         </Link>
 
         <div className="hidden items-center gap-8 sm:flex">

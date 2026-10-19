@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 
 export default function Footer() {
@@ -12,7 +13,7 @@ export default function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-6 sm:flex-row sm:px-6 lg:px-8">
         <div className="flex flex-col items-start gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🤝</span>
+            <Image src="/Frame.svg" alt="" width={36} height={36} />
             <span className="text-xl font-bold">
               <span className="text-brand-primary">Troov</span>
             </span>

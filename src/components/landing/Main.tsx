@@ -1,4 +1,12 @@
 import Link from "next/link";
+import {
+  Handshake,
+  Search,
+  Target,
+  UserPlus,
+  UserRound,
+  UsersRound,
+} from "lucide-react";
 import TeamCard from "@/src/components/teams/TeamCard";
 import type { BackendTeam } from "@/src/types/team";
 
@@ -53,6 +61,20 @@ const landingTeams: Array<{ team: BackendTeam; kecocokan: string }> = [
   },
 ];
 
+const heroTeam: BackendTeam = {
+  id: 0,
+  nama: "Vertex Team",
+  deskripsi: "Tim yang mencari partner untuk membangun solusi digital.",
+  kompetisi: "NusaHack 2026",
+  skillDibutuhkan: ["UI/UX", "Front-End", "Back-End"],
+  leaderId: 0,
+  createdAt: "",
+  updatedAt: "",
+  kuota: 6,
+  kecocokan: "92%",
+  members: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
+};
+
 export default function Main() {
   return (
     <main className="min-h-[calc(100vh-5rem)]">
@@ -98,60 +120,8 @@ export default function Main() {
               92% <span className="text-brand-primary">Cocok!!</span>
             </div>
 
-            <div className="w-full max-w-sm border border-border bg-white p-6 shadow-sm">
-              <div className="flex flex-col items-center text-center">
-                <div className="mb-4 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-background-muted">
-                  <div className="text-4xl">👩🏻‍💼</div>
-                </div>
-
-                <h3 className="text-lg font-bold text-text-primary">
-                  Nasgor Gila
-                </h3>
-
-                <p className="text-sm text-text-secondary">NusaHack 2026</p>
-              </div>
-
-              <div className="mt-4 space-y-3">
-                <p className="text-sm text-text-primary">
-                  👥 <span className="font-medium">3/4 Anggota</span>
-                </p>
-
-                <p className="text-sm text-text-secondary">Skill Dibutuhkan</p>
-
-                <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full bg-brand-primary-light px-3 py-1 text-xs font-medium text-brand-primary">
-                    UI/UX
-                  </span>
-                  <span className="rounded-full bg-brand-primary-light px-3 py-1 text-xs font-medium text-brand-primary">
-                    Front-End
-                  </span>
-                  <span className="rounded-full bg-brand-primary-light px-3 py-1 text-xs font-medium text-brand-primary">
-                    Back-End
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <div className="mb-2 flex items-center justify-between text-sm">
-                  <span className="font-medium text-text-primary">
-                    Kecocokan
-                  </span>
-                  <span className="font-medium text-text-primary">92%</span>
-                </div>
-
-                <div className="h-2 w-full bg-background-muted">
-                  <div className="h-full w-[92%] bg-brand-primary" />
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-center">
-                <a
-                  href="#"
-                  className="inline-flex h-10 items-center justify-center rounded-lg bg-brand-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
-                >
-                  Lihat Tim →
-                </a>
-              </div>
+            <div className="w-full max-w-sm">
+              <TeamCard team={heroTeam} kecocokan="92%" href="/dashboard" />
             </div>
 
             <div className="absolute -bottom-10 right-0 rounded-full bg-white px-4 py-2 text-sm font-medium shadow-lg">
@@ -178,7 +148,10 @@ export default function Main() {
           <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
             <div className="rounded-xl border border-border bg-background-white p-8 text-center shadow-sm">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-primary-light">
-                <span className="text-2xl">👥</span>
+                <UsersRound
+                  className="size-7 text-brand-primary"
+                  aria-hidden="true"
+                />
               </div>
               <h3 className="text-lg font-bold text-text-primary">
                 Temukan Tim
@@ -190,7 +163,10 @@ export default function Main() {
 
             <div className="rounded-xl border border-border bg-background-white p-8 text-center shadow-sm">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-primary-light">
-                <span className="text-2xl">🎯</span>
+                <Target
+                  className="size-7 text-brand-primary"
+                  aria-hidden="true"
+                />
               </div>
               <h3 className="text-lg font-bold text-text-primary">
                 Cocokkan Skill
@@ -202,7 +178,10 @@ export default function Main() {
 
             <div className="rounded-xl border border-border bg-background-white p-8 text-center shadow-sm">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-primary-light">
-                <span className="text-2xl">🤝</span>
+                <Handshake
+                  className="size-7 text-brand-primary"
+                  aria-hidden="true"
+                />
               </div>
               <h3 className="text-lg font-bold text-text-primary">
                 Bergabung &amp; berkolaborasi
@@ -230,7 +209,10 @@ export default function Main() {
             <div className="w-full rounded-xl border border-border bg-background-white p-8 text-center shadow-sm">
               <div className="text-3xl font-bold text-text-primary">1</div>
               <div className="mx-auto my-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary-light">
-                <span className="text-xl">👥</span>
+                <UserRound
+                  className="size-6 text-brand-primary"
+                  aria-hidden="true"
+                />
               </div>
               <h3 className="text-lg font-bold text-text-primary">
                 Buat Profil
@@ -242,7 +224,10 @@ export default function Main() {
             <div className="w-full rounded-xl border border-border bg-background-white p-8 text-center shadow-sm">
               <div className="text-3xl font-bold text-text-primary">2</div>
               <div className="mx-auto my-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary-light">
-                <span className="text-xl">🔍</span>
+                <Search
+                  className="size-6 text-brand-primary"
+                  aria-hidden="true"
+                />
               </div>
               <h3 className="text-lg font-bold text-text-primary">
                 Temukan Tim
@@ -254,7 +239,10 @@ export default function Main() {
             <div className="w-full rounded-xl border border-border bg-background-white p-8 text-center shadow-sm">
               <div className="text-3xl font-bold text-text-primary">3</div>
               <div className="mx-auto my-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary-light">
-                <span className="text-xl">+</span>
+                <UserPlus
+                  className="size-6 text-brand-primary"
+                  aria-hidden="true"
+                />
               </div>
               <h3 className="text-lg font-bold text-text-primary">
                 Join Request
@@ -266,7 +254,10 @@ export default function Main() {
             <div className="w-full rounded-xl border border-border bg-background-white p-8 text-center shadow-sm">
               <div className="text-3xl font-bold text-text-primary">4</div>
               <div className="mx-auto my-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary-light">
-                <span className="text-xl">🤝</span>
+                <Handshake
+                  className="size-6 text-brand-primary"
+                  aria-hidden="true"
+                />
               </div>
               <h3 className="text-lg font-bold text-text-primary">
                 Kolaborasi
@@ -290,7 +281,7 @@ export default function Main() {
                 key={team.id}
                 team={team}
                 kecocokan={kecocokan}
-                href="#"
+                href="/dashboard"
               />
             ))}
           </div>

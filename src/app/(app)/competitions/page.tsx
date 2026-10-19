@@ -27,7 +27,7 @@ function CompetitionCard({ competition }: { competition: Competition }) {
   }).format(new Date(competition.deadline));
 
   return (
-    <article className="flex min-h-0 flex-col border border-border bg-white px-4 py-5 text-center transition-shadow hover:shadow-md sm:px-5">
+    <article className="flex min-h-0 flex-col rounded-xl border border-border bg-white px-4 py-5 text-center transition-shadow hover:shadow-md sm:px-5">
       <CompetitionPlaceholder competition={{ name: competition.namaLomba }} />
       <h2 className="mt-5 min-h-10 text-xs font-bold leading-5 text-text-primary sm:text-sm">
         {competition.namaLomba}

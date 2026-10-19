@@ -1,7 +1,7 @@
 export default function CompetitionCardSkeleton() {
   return (
     <article
-      className="flex min-h-72 animate-pulse flex-col border border-border bg-white px-4 py-5 text-center sm:px-5"
+      className="flex min-h-72 animate-pulse flex-col rounded-xl border border-border bg-white px-4 py-5 text-center sm:px-5"
       aria-hidden="true"
     >
       <div className="mx-auto h-28 w-full max-w-48 bg-background-muted sm:h-32" />

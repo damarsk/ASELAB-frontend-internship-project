@@ -28,7 +28,7 @@ export default function CompetitionSection({
         {competitions.map((competition) => (
           <article
             key={competition.id}
-            className="flex min-h-101.25 flex-col items-center border border-border bg-white px-6 py-6 text-center transition-shadow hover:shadow-md"
+            className="flex min-h-101.25 flex-col items-center rounded-xl border border-border bg-white px-6 py-6 text-center transition-shadow hover:shadow-md"
           >
             <CompetitionPlaceholder />
             <h3 className="mt-6 max-w-xs text-base font-bold leading-6 text-text-primary">

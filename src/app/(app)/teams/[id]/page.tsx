@@ -7,7 +7,7 @@ import { use, useEffect, useState } from "react";
 import Footer from "@/src/components/landing/Footer";
 import TeamHero from "@/src/components/my-team/TeamHero";
 import PublicTeamMembers from "@/src/components/teams/PublicTeamMembers";
-import type { BackendTeam } from "@/src/types/team";
+import type { BackendTeamDetail } from "@/src/types/team";
 
 export default function TeamDetailPage({
   params,
@@ -15,7 +15,7 @@ export default function TeamDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const [team, setTeam] = useState<BackendTeam | null>(null);
+  const [team, setTeam] = useState<BackendTeamDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,15 +23,15 @@ export default function TeamDetailPage({
 
     const loadTeam = async () => {
       try {
-        const response = await fetch("/api/teams", {
+        const response = await fetch(`/api/teams/${id}`, {
           credentials: "include",
           cache: "no-store",
           signal: controller.signal,
         });
         if (!response.ok) throw new Error("Gagal memuat detail tim");
 
-        const payload: { data?: BackendTeam[] } = await response.json();
-        setTeam(payload.data?.find((item) => String(item.id) === id) ?? null);
+        const payload: { data?: BackendTeamDetail } = await response.json();
+        setTeam(payload.data ?? null);
       } catch (error) {
         if (!(error instanceof DOMException && error.name === "AbortError")) {
           setTeam(null);
@@ -68,15 +68,27 @@ export default function TeamDetailPage({
                 name={team.nama}
                 event={team.kompetisi}
                 description={team.deskripsi}
-                leaderName={team.leader?.nama}
+                leaderName={
+                  team.members.find(
+                    (member) =>
+                      member.role === "LEADER" ||
+                      member.userId === team.leaderId,
+                  )?.user.nama
+                }
                 skills={team.skillDibutuhkan}
                 membershipStatus="request"
               />
               <PublicTeamMembers
                 members={team.members.map((member) => ({
-                  name: `Anggota #${member.id}`,
-                  role: "Anggota Tim",
-                  initials: String(member.id).slice(-2),
+                  name: member.user.nama,
+                  department: member.user.profile?.jurusan ?? undefined,
+                  role: member.role === "LEADER" ? "Team Leader" : "Anggota Tim",
+                  initials: member.user.nama
+                    .split(/\s+/)
+                    .map((part) => part[0])
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase(),
                   color: "bg-sky-100 text-sky-700",
                 }))}
               />

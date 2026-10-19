@@ -180,7 +180,7 @@ export default function CompetitionsPage() {
             <p className="text-4xl font-medium text-text-primary">
               Temukan kompetisi yang sesuai
             </p>
-            <p className="text-4xl font-medium text-brand-primary/55">
+            <p className="text-4xl font-medium text-brand-primary">
               dengan skill dan minatmu.
             </p>
           </div>
@@ -226,10 +226,7 @@ export default function CompetitionsPage() {
               <div className="flex items-end justify-between gap-4">
                 <div className="h-9 w-64 animate-pulse rounded bg-background-muted sm:h-10" />
               </div>
-              <div
-                className="mt-8 grid gap-6 md:grid-cols-3"
-                aria-busy="true"
-              >
+              <div className="mt-8 grid gap-6 md:grid-cols-3" aria-busy="true">
                 {Array.from({ length: competitionsPerPage }, (_, index) => (
                   <CompetitionCardSkeleton key={index} />
                 ))}

@@ -15,3 +15,22 @@ export type BackendTeam = {
     id: number;
   }>;
 };
+
+export type BackendTeamDetailMember = {
+  id: number;
+  teamId: number;
+  userId: number;
+  role: "LEADER" | "MEMBER";
+  joinedAt: string;
+  user: {
+    nama: string;
+    profile: {
+      jurusan: string | null;
+      skill: string[];
+    } | null;
+  };
+};
+
+export type BackendTeamDetail = Omit<BackendTeam, "members"> & {
+  members: BackendTeamDetailMember[];
+};

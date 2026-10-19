@@ -100,17 +100,20 @@ function SwipeCard({
       <div className="mt-auto">
         <div className="mb-1 flex justify-between text-xs text-text-secondary">
           <span>Kecocokan</span>
-          <span>0%</span>
+          <span>{team.kecocokan ?? "0%"}</span>
         </div>
         <div
           className="h-1.5 bg-border"
           role="progressbar"
           aria-label="Persentase kecocokan"
-          aria-valuenow={0}
+          aria-valuenow={Number.parseInt(team.kecocokan ?? "0", 10) || 0}
           aria-valuemin={0}
           aria-valuemax={100}
         >
-          <div className="h-full bg-brand-primary" style={{ width: "0%" }} />
+          <div
+            className="h-full bg-brand-primary"
+            style={{ width: team.kecocokan ?? "0%" }}
+          />
         </div>
         {isFront && (
           <div className="mt-5 flex justify-center gap-4">

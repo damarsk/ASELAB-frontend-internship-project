@@ -4,13 +4,16 @@ import type { BackendTeam } from "@/src/types/team";
 
 export default function TeamCard({
   team,
-  match = 0,
+  kecocokan,
   href,
 }: {
   team: BackendTeam;
-  match?: number;
+  kecocokan?: string;
   href?: string;
 }) {
+  const matchPercentage = kecocokan ?? team.kecocokan ?? "0%";
+  const matchValue = Number.parseInt(matchPercentage, 10) || 0;
+
   return (
     <article className="flex min-h-72 flex-col rounded-xl border border-border bg-white p-5 transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
@@ -43,19 +46,19 @@ export default function TeamCard({
       <div className="mt-auto pt-5">
         <div className="mb-1 flex justify-between text-xs text-text-secondary">
           <span>Kecocokan</span>
-          <span>{match}%</span>
+          <span>{matchPercentage}</span>
         </div>
         <div
           className="h-1.5 bg-border"
           role="progressbar"
           aria-label="Persentase kecocokan"
-          aria-valuenow={match}
+          aria-valuenow={matchValue}
           aria-valuemin={0}
           aria-valuemax={100}
         >
           <div
             className="h-full bg-brand-primary"
-            style={{ width: `${match}%` }}
+            style={{ width: `${matchValue}%` }}
           />
         </div>
         <Link

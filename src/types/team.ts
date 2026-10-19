@@ -8,6 +8,8 @@ export type BackendTeam = {
   createdAt: string;
   updatedAt: string;
   kuota: number;
+  kecocokan?: string;
+  jumlahAnggotaTeks?: string;
   leader?: {
     nama: string;
   } | null;

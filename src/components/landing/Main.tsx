@@ -2,7 +2,7 @@ import Link from "next/link";
 import TeamCard from "@/src/components/teams/TeamCard";
 import type { BackendTeam } from "@/src/types/team";
 
-const landingTeams: Array<{ team: BackendTeam; match: number }> = [
+const landingTeams: Array<{ team: BackendTeam; kecocokan: string }> = [
   {
     team: {
       id: 1,
@@ -14,9 +14,10 @@ const landingTeams: Array<{ team: BackendTeam; match: number }> = [
       createdAt: "",
       updatedAt: "",
       kuota: 4,
+      kecocokan: "92%",
       members: [{ id: 1 }, { id: 2 }],
     },
-    match: 92,
+    kecocokan: "92%",
   },
   {
     team: {
@@ -29,9 +30,10 @@ const landingTeams: Array<{ team: BackendTeam; match: number }> = [
       createdAt: "",
       updatedAt: "",
       kuota: 4,
+      kecocokan: "87%",
       members: [{ id: 1 }, { id: 2 }],
     },
-    match: 87,
+    kecocokan: "87%",
   },
   {
     team: {
@@ -44,9 +46,10 @@ const landingTeams: Array<{ team: BackendTeam; match: number }> = [
       createdAt: "",
       updatedAt: "",
       kuota: 4,
+      kecocokan: "84%",
       members: [{ id: 1 }, { id: 2 }],
     },
-    match: 84,
+    kecocokan: "84%",
   },
 ];
 
@@ -282,8 +285,13 @@ export default function Main() {
           </div>
 
           <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
-            {landingTeams.map(({ team, match }) => (
-              <TeamCard key={team.id} team={team} match={match} href="#" />
+            {landingTeams.map(({ team, kecocokan }) => (
+              <TeamCard
+                key={team.id}
+                team={team}
+                kecocokan={kecocokan}
+                href="#"
+              />
             ))}
           </div>
         </div>

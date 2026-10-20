@@ -8,6 +8,11 @@ type ProfileActionsProps = {
   loading: boolean;
 };
 
+function isFallbackProfileImage(value: string) {
+  const path = value.split(/[?#]/, 1)[0];
+  return path === "unknown.jpg" || path.endsWith("/unknown.jpg");
+}
+
 function hasProfileValue(profile: Profile | null, key: string) {
   if (!profile) return false;
 
@@ -18,7 +23,14 @@ function hasProfileValue(profile: Profile | null, key: string) {
   const value = profile[key] ?? profileData?.[key];
 
   if (Array.isArray(value)) return value.length > 0;
-  return typeof value === "string" ? value.trim().length > 0 : Boolean(value);
+  if (typeof value === "string") {
+    const trimmedValue = value.trim();
+    return (
+      trimmedValue.length > 0 &&
+      (key !== "fotoProfilUrl" || !isFallbackProfileImage(trimmedValue))
+    );
+  }
+  return Boolean(value);
 }
 
 export default function ProfileActions({

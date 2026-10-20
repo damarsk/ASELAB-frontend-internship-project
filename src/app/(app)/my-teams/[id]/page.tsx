@@ -1,7 +1,6 @@
 "use client";
 
-import { notFound } from "next/navigation";
-import { use, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import { Check, X } from "lucide-react";
 import Footer from "@/src/components/landing/Footer";
 import JoinRequests from "@/src/components/my-team/JoinRequests";
@@ -10,9 +9,15 @@ import TeamHero from "@/src/components/my-team/TeamHero";
 import TeamGroupLinks from "@/src/components/my-team/TeamGroupLinks";
 import TeamTabs, { type TeamTab } from "@/src/components/my-team/TeamTabs";
 import TeamSettings from "@/src/components/my-team/TeamSettings";
-import { initialRequests, members } from "@/src/components/my-team/data";
-import type { RequestStatus } from "@/src/components/my-team/types";
-import { teams } from "@/src/data/teams";
+import { initialRequests } from "@/src/components/my-team/data";
+import type { RequestStatus, TeamMember } from "@/src/components/my-team/types";
+import type { BackendTeamDetail } from "@/src/types/team";
+
+type TeamResponse = {
+  data?: BackendTeamDetail;
+  error?: string;
+  message?: string;
+};
 
 export default function MyTeamDetailPage({
   params,
@@ -20,7 +25,9 @@ export default function MyTeamDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const team = teams.find((item) => item.id === id);
+  const [team, setTeam] = useState<BackendTeamDetail | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TeamTab>("overview");
   const [activeFilter, setActiveFilter] = useState<"all" | RequestStatus>(
     "all",
@@ -31,6 +38,56 @@ export default function MyTeamDetailPage({
     requestId: number;
     status: RequestStatus;
   } | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadTeam = async () => {
+      try {
+        const response = await fetch(`/api/teams/${id}`, {
+          credentials: "include",
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        const result = (await response.json().catch(() => null)) as
+          | TeamResponse
+          | null;
+
+        if (!response.ok) {
+          throw new Error(
+            result?.error ?? result?.message ?? "Gagal memuat detail tim.",
+          );
+        }
+
+        if (!result?.data) {
+          throw new Error("Data detail tim tidak tersedia.");
+        }
+
+        setTeam(result.data);
+      } catch (loadError) {
+        if (
+          loadError instanceof DOMException &&
+          loadError.name === "AbortError"
+        ) {
+          return;
+        }
+
+        setError(
+          loadError instanceof Error
+            ? loadError.message
+            : "Gagal memuat detail tim.",
+        );
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadTeam();
+
+    return () => controller.abort();
+  }, [id]);
 
   const filteredRequests = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -46,7 +103,58 @@ export default function MyTeamDetailPage({
     });
   }, [activeFilter, requests, search]);
 
-  if (!team) notFound();
+  if (isLoading) {
+    return (
+      <>
+        <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-12">
+          <p className="rounded-xl border border-border bg-white px-5 py-8 text-center text-sm text-text-secondary">
+            Memuat detail tim...
+          </p>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  if (error || !team) {
+    return (
+      <>
+        <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-12">
+          <p
+            className="rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700"
+            role="alert"
+          >
+            {error ?? "Tim tidak ditemukan."}
+          </p>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  const teamMembers: TeamMember[] = team.members.map((member, index) => {
+    const name = member.user.nama;
+    const initials = name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+    const colors = [
+      "bg-emerald-100 text-emerald-700",
+      "bg-sky-100 text-sky-700",
+      "bg-amber-100 text-amber-700",
+      "bg-lime-100 text-lime-700",
+    ];
+
+    return {
+      name,
+      department: member.user.profile?.jurusan ?? undefined,
+      role: member.role === "LEADER" ? "Team Leader" : "Anggota Tim",
+      initials,
+      color: colors[index % colors.length],
+    };
+  });
 
   const pendingCount = requests.filter(
     (request) => request.status === "pending",
@@ -71,15 +179,11 @@ export default function MyTeamDetailPage({
     <>
       <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-12">
         <TeamHero
-          name={team.name}
-          event={team.event}
-          skills={[
-            "UI/UX",
-            "Front-End",
-            "System Analyst",
-            "Back-End",
-            "Quality Assurance",
-          ]}
+          name={team.nama}
+          event={team.kompetisi}
+          skills={team.skillDibutuhkan}
+          description={team.deskripsi}
+          leaderName={team.leader?.nama}
         >
           <TeamGroupLinks />
         </TeamHero>
@@ -89,7 +193,7 @@ export default function MyTeamDetailPage({
           onChange={setActiveTab}
         />
         {activeTab === "overview" ? (
-          <MembersOverview members={members} />
+          <MembersOverview members={teamMembers} />
         ) : activeTab === "requests" ? (
           <JoinRequests
             requests={filteredRequests}
@@ -102,7 +206,7 @@ export default function MyTeamDetailPage({
             }
           />
         ) : (
-          <TeamSettings teamName={team.name} event={team.event} />
+          <TeamSettings teamName={team.nama} event={team.kompetisi} />
         )}
       </main>
       {confirmation && selectedRequest && (

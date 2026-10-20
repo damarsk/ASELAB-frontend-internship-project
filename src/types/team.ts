@@ -15,7 +15,24 @@ export type BackendTeam = {
   } | null;
   members: Array<{
     id: number;
+    role?: "LEADER" | "MEMBER";
+    joinedAt?: string;
+    user?: {
+      id: number;
+      nama: string;
+      profile: {
+        jurusan: string | null;
+        fotoProfilUrl: string | null;
+      } | null;
+    };
   }>;
+};
+
+export type BackendTeamSummary = Omit<BackendTeam, "members"> & {
+  peranSaya: "LEADER" | "MEMBER";
+  jumlahAnggota: number;
+  sisaKuota: number;
+  members: BackendTeam["members"];
 };
 
 export type BackendTeamDetailMember = {
@@ -29,6 +46,7 @@ export type BackendTeamDetailMember = {
     profile: {
       jurusan: string | null;
       skill: string[];
+      fotoProfilUrl?: string | null;
     } | null;
   };
 };

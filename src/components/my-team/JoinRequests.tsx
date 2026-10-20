@@ -75,7 +75,7 @@ export default function JoinRequests({
             />
           ))
         ) : (
-          <div className="rounded-2xl border border-dashed border-border-strong px-6 py-16 text-center">
+          <div className="rounded-2xl border border-dashed border-border-strong px-6 py-16 text-center lg:col-span-2">
             <Users className="mx-auto size-8 text-text-muted" />
             <p className="mt-3 font-semibold text-text-primary">
               Tidak ada request ditemukan

@@ -53,4 +53,6 @@ export type BackendTeamDetailMember = {
 
 export type BackendTeamDetail = Omit<BackendTeam, "members"> & {
   members: BackendTeamDetailMember[];
+  linkGrupWhatsapp?: string | null;
+  linkChannelDiscord?: string | null;
 };

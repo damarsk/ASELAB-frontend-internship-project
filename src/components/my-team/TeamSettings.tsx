@@ -1,22 +1,60 @@
 "use client";
 
 import { AlertTriangle, Camera, Plus, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
 export default function TeamSettings({
   teamName,
   event,
+  description,
+  skills: initialSkills,
+  whatsappUrl,
+  discordUrl,
+  memberCount,
+  requestCount,
+  onSave,
+  onDelete,
 }: {
   teamName: string;
   event: string;
+  description: string;
+  skills: string[];
+  whatsappUrl?: string | null;
+  discordUrl?: string | null;
+  memberCount: number;
+  requestCount: number;
+  onSave: (data: {
+    nama: string;
+    deskripsi: string;
+    kompetisi: string;
+    skillDibutuhkan: string[];
+    linkGrupWhatsapp: string | null;
+    linkChannelDiscord: string | null;
+  }) => Promise<void>;
+  onDelete: () => Promise<void>;
 }) {
-  const [skills, setSkills] = useState([
-    "UI/UX",
-    "Front-End",
-    "System Analyst",
-  ]);
+  const [skills, setSkills] = useState(initialSkills);
+  const [name, setName] = useState(teamName);
+  const [descriptionValue, setDescriptionValue] = useState(description);
+  const [competitionValue, setCompetitionValue] = useState(event);
+  const [whatsappValue, setWhatsappValue] = useState(whatsappUrl ?? "");
+  const [discordValue, setDiscordValue] = useState(discordUrl ?? "");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [formMessage, setFormMessage] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!formMessage) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setFormMessage(null);
+    }, 5000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [formMessage]);
 
   const isDeleteConfirmed = deleteConfirmation === teamName;
   const closeDeleteModal = () => {
@@ -26,6 +64,51 @@ export default function TeamSettings({
 
   const removeSkill = (skill: string) =>
     setSkills((current) => current.filter((item) => item !== skill));
+
+  const handleSave = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!name.trim() || !descriptionValue.trim() || !competitionValue.trim()) {
+      setFormError("Nama, deskripsi, dan kompetisi wajib diisi.");
+      setFormMessage(null);
+      return;
+    }
+
+    setIsSaving(true);
+    setFormError(null);
+    setFormMessage(null);
+    try {
+      await onSave({
+        nama: name.trim(),
+        deskripsi: descriptionValue.trim(),
+        kompetisi: competitionValue.trim(),
+        skillDibutuhkan: skills,
+        linkGrupWhatsapp: whatsappValue.trim() || null,
+        linkChannelDiscord: discordValue.trim() || null,
+      });
+      setFormMessage("Informasi tim berhasil diperbarui.");
+    } catch (error) {
+      setFormError(
+        error instanceof Error
+          ? error.message
+          : "Gagal memperbarui informasi tim.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    setFormError(null);
+    try {
+      await onDelete();
+    } catch (error) {
+      setFormError(
+        error instanceof Error ? error.message : "Gagal menghapus tim.",
+      );
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <section
@@ -48,11 +131,11 @@ export default function TeamSettings({
           <p className="mt-1 text-xs text-text-secondary">{event}</p>
           <div className="mt-5 grid grid-cols-3 border-t border-border pt-4 text-center text-xs text-text-muted">
             <span>
-              <strong className="block text-sm text-text-primary">3</strong>
+              <strong className="block text-sm text-text-primary">{memberCount}</strong>
               Anggota
             </span>
             <span className="border-x border-border">
-              <strong className="block text-sm text-brand-primary">4</strong>
+              <strong className="block text-sm text-brand-primary">{requestCount}</strong>
               Permintaan
             </span>
             <span>
@@ -72,7 +155,7 @@ export default function TeamSettings({
       <div className="space-y-5">
         <form
           className="rounded-xl border border-border bg-white p-6 shadow-sm sm:p-7"
-          onSubmit={(formEvent) => formEvent.preventDefault()}
+          onSubmit={handleSave}
         >
           <h2 id="settings-heading" className="sr-only">
             Pengaturan tim
@@ -80,25 +163,27 @@ export default function TeamSettings({
           <label className="block text-xs font-bold text-text-primary">
             Nama Tim
             <input
-              defaultValue={teamName}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
               className="mt-2 h-9 w-full rounded-lg border border-border-strong px-3 text-xs font-normal outline-none focus:border-brand-primary"
             />
           </label>
           <label className="mt-5 block text-xs font-bold text-text-primary">
             Deskripsi Tentang Tim
             <textarea
-              defaultValue="Kami sedang membangun solusi platform digital inklusif."
+              value={descriptionValue}
+              onChange={(event) => setDescriptionValue(event.target.value)}
               className="mt-2 min-h-16 w-full resize-y rounded-lg border border-border-strong px-3 py-2 text-xs font-normal outline-none focus:border-brand-primary"
             />
           </label>
           <label className="mt-5 block text-xs font-bold text-text-primary">
             Kompetisi yang diikuti
-            <select
-              defaultValue={event}
-              className="mt-2 h-9 w-full rounded-lg border border-border-strong bg-white px-3 text-xs font-normal outline-none focus:border-brand-primary"
-            >
-              <option>{event}</option>
-            </select>
+            <input
+              value={competitionValue}
+              onChange={(event) => setCompetitionValue(event.target.value)}
+              placeholder="Masukkan nama kompetisi"
+              className="mt-2 h-9 w-full rounded-lg border border-border-strong px-3 text-xs font-normal outline-none focus:border-brand-primary"
+            />
           </label>
           <div className="mt-5">
             <p className="text-xs font-bold text-text-primary">
@@ -132,30 +217,42 @@ export default function TeamSettings({
             <label className="text-xs font-bold text-text-primary">
               Link Grup Whatsapp
               <input
-                placeholder="https whatsapp"
+                value={whatsappValue}
+                onChange={(event) => setWhatsappValue(event.target.value)}
+                placeholder="https://chat.whatsapp.com/..."
                 className="mt-2 h-9 w-full rounded-lg border border-border-strong px-3 text-xs font-normal outline-none focus:border-brand-primary"
               />
             </label>
             <label className="text-xs font-bold text-text-primary">
               Link Channel Discord
               <input
-                placeholder="https discord"
+                value={discordValue}
+                onChange={(event) => setDiscordValue(event.target.value)}
+                placeholder="https://discord.gg/..."
                 className="mt-2 h-9 w-full rounded-lg border border-border-strong px-3 text-xs font-normal outline-none focus:border-brand-primary"
               />
             </label>
           </div>
           <div className="mt-6 flex justify-end gap-2 border-t border-border pt-4">
-            <button
-              type="button"
-              className="rounded-lg bg-background-muted px-4 py-2 text-xs text-text-secondary"
-            >
-              Batal
-            </button>
+            {formError && (
+              <p className="mr-auto self-center text-xs text-red-600" role="alert">
+                {formError}
+              </p>
+            )}
+            {formMessage && (
+              <p
+                className="mr-auto self-center text-xs text-brand-primary"
+                role="status"
+              >
+                {formMessage}
+              </p>
+            )}
             <button
               type="submit"
+              disabled={isSaving}
               className="rounded-lg bg-brand-primary px-4 py-2 text-xs font-semibold text-white hover:bg-brand-primary-hover"
             >
-              Simpan Perubahan
+              {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
             </button>
           </div>
         </form>
@@ -231,6 +328,7 @@ export default function TeamSettings({
               <button
                 type="button"
                 onClick={closeDeleteModal}
+                disabled={isDeleting}
                 className="rounded-lg bg-background-muted px-5 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-border"
               >
                 Batal
@@ -238,10 +336,10 @@ export default function TeamSettings({
               <button
                 type="button"
                 disabled={!isDeleteConfirmed}
-                onClick={closeDeleteModal}
+                onClick={handleDelete}
                 className="rounded-lg bg-red-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-slate-300"
               >
-                Hapus Tim
+                {isDeleting ? "Menghapus..." : "Hapus Tim"}
               </button>
             </div>
           </section>

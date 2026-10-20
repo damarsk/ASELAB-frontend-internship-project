@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-export async function GET(
+async function forwardTeamRequest(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  id: string,
+  method: "GET" | "PUT" | "DELETE",
 ) {
   const backendBaseUrl =
     process.env.BACKEND_URL ?? process.env.NEXT_PUBLIC_BACKEND_URL;
-  const { id } = await params;
 
   if (!backendBaseUrl) {
     return NextResponse.json(
@@ -28,11 +28,12 @@ export async function GET(
 
   try {
     const response = await fetch(`${backendBaseUrl}/teams/${id}`, {
-      method: "GET",
+      method,
       headers: {
         "Content-Type": "application/json",
         ...(authorization ? { Authorization: authorization } : {}),
       },
+      ...(method === "PUT" ? { body: await request.text() } : {}),
       cache: "no-store",
     });
     const data = await response.text();
@@ -50,4 +51,28 @@ export async function GET(
       { status: 503 },
     );
   }
+}
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  return forwardTeamRequest(request, id, "GET");
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  return forwardTeamRequest(request, id, "PUT");
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  return forwardTeamRequest(request, id, "DELETE");
 }

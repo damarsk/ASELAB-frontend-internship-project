@@ -35,8 +35,9 @@ export default function TeamHero({
                 {event}
               </p>
               <p className="mt-2 text-sm text-text-secondary">
-                Dibuat oleh <strong>{leaderName ?? "Anindya"}</strong> • Team
-                Leader
+                Dibuat oleh{" "}
+                <strong>{leaderName ?? "Ketua tim tidak tersedia"}</strong> •
+                Team Leader
               </p>
             </div>
             <TeamMembershipAction status={membershipStatus} />

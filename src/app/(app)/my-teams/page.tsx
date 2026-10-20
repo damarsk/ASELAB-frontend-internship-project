@@ -250,8 +250,8 @@ export default function MyTeamPage() {
                   key={team.id}
                   className="flex flex-col gap-5 rounded-xl border border-border bg-white p-5 transition-shadow hover:shadow-md sm:flex-row sm:items-center"
                 >
-                  <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-success-light text-2xl">
-                    👩🏻‍💼
+                  <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-2xl font-extrabold uppercase text-cyan-400 shadow-inner select-none">
+                    {team.nama.trim().charAt(0).toUpperCase() || "T"}
                   </div>
                   <div className="min-w-0 flex-1">
                     <h3 className="text-lg font-bold text-text-primary">
@@ -335,8 +335,8 @@ export default function MyTeamPage() {
                     key={team.id}
                     className="flex flex-col gap-5 rounded-xl border border-border bg-white p-5 transition-shadow hover:shadow-md sm:flex-row sm:items-center"
                   >
-                    <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-2xl">
-                      👥
+                    <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-2xl font-extrabold uppercase text-cyan-400 shadow-inner select-none">
+                      {team.nama.trim().charAt(0).toUpperCase() || "T"}
                     </div>
                     <div className="min-w-0 flex-1">
                       <h3 className="text-lg font-bold text-text-primary">
@@ -425,8 +425,8 @@ export default function MyTeamPage() {
                   key={request.id}
                   className="flex flex-col gap-5 rounded-xl border border-border bg-white p-5 transition-shadow hover:shadow-md sm:flex-row sm:items-center"
                 >
-                  <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-success-light text-2xl">
-                    👩🏻‍💼
+                  <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-2xl font-extrabold uppercase text-cyan-400 shadow-inner select-none">
+                    {request.team.nama.trim().charAt(0).toUpperCase() || "T"}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">

@@ -71,8 +71,8 @@ function SwipeCard({
       </motion.span>
 
       <div className="flex items-start justify-between gap-3">
-        <div className="flex size-16 items-center justify-center rounded-full bg-success-light text-3xl">
-          👩🏻‍💼
+        <div className="flex size-16 items-center justify-center rounded-xl bg-slate-900 text-2xl font-extrabold uppercase text-cyan-400 shadow-inner select-none">
+          {team.nama.trim().charAt(0).toUpperCase() || "T"}
         </div>
         <span className="flex items-center gap-1 pt-1 text-xs text-text-secondary">
           <Users className="size-3.5" aria-hidden="true" />

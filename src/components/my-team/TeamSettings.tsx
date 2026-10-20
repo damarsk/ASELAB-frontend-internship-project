@@ -2,7 +2,6 @@
 
 import {
   AlertTriangle,
-  Camera,
   Loader2,
   Plus,
   Search,
@@ -344,15 +343,10 @@ export default function TeamSettings({
     >
       <aside>
         <div className="rounded-xl border border-border bg-white p-5 text-center shadow-sm">
-          <div className="relative mx-auto flex size-16 items-center justify-center rounded-lg bg-slate-900 text-cyan-400 shadow-inner">
-            <span className="text-2xl">◈</span>
-            <button
-              type="button"
-              aria-label="Ubah logo tim"
-              className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full border border-border bg-white text-text-secondary"
-            >
-              <Camera className="size-3" />
-            </button>
+          <div className="mx-auto flex size-16 items-center justify-center rounded-lg bg-slate-900 text-cyan-400 shadow-inner">
+            <span className="text-2xl font-extrabold uppercase select-none">
+              {(name || teamName || "T").trim().charAt(0).toUpperCase()}
+            </span>
           </div>
           <h2 className="mt-3 font-bold text-text-primary">{teamName}</h2>
           <p className="mt-1 text-xs text-text-secondary">{event}</p>

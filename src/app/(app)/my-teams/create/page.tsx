@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, ImagePlus, Plus, X } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Plus, X } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Footer from "@/src/components/landing/Footer";
 
@@ -29,7 +29,6 @@ export default function CreateTeamPage() {
   const [maxMembers, setMaxMembers] = useState("5");
   const [skills, setSkills] = useState<string[]>(["UI/UX Designer"]);
   const [newSkill, setNewSkill] = useState("");
-  const [logoName, setLogoName] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -155,7 +154,6 @@ export default function CreateTeamPage() {
           kompetisi: competition.trim(),
           skillDibutuhkan: skills,
           kuota: Number(maxMembers),
-          logo: logoName || null,
           blacklistUserIds: blacklistedUsers.map((user) => user.id),
         }),
       });
@@ -251,7 +249,7 @@ export default function CreateTeamPage() {
               />
             </label>
 
-            <label>
+            <label className="sm:col-span-2">
               <span className="text-sm font-semibold text-text-primary">
                 Maksimal Anggota <span className="text-red-500">*</span>
               </span>
@@ -265,30 +263,6 @@ export default function CreateTeamPage() {
                 className={inputClassName}
               />
             </label>
-
-            <div>
-              <span className="text-sm font-semibold text-text-primary">
-                Logo Tim{" "}
-                <span className="font-normal text-text-muted">(opsional)</span>
-              </span>
-              <label className="mt-2 flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-border-strong px-4 py-3 text-sm text-text-secondary transition hover:border-brand-primary hover:bg-brand-primary-light">
-                <ImagePlus
-                  className="size-5 text-brand-primary"
-                  aria-hidden="true"
-                />
-                <span className="min-w-0 truncate">
-                  {logoName || "Unggah gambar logo"}
-                </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="sr-only"
-                  onChange={(event) =>
-                    setLogoName(event.target.files?.[0]?.name ?? "")
-                  }
-                />
-              </label>
-            </div>
           </div>
 
           <fieldset className="mt-6 border-t border-border pt-6">

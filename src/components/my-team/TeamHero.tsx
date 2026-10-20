@@ -1,4 +1,3 @@
-import { ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import TeamMembershipAction from "./TeamMembershipAction";
 
@@ -19,11 +18,15 @@ export default function TeamHero({
   children?: ReactNode;
   membershipStatus?: "joined" | "request";
 }) {
+  const initial = name?.trim().charAt(0).toUpperCase() || "T";
+
   return (
     <section className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-7">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
         <div className="flex size-18 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-cyan-400 shadow-inner">
-          <ShieldCheck className="size-10" aria-hidden="true" />
+          <span className="text-3xl font-extrabold uppercase select-none">
+            {initial}
+          </span>
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-col justify-between gap-3 sm:flex-row">

@@ -350,7 +350,13 @@ export default function MyTeamDetailPage({
           event={team.kompetisi}
           skills={team.skillDibutuhkan}
           description={team.deskripsi}
-          leaderName={team.leader?.nama}
+          leaderName={
+            team.leader?.nama ??
+            team.members.find(
+              (member) =>
+                member.role === "LEADER" || member.userId === team.leaderId,
+            )?.user.nama
+          }
         >
           <TeamGroupLinks
             whatsappUrl={team.linkGrupWhatsapp ?? undefined}

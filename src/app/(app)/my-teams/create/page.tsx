@@ -19,15 +19,8 @@ const inputClassName =
 type BlacklistUser = {
   id: number;
   nama: string;
+  nim?: string;
 };
-
-const mockUsers: BlacklistUser[] = [
-  { id: 1, nama: "Alya Putri" },
-  { id: 2, nama: "Bagas Pratama" },
-  { id: 3, nama: "Citra Lestari" },
-  { id: 4, nama: "Dimas Saputra" },
-  { id: 5, nama: "Elvina Sari" },
-];
 
 export default function CreateTeamPage() {
   const [teamName, setTeamName] = useState("");
@@ -43,7 +36,43 @@ export default function CreateTeamPage() {
   const [blacklistQuery, setBlacklistQuery] = useState("");
   const [blacklistedUsers, setBlacklistedUsers] = useState<BlacklistUser[]>([]);
   const [isBlacklistDropdownOpen, setIsBlacklistDropdownOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState<BlacklistUser[]>([]);
+  const [isSearchingUsers, setIsSearchingUsers] = useState(false);
   const blacklistSearchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const trimmed = blacklistQuery.trim();
+    if (!trimmed) {
+      setSearchResults([]);
+      setIsSearchingUsers(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearchingUsers(true);
+      try {
+        const response = await fetch(
+          `/api/teams/users/search?q=${encodeURIComponent(trimmed)}`,
+          { credentials: "include" },
+        );
+        const result = (await response.json().catch(() => null)) as {
+          data?: BlacklistUser[];
+        } | null;
+
+        if (response.ok && Array.isArray(result?.data)) {
+          setSearchResults(result.data);
+        } else {
+          setSearchResults([]);
+        }
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setIsSearchingUsers(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [blacklistQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -87,10 +116,9 @@ export default function CreateTeamPage() {
     }
   };
 
-  const blacklistSuggestions = mockUsers.filter(
+  const blacklistSuggestions = searchResults.filter(
     (user) =>
-      !blacklistedUsers.some((selectedUser) => selectedUser.id === user.id) &&
-      user.nama.toLowerCase().includes(blacklistQuery.trim().toLowerCase()),
+      !blacklistedUsers.some((selectedUser) => selectedUser.id === user.id),
   );
 
   const selectBlacklistUser = (user: BlacklistUser) => {
@@ -128,6 +156,7 @@ export default function CreateTeamPage() {
           skillDibutuhkan: skills,
           kuota: Number(maxMembers),
           logo: logoName || null,
+          blacklistUserIds: blacklistedUsers.map((user) => user.id),
         }),
       });
       const result = (await response.json().catch(() => null)) as {
@@ -357,7 +386,15 @@ export default function CreateTeamPage() {
                   className="absolute inset-x-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-lg border border-border bg-white py-1 shadow-lg"
                   role="listbox"
                 >
-                  {blacklistSuggestions.length > 0 ? (
+                  {isSearchingUsers ? (
+                    <p className="px-4 py-3 text-sm text-text-secondary">
+                      Mencari user...
+                    </p>
+                  ) : !blacklistQuery.trim() ? (
+                    <p className="px-4 py-3 text-sm text-text-secondary">
+                      Ketik nama atau NIM untuk mencari user.
+                    </p>
+                  ) : blacklistSuggestions.length > 0 ? (
                     blacklistSuggestions.map((user) => (
                       <button
                         key={user.id}
@@ -371,6 +408,11 @@ export default function CreateTeamPage() {
                         <span className="font-medium text-text-primary">
                           {user.nama}
                         </span>
+                        {user.nim && (
+                          <span className="text-xs text-text-muted">
+                            NIM: {user.nim}
+                          </span>
+                        )}
                       </button>
                     ))
                   ) : (
@@ -388,7 +430,12 @@ export default function CreateTeamPage() {
                     key={user.id}
                     className="inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700"
                   >
-                    {user.nama}
+                    <span>
+                      {user.nama}{" "}
+                      {user.nim && (
+                        <span className="text-red-500">({user.nim})</span>
+                      )}
+                    </span>
                     <button
                       type="button"
                       onClick={() => removeBlacklistUser(user.id)}

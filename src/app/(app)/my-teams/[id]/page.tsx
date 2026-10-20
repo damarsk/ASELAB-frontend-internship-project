@@ -377,6 +377,7 @@ export default function MyTeamDetailPage({
           />
         ) : (
           <TeamSettings
+            teamId={team.id}
             teamName={team.nama}
             event={team.kompetisi}
             description={team.deskripsi}

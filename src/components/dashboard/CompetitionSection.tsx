@@ -32,7 +32,12 @@ export default function CompetitionSection({
           >
             <CompetitionPlaceholder />
             <h3 className="mt-6 max-w-xs text-base font-bold leading-6 text-text-primary">
-              {competition.namaLomba}
+              <Link
+                href={`/competitions/${competition.id}`}
+                className="transition-colors hover:text-brand-primary"
+              >
+                {competition.namaLomba}
+              </Link>
             </h3>
             <p className="mt-4 max-w-xs text-xs leading-4 text-text-secondary">
               Kategori {competition.kategori}, {competition.penyelenggara}
@@ -41,10 +46,13 @@ export default function CompetitionSection({
             <p className="mt-1 text-2xl font-medium text-text-secondary">
               {competition.hadiah ?? "Tidak tersedia"}
             </p>
-            <button className="mt-auto inline-flex items-center gap-1 rounded-md bg-brand-primary px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-brand-primary-hover">
+            <Link
+              href={`/competitions/${competition.id}`}
+              className="mt-auto inline-flex items-center gap-1 rounded-md bg-brand-primary px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-brand-primary-hover"
+            >
               Eksplorasi &amp; Cari Rekan{" "}
               <ArrowRight className="size-3.5" aria-hidden="true" />
-            </button>
+            </Link>
           </article>
         ))}
       </div>

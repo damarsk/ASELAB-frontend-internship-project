@@ -109,6 +109,12 @@ export default function MyTeamPage() {
   const [isLoadingRequests, setIsLoadingRequests] = useState(true);
   const [requestsError, setRequestsError] = useState<string | null>(null);
 
+  // Request yang sudah diterima tidak ditampilkan lagi di section "Request",
+  // karena tim tersebut sudah muncul di section "Tim yang kamu ikuti".
+  const visibleJoinRequests = joinRequests.filter(
+    (request) => request.status !== "ACCEPTED",
+  );
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -391,7 +397,7 @@ export default function MyTeamPage() {
               <span className="h-4 w-20 animate-pulse rounded bg-slate-200" />
             ) : (
               <span className="text-sm text-text-muted">
-                {joinRequests.length} request
+                {visibleJoinRequests.length} request
               </span>
             )}
           </div>
@@ -414,13 +420,15 @@ export default function MyTeamPage() {
             </p>
           ) : isLoadingRequests ? (
             <JoinRequestListSkeleton />
-          ) : joinRequests.length === 0 ? (
+          ) : visibleJoinRequests.length === 0 ? (
             <p className="mt-4 rounded-xl border border-dashed border-border-strong bg-white px-5 py-12 text-center text-sm text-text-secondary">
-              Belum ada permintaan bergabung ke tim.
+              {joinRequests.length > 0
+                ? "Semua permintaan sudah diproses. Tim yang menerima kamu ada di bagian Tim yang kamu ikuti."
+                : "Belum ada permintaan bergabung ke tim."}
             </p>
           ) : (
             <div className="mt-4 space-y-3">
-              {joinRequests.map((request) => (
+              {visibleJoinRequests.map((request) => (
                 <article
                   key={request.id}
                   className="flex flex-col gap-5 rounded-xl border border-border bg-white p-5 transition-shadow hover:shadow-md sm:flex-row sm:items-center"
@@ -437,9 +445,7 @@ export default function MyTeamPage() {
                         className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
                           request.status === "PENDING"
                             ? "bg-warning-light text-amber-700"
-                            : request.status === "ACCEPTED"
-                              ? "bg-success-light text-brand-primary"
-                              : "bg-red-50 text-red-700"
+                            : "bg-red-50 text-red-700"
                         }`}
                       >
                         {request.status === "PENDING" && (

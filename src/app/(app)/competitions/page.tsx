@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, Search, SlidersHorizontal, X } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import CompetitionCardSkeleton from "@/src/components/competitions/CompetitionCardSkeleton";
 import CompetitionPlaceholder from "@/src/components/competitions/CompetitionPlaceholder";
@@ -20,17 +21,32 @@ type CompetitionsResponse = {
 };
 
 function CompetitionCard({ competition }: { competition: Competition }) {
-  const deadline = new Intl.DateTimeFormat("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(competition.deadline));
+  const deadlineDate = competition.deadline
+    ? new Date(competition.deadline)
+    : null;
+  const deadline =
+    deadlineDate && !Number.isNaN(deadlineDate.getTime())
+      ? new Intl.DateTimeFormat("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }).format(deadlineDate)
+      : "Belum ditentukan";
 
   return (
     <article className="flex min-h-0 flex-col rounded-xl border border-border bg-white px-4 py-5 text-center transition-shadow hover:shadow-md sm:px-5">
-      <CompetitionPlaceholder competition={{ name: competition.namaLomba }} />
+      <Link href={`/competitions/${competition.id}`} className="block">
+        <CompetitionPlaceholder
+          competition={{ name: competition.namaLomba }}
+        />
+      </Link>
       <h2 className="mt-5 min-h-10 text-xs font-bold leading-5 text-text-primary sm:text-sm">
-        {competition.namaLomba}
+        <Link
+          href={`/competitions/${competition.id}`}
+          className="transition-colors hover:text-brand-primary"
+        >
+          {competition.namaLomba}
+        </Link>
       </h2>
       <p className="mt-2 min-h-10 text-[10px] leading-3.5 text-text-secondary sm:text-[11px]">
         Kategori {competition.kategori}, {competition.penyelenggara}
@@ -40,14 +56,12 @@ function CompetitionCard({ competition }: { competition: Competition }) {
         {competition.hadiah ?? "Tidak tersedia"}
       </p>
       <p className="mt-1 text-[10px] text-text-muted">Deadline: {deadline}</p>
-      <a
-        href={competition.infoPendaftaran}
-        target="_blank"
-        rel="noreferrer"
+      <Link
+        href={`/competitions/${competition.id}`}
         className="mx-auto mt-3 inline-flex items-center gap-1 rounded-md bg-brand-primary px-3 py-1.5 text-[10px] font-medium text-white transition-colors hover:bg-brand-primary-hover sm:px-4 sm:text-xs"
       >
-        Daftar Kompetisi <ArrowRight className="size-3.5" aria-hidden="true" />
-      </a>
+        Lihat Detail <ArrowRight className="size-3.5" aria-hidden="true" />
+      </Link>
     </article>
   );
 }

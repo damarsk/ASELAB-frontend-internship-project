@@ -11,16 +11,20 @@ type TeamSwipeDeckProps = {
   teams: BackendTeam[];
 };
 
+type SwipeDirection = "join" | "skip";
+
 function SwipeCard({
   team,
   isFront,
   stackIndex,
-  onRemove,
+  isBusy,
+  onSwipe,
 }: {
   team: BackendTeam;
   isFront: boolean;
   stackIndex: number;
-  onRemove: (teamId: number) => void;
+  isBusy: boolean;
+  onSwipe: (teamId: number, direction: SwipeDirection) => void;
 }) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-180, 180], [-14, 14]);
@@ -41,12 +45,18 @@ function SwipeCard({
         scale: isFront ? 1 : 1 - Math.min(stackIndex * 0.02, 0.06),
         y: isFront ? 0 : -stackIndex * 5,
       }}
-      drag={isFront ? "x" : false}
+      drag={isFront && !isBusy ? "x" : false}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.9}
       dragSnapToOrigin
       onDragEnd={(_, info) => {
-        if (Math.abs(info.offset.x) > 90) onRemove(team.id);
+        if (isBusy) return;
+
+        if (info.offset.x <= -90) {
+          onSwipe(team.id, "join");
+        } else if (info.offset.x >= 90) {
+          onSwipe(team.id, "skip");
+        }
       }}
     >
       <motion.div
@@ -120,8 +130,9 @@ function SwipeCard({
             <button
               type="button"
               aria-label={`Gabung ${team.nama}`}
-              onClick={() => onRemove(team.id)}
-              className="flex size-12 items-center justify-center rounded-full bg-success-light text-brand-primary transition-transform hover:scale-105"
+              onClick={() => onSwipe(team.id, "join")}
+              disabled={isBusy}
+              className="flex size-12 items-center justify-center rounded-full bg-success-light text-brand-primary transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Image
                 src="/join-request.svg"
@@ -141,8 +152,9 @@ function SwipeCard({
             <button
               type="button"
               aria-label={`Lewati ${team.nama}`}
-              onClick={() => onRemove(team.id)}
-              className="flex size-12 items-center justify-center rounded-full border border-danger bg-danger-light text-danger transition-transform hover:scale-105"
+              onClick={() => onSwipe(team.id, "skip")}
+              disabled={isBusy}
+              className="flex size-12 items-center justify-center rounded-full border border-danger bg-danger-light text-danger transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <X className="size-5" aria-hidden="true" />
             </button>
@@ -153,13 +165,90 @@ function SwipeCard({
   );
 }
 
+type SwipeResult = {
+  direction: SwipeDirection;
+  teamName: string;
+};
+
 export default function TeamSwipeDeck({
   teams: filteredTeams,
 }: TeamSwipeDeckProps) {
   const [cards, setCards] = useState(filteredTeams);
+  const [joinedIds, setJoinedIds] = useState<number[]>([]);
+  const [isBusy, setIsBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [lastResult, setLastResult] = useState<SwipeResult | null>(null);
 
   const removeCard = (teamId: number) => {
     setCards((current) => current.filter((team) => team.id !== teamId));
+  };
+
+  const handleSwipe = async (teamId: number, direction: SwipeDirection) => {
+    if (isBusy) return;
+
+    const team = cards.find((item) => item.id === teamId);
+    if (!team) return;
+
+    setError(null);
+
+    // Swipe ke kanan (skip) tidak memanggil API apa pun.
+    if (direction === "skip") {
+      removeCard(teamId);
+      setLastResult({ direction, teamName: team.nama });
+      return;
+    }
+
+    // Swipe ke kiri (join): kirim join request sekaligus simpan swipe LIKE
+    // agar tim tidak muncul lagi di rekomendasi.
+    setIsBusy(true);
+
+    try {
+      const joinResponse = await fetch("/api/match/requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ teamId }),
+      });
+
+      if (!joinResponse.ok) {
+        const payload = await joinResponse.json().catch(() => null);
+        const message =
+          payload?.error ?? payload?.message ?? "Gagal mengirim join request.";
+
+        // Request yang sudah pernah dikirim tetap dianggap berhasil.
+        const sudahDikirim =
+          joinResponse.status === 409 && message.includes("pernah mengirim");
+
+        if (!sudahDikirim) throw new Error(message);
+      }
+
+      const swipeResponse = await fetch("/api/match/swipe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ teamId, action: "LIKE" }),
+      });
+
+      if (!swipeResponse.ok) {
+        const payload = await swipeResponse.json().catch(() => null);
+
+        throw new Error(
+          payload?.error ?? payload?.message ?? "Gagal menyimpan swipe.",
+        );
+      }
+
+      setJoinedIds((current) => [...current, teamId]);
+      removeCard(teamId);
+      setLastResult({ direction, teamName: team.nama });
+    } catch (swipeError) {
+      setError(
+        swipeError instanceof Error
+          ? swipeError.message
+          : "Gagal mengirim join request.",
+      );
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   if (cards.length === 0) {
@@ -172,11 +261,17 @@ export default function TeamSwipeDeck({
           Semua tim sudah kamu lihat
         </h2>
         <p className="mt-2 max-w-sm text-sm text-text-secondary">
-          Mulai lagi untuk melihat daftar tim dari awal.
+          {lastResult?.direction === "join"
+            ? `Join request untuk ${lastResult.teamName} sudah dikirim.`
+            : "Mulai lagi untuk melihat daftar tim dari awal."}
         </p>
         <button
           type="button"
-          onClick={() => setCards(filteredTeams)}
+          onClick={() =>
+            setCards(
+              filteredTeams.filter((team) => !joinedIds.includes(team.id)),
+            )
+          }
           className="mt-5 rounded-lg bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
         >
           Mulai Lagi
@@ -194,10 +289,20 @@ export default function TeamSwipeDeck({
             team={team}
             isFront={index === cards.length - 1}
             stackIndex={index}
-            onRemove={removeCard}
+            isBusy={isBusy}
+            onSwipe={handleSwipe}
           />
         ))}
       </div>
+      {error ? (
+        <p role="alert" className="mt-4 text-center text-xs text-danger">
+          {error}
+        </p>
+      ) : lastResult?.direction === "join" ? (
+        <p className="mt-4 text-center text-xs text-brand-primary">
+          Join request untuk {lastResult.teamName} sudah dikirim.
+        </p>
+      ) : null}
       <p className="mt-4 text-center text-xs text-text-secondary">
         Geser kartu ke kiri untuk join, atau ke kanan untuk skip
       </p>

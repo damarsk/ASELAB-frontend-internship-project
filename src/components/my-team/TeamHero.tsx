@@ -1,7 +1,10 @@
 import type { ReactNode } from "react";
-import TeamMembershipAction from "./TeamMembershipAction";
+import TeamMembershipAction, {
+  type JoinRequestStatus,
+} from "./TeamMembershipAction";
 
 export default function TeamHero({
+  teamId,
   name,
   event,
   skills,
@@ -9,7 +12,10 @@ export default function TeamHero({
   leaderName,
   children,
   membershipStatus = "joined",
+  initialRequestStatus = null,
+  onRequestSuccess,
 }: {
+  teamId?: number;
   name: string;
   event: string;
   skills: string[];
@@ -17,6 +23,8 @@ export default function TeamHero({
   leaderName?: string;
   children?: ReactNode;
   membershipStatus?: "joined" | "request";
+  initialRequestStatus?: JoinRequestStatus | null;
+  onRequestSuccess?: () => void;
 }) {
   const initial = name?.trim().charAt(0).toUpperCase() || "T";
 
@@ -43,7 +51,13 @@ export default function TeamHero({
                 Team Leader
               </p>
             </div>
-            <TeamMembershipAction status={membershipStatus} />
+            <TeamMembershipAction
+              status={membershipStatus}
+              teamId={teamId}
+              teamSkills={skills}
+              initialRequestStatus={initialRequestStatus}
+              onRequestSuccess={onRequestSuccess}
+            />
           </div>
           <div className="mt-7 border-t border-border pt-5">
             <h2 className="text-xs font-bold text-text-primary">

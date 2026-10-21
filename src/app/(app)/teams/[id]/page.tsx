@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import Footer from "@/src/components/landing/Footer";
 import TeamHero from "@/src/components/my-team/TeamHero";
+import type { JoinRequestStatus } from "@/src/components/my-team/TeamMembershipAction";
 import PublicTeamMembers from "@/src/components/teams/PublicTeamMembers";
 import type { BackendTeamDetail } from "@/src/types/team";
 
@@ -17,21 +18,74 @@ export default function TeamDetailPage({
   const { id } = use(params);
   const [team, setTeam] = useState<BackendTeamDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [membershipStatus, setMembershipStatus] = useState<"joined" | "request">(
+    "request",
+  );
+  const [requestStatus, setRequestStatus] = useState<JoinRequestStatus | null>(
+    null,
+  );
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    const loadTeam = async () => {
+    const loadTeamData = async () => {
       try {
-        const response = await fetch(`/api/teams/${id}`, {
-          credentials: "include",
-          cache: "no-store",
-          signal: controller.signal,
-        });
-        if (!response.ok) throw new Error("Gagal memuat detail tim");
+        const [teamResponse, profileResponse, requestsResponse] =
+          await Promise.all([
+            fetch(`/api/teams/${id}`, {
+              credentials: "include",
+              cache: "no-store",
+              signal: controller.signal,
+            }),
+            fetch("/api/auth/profile", {
+              credentials: "include",
+              cache: "no-store",
+              signal: controller.signal,
+            }).catch(() => null),
+            fetch("/api/match/requests", {
+              credentials: "include",
+              cache: "no-store",
+              signal: controller.signal,
+            }).catch(() => null),
+          ]);
 
-        const payload: { data?: BackendTeamDetail } = await response.json();
-        setTeam(payload.data ?? null);
+        if (!teamResponse.ok) throw new Error("Gagal memuat detail tim");
+
+        const payload: { data?: BackendTeamDetail } =
+          await teamResponse.json();
+        const teamData = payload.data ?? null;
+        setTeam(teamData);
+
+        const profilePayload = profileResponse?.ok
+          ? await profileResponse.json().catch(() => null)
+          : null;
+        const currentUserId =
+          profilePayload?.data?.id ?? profilePayload?.data?.userId;
+
+        const requestsPayload = requestsResponse?.ok
+          ? await requestsResponse.json().catch(() => null)
+          : null;
+        const myRequests: Array<{ teamId: number; status: JoinRequestStatus }> =
+          Array.isArray(requestsPayload?.data) ? requestsPayload.data : [];
+
+        if (teamData) {
+          const isMemberOrLeader =
+            typeof currentUserId === "number" &&
+            (teamData.leaderId === currentUserId ||
+              teamData.members.some((member) => member.userId === currentUserId));
+
+          const existingRequest = myRequests.find(
+            (req) => req.teamId === Number(id),
+          );
+
+          if (isMemberOrLeader || existingRequest?.status === "ACCEPTED") {
+            setMembershipStatus("joined");
+          } else {
+            setMembershipStatus("request");
+            setRequestStatus(existingRequest?.status ?? null);
+          }
+        }
       } catch (error) {
         if (!(error instanceof DOMException && error.name === "AbortError")) {
           setTeam(null);
@@ -41,11 +95,19 @@ export default function TeamDetailPage({
       }
     };
 
-    void loadTeam();
+    void loadTeamData();
     return () => controller.abort();
   }, [id]);
 
   if (!loading && !team) notFound();
+
+  const handleRequestSuccess = () => {
+    setRequestStatus("PENDING");
+    setToastMessage("Permintaan bergabung berhasil dikirim ke Team Leader!");
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 5000);
+  };
 
   return (
     <>
@@ -57,6 +119,24 @@ export default function TeamDetailPage({
           <ArrowLeft className="size-4" aria-hidden="true" />
           Kembali ke Cari Tim
         </Link>
+
+        {toastMessage && (
+          <div
+            role="status"
+            className="mb-5 flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
+          >
+            <span>{toastMessage}</span>
+            <button
+              type="button"
+              onClick={() => setToastMessage(null)}
+              className="text-emerald-700 hover:text-emerald-900"
+              aria-label="Tutup notifikasi"
+            >
+              &times;
+            </button>
+          </div>
+        )}
+
         {loading ? (
           <p className="py-16 text-center text-text-secondary">
             Memuat detail tim...
@@ -65,6 +145,7 @@ export default function TeamDetailPage({
           team && (
             <>
               <TeamHero
+                teamId={Number(id)}
                 name={team.nama}
                 event={team.kompetisi}
                 description={team.deskripsi}
@@ -73,10 +154,12 @@ export default function TeamDetailPage({
                     (member) =>
                       member.role === "LEADER" ||
                       member.userId === team.leaderId,
-                  )?.user.nama
+                  )?.user.nama ?? team.leader?.nama
                 }
                 skills={team.skillDibutuhkan}
-                membershipStatus="request"
+                membershipStatus={membershipStatus}
+                initialRequestStatus={requestStatus}
+                onRequestSuccess={handleRequestSuccess}
               />
               <PublicTeamMembers
                 members={team.members.map((member) => ({
@@ -101,3 +184,4 @@ export default function TeamDetailPage({
     </>
   );
 }
+

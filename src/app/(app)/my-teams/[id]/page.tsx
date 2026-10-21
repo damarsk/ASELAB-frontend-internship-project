@@ -13,6 +13,7 @@ import TeamSettings from "@/src/components/my-team/TeamSettings";
 import type { RequestStatus, TeamMember } from "@/src/components/my-team/types";
 import type { JoinRequest } from "@/src/components/my-team/types";
 import type { BackendTeamDetail } from "@/src/types/team";
+import TeamDetailSkeleton from "@/src/components/my-team/TeamDetailSkeleton";
 
 type TeamResponse = {
   data?: BackendTeamDetail;
@@ -114,9 +115,9 @@ export default function MyTeamDetailPage({
           cache: "no-store",
           signal: controller.signal,
         });
-        const result = (await response.json().catch(() => null)) as
-          | TeamResponse
-          | null;
+        const result = (await response
+          .json()
+          .catch(() => null)) as TeamResponse | null;
 
         if (!response.ok) {
           throw new Error(
@@ -198,9 +199,7 @@ export default function MyTeamDetailPage({
     return (
       <>
         <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-12">
-          <p className="rounded-xl border border-border bg-white px-5 py-8 text-center text-sm text-text-secondary">
-            Memuat detail tim...
-          </p>
+          <TeamDetailSkeleton />
         </main>
         <Footer />
       </>
@@ -262,9 +261,10 @@ export default function MyTeamDetailPage({
           }),
         },
       );
-      const result = (await response.json().catch(() => null)) as
-        | { error?: string; message?: string }
-        | null;
+      const result = (await response.json().catch(() => null)) as {
+        error?: string;
+        message?: string;
+      } | null;
 
       if (!response.ok) {
         throw new Error(
@@ -305,9 +305,9 @@ export default function MyTeamDetailPage({
       credentials: "include",
       body: JSON.stringify(data),
     });
-    const result = (await response.json().catch(() => null)) as
-      | TeamResponse
-      | null;
+    const result = (await response
+      .json()
+      .catch(() => null)) as TeamResponse | null;
 
     if (!response.ok || !result?.data) {
       throw new Error(
@@ -322,7 +322,7 @@ export default function MyTeamDetailPage({
             ...result.data,
             members: current.members,
           }
-        : result.data ?? current,
+        : (result.data ?? current),
     );
   };
 
@@ -331,12 +331,15 @@ export default function MyTeamDetailPage({
       method: "DELETE",
       credentials: "include",
     });
-    const result = (await response.json().catch(() => null)) as
-      | { error?: string; message?: string }
-      | null;
+    const result = (await response.json().catch(() => null)) as {
+      error?: string;
+      message?: string;
+    } | null;
 
     if (!response.ok) {
-      throw new Error(result?.error ?? result?.message ?? "Gagal menghapus tim.");
+      throw new Error(
+        result?.error ?? result?.message ?? "Gagal menghapus tim.",
+      );
     }
 
     router.push("/my-teams");

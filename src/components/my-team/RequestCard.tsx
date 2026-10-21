@@ -1,4 +1,6 @@
 import { ArrowRight, Check, Clock3, X } from "lucide-react";
+import Link from "next/link";
+import UserAvatar from "@/src/components/ui/UserAvatar";
 import { statusLabels } from "./data";
 import type { JoinRequest, RequestStatus } from "./types";
 
@@ -14,17 +16,18 @@ export default function RequestCard({
       <div className="flex flex-1 flex-col gap-5">
         <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-start">
           <div className="flex shrink-0 flex-col items-start gap-4 sm:w-28">
-            <div
-              className={`flex size-24 items-center justify-center rounded-full text-lg font-bold ring-4 ring-background-muted ${request.color}`}
-            >
-              {request.initials}
-            </div>
-            <button
-              type="button"
-              className="flex items-center justify-center gap-1 rounded-lg bg-sky-400 px-3 py-2 text-xs font-semibold text-white hover:bg-sky-500"
+            <UserAvatar
+              name={request.name}
+              imageUrl={request.fotoProfilUrl}
+              size={96}
+              className="rounded-full ring-4 ring-background-muted"
+            />
+            <Link
+              href={`/profile/${request.userId}`}
+              className="flex items-center justify-center gap-1 rounded-lg bg-sky-400 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-sky-500"
             >
               Lihat Profil <ArrowRight className="size-3.5" />
-            </button>
+            </Link>
           </div>
           <div className="flex min-w-0 flex-1 flex-col">
             <div className="flex flex-col justify-between gap-2 sm:flex-row">

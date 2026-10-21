@@ -1,3 +1,4 @@
+import UserAvatar from "@/src/components/ui/UserAvatar";
 import type { TeamMember } from "@/src/components/my-team/types";
 
 export default function PublicTeamMembers({
@@ -24,11 +25,12 @@ export default function PublicTeamMembers({
             key={member.name}
             className="flex items-center gap-4 rounded-2xl border border-border bg-white px-4 py-4 shadow-sm"
           >
-            <div
-              className={`flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-bold ${member.color}`}
-            >
-              {member.initials}
-            </div>
+            <UserAvatar
+              name={member.name}
+              imageUrl={member.fotoProfilUrl}
+              size={48}
+              className="rounded-full"
+            />
             <div className="min-w-0">
               <h3 className="truncate text-sm font-bold text-text-primary">
                 {member.name}

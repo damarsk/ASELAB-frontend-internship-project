@@ -27,10 +27,12 @@ type BackendJoinRequest = {
   pesan: string | null;
   createdAt: string;
   user: {
+    id: number;
     nama: string;
     profile: {
       jurusan: string | null;
       skill: string[];
+      fotoProfilUrl?: string | null;
     } | null;
   };
   team: { id: number };
@@ -67,6 +69,7 @@ function mapJoinRequest(
 
   return {
     id: request.id,
+    userId: request.user.id,
     name,
     role: request.user.profile?.jurusan ?? "Anggota Tim",
     initials: name
@@ -76,6 +79,7 @@ function mapJoinRequest(
       .slice(0, 2)
       .toUpperCase(),
     color: memberColors[index % memberColors.length],
+    fotoProfilUrl: request.user.profile?.fotoProfilUrl ?? null,
     skills: request.user.profile?.skill ?? [],
     message: request.pesan ?? "Tidak ada pesan.",
     status: request.status.toLowerCase() as RequestStatus,
@@ -236,6 +240,7 @@ export default function MyTeamDetailPage({
       role: member.role === "LEADER" ? "Team Leader" : "Anggota Tim",
       initials,
       color: memberColors[index % memberColors.length],
+      fotoProfilUrl: member.user.profile?.fotoProfilUrl ?? null,
     };
   });
 

@@ -1,4 +1,5 @@
 import { Mail, MoreHorizontal } from "lucide-react";
+import UserAvatar from "@/src/components/ui/UserAvatar";
 import type { TeamMember } from "./types";
 
 export default function MembersOverview({
@@ -26,11 +27,12 @@ export default function MembersOverview({
             className="rounded-2xl border border-border bg-white p-5"
           >
             <div className="flex items-start justify-between">
-              <div
-                className={`flex size-12 items-center justify-center rounded-xl text-sm font-bold ${member.color}`}
-              >
-                {member.initials}
-              </div>
+              <UserAvatar
+                name={member.name}
+                imageUrl={member.fotoProfilUrl}
+                size={48}
+                className="rounded-xl"
+              />
               <button
                 type="button"
                 aria-label={`Opsi untuk ${member.name}`}

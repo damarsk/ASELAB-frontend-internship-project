@@ -34,6 +34,7 @@ export const members: TeamMember[] = [
 export const initialRequests: JoinRequest[] = [
   {
     id: 1,
+    userId: 101,
     name: "Ahmad Aldiansyah",
     role: "UI/UX Designer",
     initials: "AA",
@@ -46,6 +47,7 @@ export const initialRequests: JoinRequest[] = [
   },
   {
     id: 2,
+    userId: 102,
     name: "Siti Aulia",
     role: "Front-End Developer",
     initials: "SA",
@@ -58,6 +60,7 @@ export const initialRequests: JoinRequest[] = [
   },
   {
     id: 3,
+    userId: 103,
     name: "Bagas Aditya",
     role: "Product Manager",
     initials: "BA",
@@ -70,6 +73,7 @@ export const initialRequests: JoinRequest[] = [
   },
   {
     id: 4,
+    userId: 104,
     name: "Naufal Fikri",
     role: "Data Analyst",
     initials: "NF",

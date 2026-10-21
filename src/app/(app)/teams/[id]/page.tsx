@@ -9,6 +9,7 @@ import TeamHero from "@/src/components/my-team/TeamHero";
 import type { JoinRequestStatus } from "@/src/components/my-team/TeamMembershipAction";
 import PublicTeamMembers from "@/src/components/teams/PublicTeamMembers";
 import type { BackendTeamDetail } from "@/src/types/team";
+import TeamDetailSkeleton from "@/src/components/my-team/TeamDetailSkeleton";
 
 export default function TeamDetailPage({
   params,
@@ -18,9 +19,9 @@ export default function TeamDetailPage({
   const { id } = use(params);
   const [team, setTeam] = useState<BackendTeamDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [membershipStatus, setMembershipStatus] = useState<"joined" | "request">(
-    "request",
-  );
+  const [membershipStatus, setMembershipStatus] = useState<
+    "joined" | "request"
+  >("request");
   const [requestStatus, setRequestStatus] = useState<JoinRequestStatus | null>(
     null,
   );
@@ -52,8 +53,7 @@ export default function TeamDetailPage({
 
         if (!teamResponse.ok) throw new Error("Gagal memuat detail tim");
 
-        const payload: { data?: BackendTeamDetail } =
-          await teamResponse.json();
+        const payload: { data?: BackendTeamDetail } = await teamResponse.json();
         const teamData = payload.data ?? null;
         setTeam(teamData);
 
@@ -73,7 +73,9 @@ export default function TeamDetailPage({
           const isMemberOrLeader =
             typeof currentUserId === "number" &&
             (teamData.leaderId === currentUserId ||
-              teamData.members.some((member) => member.userId === currentUserId));
+              teamData.members.some(
+                (member) => member.userId === currentUserId,
+              ));
 
           const existingRequest = myRequests.find(
             (req) => req.teamId === Number(id),
@@ -138,9 +140,7 @@ export default function TeamDetailPage({
         )}
 
         {loading ? (
-          <p className="py-16 text-center text-text-secondary">
-            Memuat detail tim...
-          </p>
+          <TeamDetailSkeleton />
         ) : (
           team && (
             <>
@@ -174,6 +174,7 @@ export default function TeamDetailPage({
                     .slice(0, 2)
                     .toUpperCase(),
                   color: "bg-sky-100 text-sky-700",
+                  fotoProfilUrl: member.user.profile?.fotoProfilUrl ?? null,
                 }))}
               />
             </>
@@ -184,4 +185,3 @@ export default function TeamDetailPage({
     </>
   );
 }
-

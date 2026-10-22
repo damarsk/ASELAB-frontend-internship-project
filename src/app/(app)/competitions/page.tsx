@@ -36,9 +36,7 @@ function CompetitionCard({ competition }: { competition: Competition }) {
   return (
     <article className="flex min-h-0 flex-col rounded-xl border border-border bg-white px-4 py-5 text-center transition-shadow hover:shadow-md sm:px-5">
       <Link href={`/competitions/${competition.id}`} className="block">
-        <CompetitionPlaceholder
-          competition={{ name: competition.namaLomba }}
-        />
+        <CompetitionPlaceholder competition={{ name: competition.namaLomba }} />
       </Link>
       <h2 className="mt-5 min-h-10 text-xs font-bold leading-5 text-text-primary sm:text-sm">
         <Link
@@ -189,10 +187,10 @@ export default function CompetitionsPage() {
         <section className="flex h-64 items-center bg-brand-primary-light py-4">
           <div className="mx-auto w-full max-w-7xl px-8">
             <h1 className="text-4xl font-medium text-text-primary">
-              Find Your Perfect Competition
+              Temukan Kompetisi yang Tepat
             </h1>
             <p className="text-4xl font-medium text-text-primary">
-              Temukan kompetisi yang sesuai
+              Raih peluang untuk mengasah kemampuan
             </p>
             <p className="text-4xl font-medium text-brand-primary">
               dengan skill dan minatmu.
@@ -230,7 +228,10 @@ export default function CompetitionsPage() {
               }}
               className="flex items-center justify-center gap-2 rounded-xl border border-border bg-white px-5 py-3 text-sm font-medium text-text-primary transition-colors hover:bg-gray-50"
             >
-              <SlidersHorizontal className="size-4 shrink-0 text-text-secondary" aria-hidden="true" />
+              <SlidersHorizontal
+                className="size-4 shrink-0 text-text-secondary"
+                aria-hidden="true"
+              />
               Filter
             </button>
           </form>

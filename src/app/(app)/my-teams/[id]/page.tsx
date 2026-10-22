@@ -2,7 +2,7 @@
 
 import { use, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, X } from "lucide-react";
+import { Check, X, LogOut } from "lucide-react";
 import Footer from "@/src/components/landing/Footer";
 import JoinRequests from "@/src/components/my-team/JoinRequests";
 import MembersOverview from "@/src/components/my-team/MembersOverview";
@@ -427,7 +427,7 @@ export default function MyTeamDetailPage({
           onChange={setActiveTab}
         />
         {visibleTab === "overview" ? (
-          <MembersOverview members={teamMembers} />
+          <MembersOverview members={teamMembers} isLeader={isLeader} />
         ) : visibleTab === "requests" ? (
           <JoinRequests
             requests={filteredRequests}

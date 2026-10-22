@@ -202,10 +202,10 @@ export default function CompetitionsPage() {
 
         <div className="mx-auto max-w-7xl px-8 py-10 lg:py-16">
           <form
-            className="flex flex-col gap-3 md:flex-row md:items-center"
+            className="flex items-center gap-3 rounded-2xl border border-border-strong bg-white p-3 shadow-sm md:flex-row"
             onSubmit={(event) => event.preventDefault()}
           >
-            <div className="flex min-w-0 flex-1 items-center gap-3 rounded-full border border-border-strong bg-white px-5 py-2 shadow-sm">
+            <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-border px-4">
               <Search
                 className="size-5 shrink-0 text-text-secondary"
                 aria-hidden="true"
@@ -216,7 +216,7 @@ export default function CompetitionsPage() {
                 onChange={(event) => updateSearch(event.target.value)}
                 placeholder="Cari kompetisi..."
                 aria-label="Cari kompetisi"
-                className="min-w-0 flex-1 bg-transparent py-2 text-sm text-text-primary outline-none placeholder:text-text-secondary sm:text-base"
+                className="min-w-0 flex-1 bg-transparent py-3 text-sm text-text-primary outline-none placeholder:text-text-secondary sm:text-base"
               />
             </div>
             <button
@@ -228,9 +228,9 @@ export default function CompetitionsPage() {
                 setDraftDeadline(deadline);
                 setIsFilterOpen(true);
               }}
-              className="flex items-center justify-center gap-2 rounded-full border border-brand-primary bg-white px-6 py-3 text-sm font-medium text-brand-primary transition-colors hover:bg-brand-primary-light md:w-auto"
+              className="flex items-center justify-center gap-2 rounded-xl border border-border bg-white px-5 py-3 text-sm font-medium text-text-primary transition-colors hover:bg-gray-50"
             >
-              <SlidersHorizontal className="size-4" aria-hidden="true" />
+              <SlidersHorizontal className="size-4 shrink-0 text-text-secondary" aria-hidden="true" />
               Filter
             </button>
           </form>

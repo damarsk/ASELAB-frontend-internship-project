@@ -21,21 +21,23 @@ export default function TeamSection({ teams }: { teams: BackendTeam[] }) {
   return (
     <section aria-labelledby="teams-heading">
       <form
-        className="mx-auto flex w-full items-center gap-3 rounded-full border border-border-strong bg-white px-5 py-2 shadow-sm"
+        className="mx-auto flex w-full items-center gap-3 rounded-2xl border border-border-strong bg-white p-3 shadow-sm"
         onSubmit={(event) => event.preventDefault()}
       >
-        <Search
-          className="size-5 shrink-0 text-text-secondary"
-          aria-hidden="true"
-        />
-        <input
-          type="search"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Cari tim berdasarkan skill atau kompetisi..."
-          aria-label="Cari tim berdasarkan skill atau kompetisi"
-          className="min-w-0 flex-1 bg-transparent py-2 text-sm text-text-primary outline-none placeholder:text-text-secondary sm:text-base"
-        />
+        <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-border px-4">
+          <Search
+            className="size-5 shrink-0 text-text-secondary"
+            aria-hidden="true"
+          />
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Cari tim berdasarkan skill atau kompetisi..."
+            aria-label="Cari tim berdasarkan skill atau kompetisi"
+            className="min-w-0 flex-1 bg-transparent py-3 text-sm text-text-primary outline-none placeholder:text-text-secondary sm:text-base"
+          />
+        </div>
       </form>
 
       <div className="mt-14 flex items-end justify-between gap-4">

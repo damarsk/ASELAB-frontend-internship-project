@@ -44,6 +44,21 @@ type JoinRequestsResponse = {
   message?: string;
 };
 
+type ProfileResponse = {
+  data?: {
+    id?: number;
+    userId?: number;
+  } | null;
+};
+
+function isTeamLeader(team: BackendTeamDetail, userId: number | null) {
+  if (typeof userId !== "number") return false;
+  if (team.leaderId === userId) return true;
+  return team.members.some(
+    (member) => member.userId === userId && member.role === "LEADER",
+  );
+}
+
 const memberColors = [
   "bg-emerald-100 text-emerald-700",
   "bg-sky-100 text-sky-700",
@@ -95,6 +110,7 @@ export default function MyTeamDetailPage({
   const { id } = use(params);
   const router = useRouter();
   const [team, setTeam] = useState<BackendTeamDetail | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TeamTab>("overview");
@@ -114,11 +130,19 @@ export default function MyTeamDetailPage({
 
     const loadTeam = async () => {
       try {
-        const response = await fetch(`/api/teams/${id}`, {
-          credentials: "include",
-          cache: "no-store",
-          signal: controller.signal,
-        });
+        const [response, profileResponse] = await Promise.all([
+          fetch(`/api/teams/${id}`, {
+            credentials: "include",
+            cache: "no-store",
+            signal: controller.signal,
+          }),
+          fetch("/api/auth/profile", {
+            credentials: "include",
+            cache: "no-store",
+            signal: controller.signal,
+          }).catch(() => null),
+        ]);
+
         const result = (await response
           .json()
           .catch(() => null)) as TeamResponse | null;
@@ -134,6 +158,22 @@ export default function MyTeamDetailPage({
         }
 
         setTeam(result.data);
+
+        const profileResult =
+          profileResponse?.ok
+            ? ((await profileResponse
+                .json()
+                .catch(() => null)) as ProfileResponse | null)
+            : null;
+        const userId = profileResult?.data?.id ?? profileResult?.data?.userId;
+        const viewerId = typeof userId === "number" ? userId : null;
+        setCurrentUserId(viewerId);
+
+        // Join request hanya bisa dilihat dan dikelola oleh Team Leader.
+        if (!isTeamLeader(result.data, viewerId)) {
+          setRequests([]);
+          return;
+        }
 
         const requestsResponse = await fetch(
           "/api/teams/my-teams/join-requests",
@@ -184,6 +224,10 @@ export default function MyTeamDetailPage({
 
     return () => controller.abort();
   }, [id]);
+
+  const isLeader = team ? isTeamLeader(team, currentUserId) : false;
+  // Anggota biasa selalu diarahkan ke Overview, tab leader-only tidak dirender.
+  const visibleTab: TeamTab = isLeader ? activeTab : "overview";
 
   const filteredRequests = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -372,13 +416,14 @@ export default function MyTeamDetailPage({
           />
         </TeamHero>
         <TeamTabs
-          activeTab={activeTab}
+          activeTab={visibleTab}
           pendingCount={pendingCount}
+          isLeader={isLeader}
           onChange={setActiveTab}
         />
-        {activeTab === "overview" ? (
+        {visibleTab === "overview" ? (
           <MembersOverview members={teamMembers} />
-        ) : activeTab === "requests" ? (
+        ) : visibleTab === "requests" ? (
           <JoinRequests
             requests={filteredRequests}
             search={search}

@@ -5,11 +5,26 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import Footer from "@/src/components/landing/Footer";
+import MembersOverview from "@/src/components/my-team/MembersOverview";
+import TabNav, { type TabItem } from "@/src/components/my-team/TabNav";
 import TeamHero from "@/src/components/my-team/TeamHero";
 import type { JoinRequestStatus } from "@/src/components/my-team/TeamMembershipAction";
-import PublicTeamMembers from "@/src/components/teams/PublicTeamMembers";
+import type { TeamMember } from "@/src/components/my-team/types";
 import type { BackendTeamDetail } from "@/src/types/team";
 import TeamDetailSkeleton from "@/src/components/my-team/TeamDetailSkeleton";
+
+const memberColors = [
+  "bg-emerald-100 text-emerald-700",
+  "bg-sky-100 text-sky-700",
+  "bg-amber-100 text-amber-700",
+  "bg-lime-100 text-lime-700",
+];
+
+type PublicTeamTab = "overview";
+
+const publicTabs: ReadonlyArray<TabItem<PublicTeamTab>> = [
+  { id: "overview", label: "Overview" },
+];
 
 export default function TeamDetailPage({
   params,
@@ -111,6 +126,28 @@ export default function TeamDetailPage({
     }, 5000);
   };
 
+  const teamMembers: TeamMember[] = (team?.members ?? []).map(
+    (member, index) => {
+      const name = member.user.nama;
+      const initials = name
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+      return {
+        userId: member.userId,
+        name,
+        department: member.user.profile?.jurusan ?? undefined,
+        role: member.role === "LEADER" ? "Team Leader" : "Anggota Tim",
+        initials,
+        color: memberColors[index % memberColors.length],
+        fotoProfilUrl: member.user.profile?.fotoProfilUrl ?? null,
+      };
+    },
+  );
+
   return (
     <>
       <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-12">
@@ -161,21 +198,15 @@ export default function TeamDetailPage({
                 initialRequestStatus={requestStatus}
                 onRequestSuccess={handleRequestSuccess}
               />
-              <PublicTeamMembers
-                members={team.members.map((member) => ({
-                  name: member.user.nama,
-                  department: member.user.profile?.jurusan ?? undefined,
-                  role:
-                    member.role === "LEADER" ? "Team Leader" : "Anggota Tim",
-                  initials: member.user.nama
-                    .split(/\s+/)
-                    .map((part) => part[0])
-                    .join("")
-                    .slice(0, 2)
-                    .toUpperCase(),
-                  color: "bg-sky-100 text-sky-700",
-                  fotoProfilUrl: member.user.profile?.fotoProfilUrl ?? null,
-                }))}
+              <TabNav
+                tabs={publicTabs}
+                activeTab="overview"
+                onChange={() => {}}
+              />
+              <MembersOverview
+                members={teamMembers}
+                quota={team.kuota}
+                showMemberActions={false}
               />
             </>
           )

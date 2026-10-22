@@ -9,6 +9,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { formatRelativeTime } from "@/src/lib/relative-time";
 import type {
   BackendNotification,
   NotificationsResponse,
@@ -70,21 +71,6 @@ function getGroup(createdAt: string): Notification["group"] {
   return "Sebelumnya";
 }
 
-function formatNotificationTime(createdAt: string) {
-  const date = new Date(createdAt);
-  const diffMinutes = Math.round((date.getTime() - Date.now()) / 60000);
-  if (Math.abs(diffMinutes) < 60) {
-    return new Intl.RelativeTimeFormat("id", { numeric: "auto" }).format(
-      diffMinutes,
-      "minute",
-    );
-  }
-  return new Intl.DateTimeFormat("id-ID", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
-}
-
 function mapNotification(notification: BackendNotification): Notification {
   const category = getCategory(notification);
   return {
@@ -92,7 +78,7 @@ function mapNotification(notification: BackendNotification): Notification {
     category,
     title: notification.title,
     description: notification.message,
-    time: formatNotificationTime(notification.createdAt),
+    time: formatRelativeTime(notification.createdAt),
     group: getGroup(notification.createdAt),
     isRead: notification.isRead,
     icon: getIcon(category),

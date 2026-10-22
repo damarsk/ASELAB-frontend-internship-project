@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { resolveProfileImageUrl } from "@/src/lib/profile-image";
+import { formatRelativeTime } from "@/src/lib/relative-time";
 import { Bell, LogOut, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
@@ -19,13 +20,6 @@ type ProfileResponse = {
     } | null;
   } | null;
 };
-
-function formatNotificationTime(createdAt: string) {
-  return new Intl.RelativeTimeFormat("id", { numeric: "auto" }).format(
-    Math.round((new Date(createdAt).getTime() - Date.now()) / 60000),
-    "minute",
-  );
-}
 
 const navItems = [
   {
@@ -375,7 +369,7 @@ export default function DashHeader() {
                             {notification.message}
                           </p>
                           <p className="mt-2 text-[11px] text-gray-400">
-                            {formatNotificationTime(notification.createdAt)}
+                            {formatRelativeTime(notification.createdAt)}
                           </p>
                         </div>
                       </button>

@@ -17,7 +17,6 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useMemo, useState } from "react";
-import CompetitionPlaceholder from "@/src/components/competitions/CompetitionPlaceholder";
 import Footer from "@/src/components/landing/Footer";
 import type { Competition } from "@/src/types/competition";
 
@@ -76,6 +75,63 @@ function splitPoints(value: string | null | undefined) {
     .split(/\r?\n|(?<=\.)\s{2,}|\s*\|\s*/)
     .map((item) => item.trim().replace(/[.;]$/, ""))
     .filter((item) => item.length > 0);
+}
+
+function cleanText(text: string | null | undefined) {
+  if (!text) return "";
+  return text
+    .replace(
+      /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu,
+      "",
+    )
+    .replace(/[*~|]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function truncateText(text: string | null | undefined, maxLength: number) {
+  if (!text) return "";
+  const cleaned = cleanText(text);
+  if (cleaned.length <= maxLength) return cleaned;
+  return cleaned.substring(0, maxLength).trim() + "...";
+}
+
+function extractOrganizer(penyelenggara: string | null | undefined) {
+  if (!penyelenggara) return "Penyelenggara";
+  const clean = penyelenggara
+    .split(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u)[0]
+    .trim();
+  return clean.length > 60 ? clean.substring(0, 60) + "..." : clean;
+}
+
+function extractFeeSummary(value: string | null | undefined) {
+  if (!value) return "Belum tersedia";
+  if (isFreeFee(value)) return "Gratis (Free)";
+
+  const match = value.match(/Rp\s?[\d.,]+/i);
+  if (match) {
+    if (
+      value.toLowerCase().includes("batch") ||
+      value.toLowerCase().includes("cabang")
+    ) {
+      return `Mulai dari ${match[0]}`;
+    }
+    return match[0];
+  }
+
+  if (value.length > 30) return "Lihat Detail";
+  return value;
+}
+
+function getDisplayHadiah(hadiah: string | null | undefined) {
+  if (
+    !hadiah ||
+    hadiah.toLowerCase() === "tidak disebutkan" ||
+    hadiah.toLowerCase() === "belum diumumkan"
+  ) {
+    return "Belum diumumkan";
+  }
+  return hadiah;
 }
 
 async function fetchCompetitionById(id: number, signal: AbortSignal) {
@@ -279,6 +335,18 @@ export default function CompetitionDetailPage({
     (typeof daysLeft === "number" && daysLeft < 0);
   const registerUrl = competition?.registrationUrl ?? null;
 
+  const displayOrganizer = extractOrganizer(competition?.penyelenggara);
+  const feeSummary = extractFeeSummary(competition?.biayaPendaftaran);
+  const displayFee = competition?.biayaPendaftaran
+    ? cleanText(competition.biayaPendaftaran)
+    : "Belum tersedia";
+  const displayHadiah = getDisplayHadiah(competition?.hadiah);
+  const displayInfo = truncateText(competition?.infoPendaftaran, 200);
+
+  const fullDescription = competition?.infoPendaftaran
+    ? cleanText(competition.infoPendaftaran)
+    : "";
+
   const faqs = useMemo(() => {
     if (!competition) return [];
 
@@ -288,7 +356,7 @@ export default function CompetitionDetailPage({
         answer: competition.biayaPendaftaran
           ? isFree
             ? "Tidak. Pendaftaran kompetisi ini gratis, tidak ada biaya yang perlu dibayarkan."
-            : `Ya. Biaya pendaftaran kompetisi ini sebesar ${competition.biayaPendaftaran} sesuai informasi dari penyelenggara.`
+            : `Ya. Biaya pendaftaran kompetisi ini sebesar ${displayFee}.`
           : "Informasi biaya pendaftaran belum dicantumkan oleh penyelenggara.",
       },
       {
@@ -315,7 +383,7 @@ export default function CompetitionDetailPage({
           "Bisa. Gunakan fitur Cari Tim di Troov untuk menemukan rekan satu tim yang cocok, lalu daftarkan tim kamu ke penyelenggara.",
       },
     ];
-  }, [competition, isFree, requirementPoints, registrationPoints]);
+  }, [competition, isFree, requirementPoints, registrationPoints, displayFee]);
 
   return (
     <>
@@ -380,11 +448,7 @@ export default function CompetitionDetailPage({
                       </Badge>
                     )}
                     <Badge className="bg-white/15 text-white ring-1 ring-inset ring-white/30">
-                      {competition.biayaPendaftaran
-                        ? isFree
-                          ? "Gratis (Free)"
-                          : competition.biayaPendaftaran
-                        : "Biaya belum tersedia"}
+                      {feeSummary}
                     </Badge>
                     {isExpired && (
                       <Badge className="bg-red-500/90 text-white">
@@ -397,14 +461,14 @@ export default function CompetitionDetailPage({
                     {competition.namaLomba}
                   </h1>
 
-                  <p className="mt-3 max-w-2xl text-sm leading-6 text-emerald-50/90">
-                    {competition.infoPendaftaran ??
+                  <p className="mt-3 max-w-2xl text-sm leading-6 text-emerald-50/90 line-clamp-3">
+                    {displayInfo ||
                       "Informasi pendaftaran kompetisi ini belum tersedia."}
                   </p>
 
                   <div className="mt-5 flex items-center gap-3">
                     <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/15 text-xs font-bold text-white ring-1 ring-inset ring-white/30">
-                      {competition.penyelenggara
+                      {displayOrganizer
                         .split(/\s+/)
                         .map((part) => part[0])
                         .join("")
@@ -412,9 +476,11 @@ export default function CompetitionDetailPage({
                         .toUpperCase()}
                     </span>
                     <div className="text-xs leading-4">
-                      <p className="text-emerald-100/80">Diselenggarakan oleh</p>
+                      <p className="text-emerald-100/80">
+                        Diselenggarakan oleh
+                      </p>
                       <p className="font-semibold text-white">
-                        {competition.penyelenggara}
+                        {displayOrganizer}
                       </p>
                     </div>
                   </div>
@@ -426,7 +492,7 @@ export default function CompetitionDetailPage({
                       Total Hadiah
                     </dt>
                     <dd className="mt-1 text-lg font-bold leading-6 text-emerald-300 lg:text-2xl">
-                      {competition.hadiah ?? "Belum diumumkan"}
+                      {displayHadiah}
                     </dd>
                   </div>
                   <div>
@@ -434,11 +500,7 @@ export default function CompetitionDetailPage({
                       Biaya Registrasi
                     </dt>
                     <dd className="mt-1 text-lg font-bold leading-6 text-emerald-300 lg:text-2xl">
-                      {competition.biayaPendaftaran
-                        ? isFree
-                          ? "Gratis (Free)"
-                          : competition.biayaPendaftaran
-                        : "Belum tersedia"}
+                      {feeSummary}
                     </dd>
                   </div>
                   <div>
@@ -486,7 +548,7 @@ export default function CompetitionDetailPage({
                 <span>
                   Hadiah:{" "}
                   <strong className="font-semibold text-text-primary">
-                    {competition.hadiah ?? "Belum diumumkan"}
+                    {displayHadiah}
                   </strong>
                 </span>
               </p>
@@ -515,11 +577,11 @@ export default function CompetitionDetailPage({
                     {competition.namaLomba} merupakan kompetisi{" "}
                     {competition.kategori.toLowerCase()} tingkat{" "}
                     {competition.tingkatLomba?.toLowerCase() ?? "nasional"} yang
-                    diselenggarakan oleh {competition.penyelenggara}.
+                    diselenggarakan oleh {displayOrganizer}.
                   </p>
-                  {registrationPoints.length > 0 && (
-                    <p className="mt-2 text-xs leading-6 text-text-secondary sm:text-sm">
-                      {registrationPoints.join(". ")}.
+                  {fullDescription && (
+                    <p className="mt-2 text-xs leading-6 text-text-secondary sm:text-sm whitespace-pre-line">
+                      {fullDescription}
                     </p>
                   )}
 
@@ -533,8 +595,8 @@ export default function CompetitionDetailPage({
                         <p className="font-semibold text-text-primary">
                           Biaya Pendaftaran
                         </p>
-                        <p className="text-text-secondary">
-                          {competition.biayaPendaftaran ?? "Belum tersedia"}
+                        <p className="text-text-secondary whitespace-pre-line">
+                          {displayFee}
                         </p>
                       </div>
                     </div>
@@ -547,22 +609,22 @@ export default function CompetitionDetailPage({
                         <p className="font-semibold text-text-primary">
                           Total Hadiah
                         </p>
-                        <p className="text-text-secondary">
-                          {competition.hadiah ?? "Belum diumumkan"}
-                        </p>
+                        <p className="text-text-secondary">{displayHadiah}</p>
                       </div>
                     </div>
                   </div>
 
                   {competition.gambarUrl && (
-                    <Image
-                      src={competition.gambarUrl}
-                      alt={`Poster ${competition.namaLomba}`}
-                      width={960}
-                      height={540}
-                      unoptimized
-                      className="mt-4 w-full rounded-xl border border-border object-cover"
-                    />
+                    <div className="mt-4 overflow-hidden rounded-xl border border-border">
+                      <Image
+                        src={competition.gambarUrl}
+                        alt={`Poster ${competition.namaLomba}`}
+                        width={960}
+                        height={540}
+                        unoptimized
+                        className="w-full max-h-[500px] object-contain"
+                      />
+                    </div>
                   )}
                 </Card>
 
@@ -629,10 +691,11 @@ export default function CompetitionDetailPage({
                       Total Hadiah
                     </p>
                     <p className="mt-1 text-xl font-bold text-amber-700 sm:text-2xl">
-                      {competition.hadiah ?? "Belum diumumkan"}
+                      {displayHadiah}
                     </p>
                     <p className="mt-1 text-[11px] text-amber-800/80">
-                      Rincian pembagian hadiah mengikuti ketentuan penyelenggara.
+                      Rincian pembagian hadiah mengikuti ketentuan
+                      penyelenggara.
                     </p>
                   </div>
                   <div className="mt-3 flex items-start gap-2.5 rounded-lg border border-border bg-background px-3.5 py-3">
@@ -642,7 +705,7 @@ export default function CompetitionDetailPage({
                     />
                     <p className="text-[11px] leading-5 text-text-secondary sm:text-xs">
                       Peserta umumnya juga memperoleh sertifikat penghargaan
-                      dari {competition.penyelenggara}.
+                      dari {displayOrganizer}.
                     </p>
                   </div>
                 </Card>
@@ -702,10 +765,10 @@ export default function CompetitionDetailPage({
                         {competition.tingkatLomba ?? "-"}
                       </dd>
                     </div>
-                    <div className="flex items-center justify-between gap-3">
+                    <div className="flex flex-col gap-1 py-2 border-t border-border">
                       <dt className="text-text-secondary">Biaya Daftar</dt>
-                      <dd className="font-semibold text-text-primary">
-                        {competition.biayaPendaftaran ?? "-"}
+                      <dd className="font-semibold text-text-primary whitespace-pre-line text-[11px] leading-relaxed">
+                        {displayFee}
                       </dd>
                     </div>
                   </dl>
@@ -759,21 +822,21 @@ export default function CompetitionDetailPage({
                         {formatLongDate(competition.deadline)}
                       </dd>
                     </div>
-                    <div className="flex items-center justify-between gap-3 py-2">
+                    <div className="flex flex-col gap-1 py-2">
                       <dt className="text-text-secondary">Biaya</dt>
-                      <dd className="font-semibold text-text-primary">
-                        {competition.biayaPendaftaran ?? "-"}
+                      <dd className="font-semibold text-text-primary whitespace-pre-line text-[11px] leading-relaxed">
+                        {displayFee}
                       </dd>
                     </div>
                     <div className="flex items-center justify-between gap-3 py-2">
                       <dt className="text-text-secondary">Penyelenggara</dt>
                       <dd className="text-right font-semibold text-text-primary">
-                        {competition.penyelenggara}
+                        {displayOrganizer}
                       </dd>
                     </div>
                   </dl>
                   {registrationPoints.length > 0 && (
-                    <p className="mt-3 rounded-lg border border-border bg-background px-3 py-2.5 text-[11px] leading-5 text-text-secondary">
+                    <p className="mt-3 rounded-lg border border-border bg-background px-3 py-2.5 text-[11px] leading-5 text-text-secondary whitespace-pre-line">
                       <strong className="font-semibold text-text-primary">
                         Cara mendaftar:{" "}
                       </strong>
@@ -816,24 +879,19 @@ export default function CompetitionDetailPage({
               </aside>
             </div>
 
-            <div className="mt-6 flex flex-col items-center gap-4 rounded-2xl border border-border bg-white px-5 py-6 text-center sm:flex-row sm:justify-between sm:text-left">
-              <div className="flex flex-col items-center gap-3 sm:flex-row">
-                <CompetitionPlaceholder
-                  competition={{ name: competition.namaLomba }}
-                />
-                <div>
-                  <p className="text-sm font-bold text-text-primary">
-                    Butuh rekan tim untuk {competition.namaLomba}?
-                  </p>
-                  <p className="mt-0.5 text-xs text-text-secondary">
-                    Geser ke kiri untuk langsung mengirim permintaan bergabung
-                    ke tim yang cocok.
-                  </p>
-                </div>
+            <div className="mt-6 flex flex-col items-center gap-4 rounded-2xl border border-border bg-white px-5 py-6 text-center sm:flex-row sm:justify-between sm:text-left sm:px-8">
+              <div>
+                <p className="text-base font-bold text-text-primary sm:text-lg">
+                  Butuh rekan tim untuk {competition.namaLomba}?
+                </p>
+                <p className="mt-1 text-sm text-text-secondary">
+                  Geser ke kiri untuk langsung mengirim permintaan bergabung ke
+                  tim yang cocok.
+                </p>
               </div>
               <Link
                 href="/teams"
-                className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
+                className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
               >
                 Cari Rekan Tim
                 <ArrowRight className="size-4" aria-hidden="true" />

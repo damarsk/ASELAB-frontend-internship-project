@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, Search, SlidersHorizontal, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import CompetitionCardSkeleton from "@/src/components/competitions/CompetitionCardSkeleton";
@@ -36,7 +37,18 @@ function CompetitionCard({ competition }: { competition: Competition }) {
   return (
     <article className="flex min-h-0 flex-col rounded-xl border border-border bg-white px-4 py-5 text-center transition-shadow hover:shadow-md sm:px-5">
       <Link href={`/competitions/${competition.id}`} className="block">
-        <CompetitionPlaceholder competition={{ name: competition.namaLomba }} />
+        {competition.gambarUrl ? (
+          <Image
+            src={competition.gambarUrl}
+            alt={competition.namaLomba}
+            width={448}
+            height={288}
+            className="mx-auto h-28 w-full max-w-48 rounded-lg border border-border object-cover sm:h-32"
+            unoptimized
+          />
+        ) : (
+          <CompetitionPlaceholder competition={{ name: competition.namaLomba }} />
+        )}
       </Link>
       <h2 className="mt-5 min-h-10 text-xs font-bold leading-5 text-text-primary sm:text-sm">
         <Link

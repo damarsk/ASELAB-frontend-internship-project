@@ -13,6 +13,10 @@ import TeamSettings from "@/src/components/my-team/TeamSettings";
 import type { RequestStatus, TeamMember } from "@/src/components/my-team/types";
 import type { JoinRequest } from "@/src/components/my-team/types";
 import type { BackendTeamDetail } from "@/src/types/team";
+import {
+  fetchMemberProfiles,
+  mapTeamMembers,
+} from "@/src/lib/team-members";
 import TeamDetailSkeleton from "@/src/components/my-team/TeamDetailSkeleton";
 
 type TeamResponse = {
@@ -42,6 +46,10 @@ type JoinRequestsResponse = {
   data?: BackendJoinRequest[];
   error?: string;
   message?: string;
+};
+
+type PublicProfile = {
+  fotoProfilUrl?: string | null;
 };
 
 type ProfileResponse = {
@@ -110,6 +118,9 @@ export default function MyTeamDetailPage({
   const { id } = use(params);
   const router = useRouter();
   const [team, setTeam] = useState<BackendTeamDetail | null>(null);
+  const [memberProfiles, setMemberProfiles] = useState<Map<number, PublicProfile>>(
+    new Map(),
+  );
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -158,6 +169,13 @@ export default function MyTeamDetailPage({
         }
 
         setTeam(result.data);
+
+        // Enrich members with profile photos (not included in team detail).
+        const profileMap = await fetchMemberProfiles(
+          result.data.members,
+          controller.signal,
+        );
+        setMemberProfiles(profileMap);
 
         const profileResult =
           profileResponse?.ok
@@ -270,23 +288,10 @@ export default function MyTeamDetailPage({
     );
   }
 
-  const teamMembers: TeamMember[] = team.members.map((member, index) => {
-    const name = member.user.nama;
-    const initials = name
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase();
-    return {
-      name,
-      department: member.user.profile?.jurusan ?? undefined,
-      role: member.role === "LEADER" ? "Team Leader" : "Anggota Tim",
-      initials,
-      color: memberColors[index % memberColors.length],
-      fotoProfilUrl: member.user.profile?.fotoProfilUrl ?? null,
-    };
-  });
+  const teamMembers: TeamMember[] = mapTeamMembers(
+    team.members,
+    memberProfiles,
+  );
 
   const pendingCount = requests.filter(
     (request) => request.status === "pending",

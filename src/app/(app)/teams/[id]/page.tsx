@@ -10,15 +10,16 @@ import TabNav, { type TabItem } from "@/src/components/my-team/TabNav";
 import TeamHero from "@/src/components/my-team/TeamHero";
 import type { JoinRequestStatus } from "@/src/components/my-team/TeamMembershipAction";
 import type { TeamMember } from "@/src/components/my-team/types";
+import {
+  fetchMemberProfiles,
+  mapTeamMembers,
+} from "@/src/lib/team-members";
 import type { BackendTeamDetail } from "@/src/types/team";
 import TeamDetailSkeleton from "@/src/components/my-team/TeamDetailSkeleton";
 
-const memberColors = [
-  "bg-emerald-100 text-emerald-700",
-  "bg-sky-100 text-sky-700",
-  "bg-amber-100 text-amber-700",
-  "bg-lime-100 text-lime-700",
-];
+type PublicProfile = {
+  fotoProfilUrl?: string | null;
+};
 
 type PublicTeamTab = "overview";
 
@@ -33,6 +34,9 @@ export default function TeamDetailPage({
 }) {
   const { id } = use(params);
   const [team, setTeam] = useState<BackendTeamDetail | null>(null);
+  const [memberProfiles, setMemberProfiles] = useState<Map<number, PublicProfile>>(
+    new Map(),
+  );
   const [loading, setLoading] = useState(true);
   const [membershipStatus, setMembershipStatus] = useState<
     "joined" | "request"
@@ -71,6 +75,15 @@ export default function TeamDetailPage({
         const payload: { data?: BackendTeamDetail } = await teamResponse.json();
         const teamData = payload.data ?? null;
         setTeam(teamData);
+
+        // Enrich members with profile photos (not included in team detail).
+        if (teamData) {
+          const profileMap = await fetchMemberProfiles(
+            teamData.members,
+            controller.signal,
+          );
+          setMemberProfiles(profileMap);
+        }
 
         const profilePayload = profileResponse?.ok
           ? await profileResponse.json().catch(() => null)
@@ -126,26 +139,9 @@ export default function TeamDetailPage({
     }, 5000);
   };
 
-  const teamMembers: TeamMember[] = (team?.members ?? []).map(
-    (member, index) => {
-      const name = member.user.nama;
-      const initials = name
-        .split(/\s+/)
-        .filter(Boolean)
-        .map((part) => part[0])
-        .join("")
-        .slice(0, 2)
-        .toUpperCase();
-      return {
-        userId: member.userId,
-        name,
-        department: member.user.profile?.jurusan ?? undefined,
-        role: member.role === "LEADER" ? "Team Leader" : "Anggota Tim",
-        initials,
-        color: memberColors[index % memberColors.length],
-        fotoProfilUrl: member.user.profile?.fotoProfilUrl ?? null,
-      };
-    },
+  const teamMembers: TeamMember[] = mapTeamMembers(
+    team?.members ?? [],
+    memberProfiles,
   );
 
   return (

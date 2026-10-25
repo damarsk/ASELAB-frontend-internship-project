@@ -37,8 +37,8 @@ export default function TeamFilters({
           type="search"
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
-          placeholder="Cari tim, kompetisi, atau skill..."
-          aria-label="Cari tim, kompetisi, atau skill"
+          placeholder="Cari tim..."
+          aria-label="Cari tim"
           className="min-w-0 flex-1 bg-transparent py-3 text-sm text-text-primary outline-none placeholder:text-text-secondary"
         />
       </div>

@@ -1,5 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { isJwtExpired } from "./token";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -58,6 +59,9 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.backendToken = user.backendToken;
+      }
+      if (token.backendToken && isJwtExpired(token.backendToken as string)) {
+        return {};
       }
       return token;
     },

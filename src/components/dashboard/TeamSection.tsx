@@ -13,9 +13,7 @@ export default function TeamSection({ teams }: { teams: BackendTeam[] }) {
     (team) =>
       team.nama.toLowerCase().includes(query) ||
       team.kompetisi.toLowerCase().includes(query) ||
-      team.skillDibutuhkan.some((skill) =>
-        skill.toLowerCase().includes(query),
-      ),
+      team.skillDibutuhkan.some((skill) => skill.toLowerCase().includes(query)),
   );
 
   return (

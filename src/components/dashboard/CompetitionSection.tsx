@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import CompetitionPlaceholder from "@/src/components/competitions/CompetitionPlaceholder";
 import type { Competition } from "@/src/types/competition";
@@ -30,7 +31,20 @@ export default function CompetitionSection({
             key={competition.id}
             className="flex min-h-101.25 flex-col items-center rounded-xl border border-border bg-white px-6 py-6 text-center transition-shadow hover:shadow-md"
           >
-            <CompetitionPlaceholder />
+            {competition.gambarUrl ? (
+              <Image
+                src={competition.gambarUrl}
+                alt={competition.namaLomba}
+                width={448}
+                height={288}
+                className="mx-auto h-28 w-full max-w-48 rounded-lg border border-border object-cover sm:h-32"
+                unoptimized
+              />
+            ) : (
+              <CompetitionPlaceholder
+                competition={{ name: competition.namaLomba }}
+              />
+            )}
             <h3 className="mt-6 max-w-xs text-base font-bold leading-6 text-text-primary">
               <Link
                 href={`/competitions/${competition.id}`}
@@ -50,7 +64,7 @@ export default function CompetitionSection({
               href={`/competitions/${competition.id}`}
               className="mt-auto inline-flex items-center gap-1 rounded-md bg-brand-primary px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-brand-primary-hover"
             >
-              Eksplorasi &amp; Cari Rekan{" "}
+              Lihat Detail{" "}
               <ArrowRight className="size-3.5" aria-hidden="true" />
             </Link>
           </article>

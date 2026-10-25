@@ -17,7 +17,7 @@ export default function TeamGridView({
 }: TeamGridViewProps) {
   if (teams.length === 0) {
     return (
-      <p className="mt-16 text-center text-text-secondary">
+      <p className="mt-16 text-center text-text-secondary lg:min-h-80 lg:mt-24">
         Tim yang kamu cari belum tersedia.
       </p>
     );

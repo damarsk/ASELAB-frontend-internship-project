@@ -113,7 +113,7 @@ export default function DashHeader() {
         handleProfileImageUpdated,
       );
     };
-  }, [isLoggedIn]);
+  }, [isLoggedIn, signOut]);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -132,6 +132,9 @@ export default function DashHeader() {
         const result = (await response.json()) as NotificationsResponse;
 
         if (!response.ok) {
+          if (response.status === 401) {
+            await signOut({ callbackUrl: "/" });
+          }
           throw new Error(
             result.error ?? result.message ?? "Gagal memuat notifikasi.",
           );
@@ -165,7 +168,7 @@ export default function DashHeader() {
         handleNotificationsUpdated,
       );
     };
-  }, [isLoggedIn]);
+  }, [isLoggedIn, signOut]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
